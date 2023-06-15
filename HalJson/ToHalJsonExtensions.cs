@@ -4,6 +4,12 @@ using RestResource;
 namespace HalJson; 
 
 public static class ToHalJsonExtensions {
+    /// <summary>
+    /// Create a resource, formatted as JSON using HAL, with extensions to support expanded links.
+    /// MIME type = application/slysoft.hal+json
+    /// </summary>
+    /// <param name="resource">Resource that contains the data to represent as json</param>
+    /// <returns>JSON text in a HAL format (with slysoft extensions)</returns>
     public static string ToHalJson(this Resource resource) {
         var o = new JObject();
         foreach (var data in resource.Data) {
