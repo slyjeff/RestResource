@@ -12,5 +12,5 @@ public sealed class Resource {
     /// <summary>
     /// Data values contained by this resource
     /// </summary>
-    public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
+    public IDictionary<string, object?> Data { get; } = new Dictionary<string, object?>();
 }
