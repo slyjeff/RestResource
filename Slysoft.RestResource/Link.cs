@@ -1,4 +1,4 @@
-﻿namespace RestResource;
+﻿namespace Slysoft.RestResource;
 
 /// <summary>
 /// Link contained by a resource so that applicable operations can be navigated (HATEOAS)

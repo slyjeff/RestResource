@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RestResource;
-using RestResource.Extensions;
+using Slysoft.RestResource.Extensions;
 using TestUtils;
 
-namespace HalXml.Tests; 
+namespace Slysoft.RestResource.HalXml.Tests; 
 
 [TestClass]
 public sealed class ToHalXmlDataTests {

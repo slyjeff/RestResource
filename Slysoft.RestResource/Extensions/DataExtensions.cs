@@ -1,7 +1,7 @@
 ﻿using System.Collections;
-using RestResource.Utils;
+using Slysoft.RestResource.Utils;
 
-namespace RestResource.Extensions; 
+namespace Slysoft.RestResource.Extensions; 
 
 public static class DataExtensions {
     /// <summary>

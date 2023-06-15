@@ -1,7 +1,6 @@
 ﻿using System.Xml;
-using RestResource;
 
-namespace HalXml; 
+namespace Slysoft.RestResource.HalXml; 
 
 public static class ToHalXmlExtensions {
     /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace RestResource; 
+﻿namespace Slysoft.RestResource; 
 
 /// <summary>
 /// Represents a REST resource that can contain data, links, and embedded resource

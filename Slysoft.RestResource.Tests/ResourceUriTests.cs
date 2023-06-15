@@ -1,8 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RestResource.Extensions;
+using Slysoft.RestResource.Extensions;
 using TestUtils;
 
-namespace RestResource.Tests;
+namespace Slysoft.RestResource.Tests;
 
 [TestClass]
 public sealed class ResourceUriTests {
