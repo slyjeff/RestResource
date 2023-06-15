@@ -34,7 +34,7 @@ public sealed class ResourceDataTests {
     }
 
     [TestMethod]
-    public void DataWillConvertSimpleTypesToString() {
+    public void DataMustConvertSimpleTypesToString() {
         //arrange
         var number = GenerateRandom.Int();
 
@@ -44,6 +44,19 @@ public sealed class ResourceDataTests {
 
         //assert
         Assert.AreEqual(number.ToString(), resource.Data["message"]);
+    }
+
+    [TestMethod]
+    public void DataMustAllowFormatting() {
+        //arrange
+        var dateTime = GenerateRandom.DateTime();
+
+        //act
+        var resource = new Resource()
+            .Data("date", dateTime, "hh:mm");
+
+        //assert
+        Assert.AreEqual(dateTime.ToString("hh:mmm"), resource.Data["date"]);
     }
 
     [TestMethod]

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Slysoft.RestResource.MappingConfiguration;
 using Slysoft.RestResource.Utils;
 
 namespace Slysoft.RestResource.Extensions; 
@@ -21,16 +22,21 @@ public static class DataExtensions {
     /// <param name="resource">The data will be added to this resource</param>
     /// <param name="name">Name of the element- will be converted to camelcase</param>
     /// <param name="value">Value to be added to the resource. Objects will be converted to dictionaries; lists will be stored as lists; lists of objects will be stored as lists of dictionaries</param>
+    /// <param name="format">Optional parameter that will be used to format the value</param>
     /// <returns>The resource so further calls can be chained</returns>
-    public static Resource Data(this Resource resource, string name, object? value) {
+    public static Resource Data(this Resource resource, string name, object? value, string? format = null) {
         var dataName = name.ToCamelCase();
-        resource.Data[dataName] = ConvertValueToResourceData(value);
+        resource.Data[dataName] = ConvertValueToResourceData(value, format);
         return resource;
     }
 
-    private static object? ConvertValueToResourceData(object? value) {
+    private static object? ConvertValueToResourceData(object? value, string? format = null) {
         if (value == null) {
             return null;
+        }
+
+        if (format != null) {
+            return string.Format($"{{0:{format}}}", value);
         }
 
         var type = value.GetType();
@@ -66,5 +72,27 @@ public static class DataExtensions {
             dictionary[property.Name.ToCamelCase()] = ConvertValueToResourceData(property.GetValue(value));
         }
         return dictionary;
+    }
+
+    /// <summary>
+    /// Map all data from an object- does not allow for exclusion, formatting of individual properties, or lists. If any of these are required, use MapDataFrom instead
+    /// </summary>
+    /// <typeparam name="T">The type of object to map</typeparam>
+    /// <param name="resource">The data will be added to this resource</param>
+    /// <param name="source">Data will be read from this object</param>
+    /// <returns>The resource so further calls can be chained</returns>
+    public static Resource MapAllDataFrom<T>(this Resource resource, T source) {
+        return resource.MapDataFrom(source).MapAll().EndMap();
+    }
+
+    /// <summary>
+         /// Start configuration to map data from an object in a type safe way, determining which fields to map
+         /// </summary>
+         /// <typeparam name="T">The type of object to map</typeparam>
+         /// <param name="resource">The data will be added to this resource</param>
+         /// <param name="source">Data will be read from this object</param>
+         /// <returns>A configuration class that will allow configuration of fields</returns>
+    public static IConfigureDataMap<T> MapDataFrom<T>(this Resource resource, T source) {
+        return new ConfigureDataMap<T>(resource, source);
     }
 }
