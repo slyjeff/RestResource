@@ -8,7 +8,7 @@ using TestUtils;
 namespace HalJson.Tests; 
 
 [TestClass]
-public class ToHalJsonDataTests {
+public sealed class ToHalJsonDataTests {
     [TestMethod]
     public void DataValuesMustBeConvertedToJson() {
         //arrange

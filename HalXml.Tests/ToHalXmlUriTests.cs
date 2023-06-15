@@ -6,7 +6,7 @@ using TestUtils;
 namespace HalXml.Tests; 
 
 [TestClass]
-public class DataTests {
+public sealed class DataTests {
     [TestMethod]
     public void DataValuesMustBeConvertedToJson() {
         //arrange
@@ -16,10 +16,10 @@ public class DataTests {
             .Uri(uri);
 
         //act
-        var json = resource.ToHalXml();
+        var xml = resource.ToHalXml();
 
         //assert
-        var expectedJson = $"<?xml version=\"1.0\" encoding=\"utf-16\"?><Resource rel=\"self\" href=\"{uri}\" />";
-        Assert.AreEqual(expectedJson, json);
+        var expectedXml = $"<?xml version=\"1.0\" encoding=\"utf-16\"?><resource rel=\"self\" href=\"{uri}\" />";
+        Assert.AreEqual(expectedXml, xml);
     }
 }
