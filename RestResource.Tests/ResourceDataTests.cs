@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Resource.Tests.Utils;
 using RestResource.Extensions;
-using RestResource.Tests.Utils;
+using TestUtils;
 
 namespace RestResource.Tests;
 

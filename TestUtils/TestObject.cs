@@ -1,8 +1,6 @@
-﻿using Resource.Tests.Utils;
+﻿namespace TestUtils; 
 
-namespace RestResource.Tests.Utils; 
-
-internal sealed class TestObject {
+public sealed class TestObject {
     public string StringValue { get; set; } = GenerateRandom.String();
     public int IntValue { get; set; } = GenerateRandom.Int();
 }

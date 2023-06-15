@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Resource.Tests.Utils;
 using RestResource.Extensions;
+using TestUtils;
 
 namespace RestResource.Tests;
 

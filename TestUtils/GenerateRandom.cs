@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿// ReSharper disable StringLiteralTypo
 
-// ReSharper disable StringLiteralTypo
+namespace TestUtils;
 
-namespace Resource.Tests.Utils;
-
-internal static class GenerateRandom {
+public static class GenerateRandom {
     private static readonly Random Random = new();
 
     public static string String(int length = 0) {
