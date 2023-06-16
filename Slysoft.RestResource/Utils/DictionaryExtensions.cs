@@ -9,7 +9,7 @@ internal static class DictionaryExtensions {
         dictionary[dataName] = ConvertValueToResourceData(value, format);
     }
 
-    private static object? ConvertValueToResourceData(object? value, string? format = null) {
+    private static object? ConvertValueToResourceData(object? value, string? format, bool fromConvertedList = false) {
         if (value == null) {
             return null;
         }
@@ -33,7 +33,7 @@ internal static class DictionaryExtensions {
         }
 
         if (!type.IsGenericType) {
-            return (from object? item in enumerableValue select ConvertValueToResourceData(item)).ToList();
+            return (from object? item in enumerableValue select ConvertValueToResourceData(item, null)).ToList();
         }
 
         var genericArgumentType = type.GetGenericArguments()[0];
@@ -48,7 +48,12 @@ internal static class DictionaryExtensions {
         IDictionary<string, object?> dictionary = new Dictionary<string, object?>();
         var properties = value.GetType().GetProperties();
         foreach (var property in properties) {
-            dictionary[property.Name.ToCamelCase()] = ConvertValueToResourceData(property.GetValue(value));
+            //ignore lists in child objects
+            if (property.PropertyType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(property.PropertyType)) {
+                continue;
+            }
+
+            dictionary[property.Name.ToCamelCase()] = ConvertValueToResourceData(property.GetValue(value), null);
         }
         return dictionary;
     }
