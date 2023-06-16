@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Slysoft.RestResource.Utils; 
 
 internal static class MapActionExtensions {
-    public static string? Evaluate<T>(this Expression<Func<T, object>> mapAction) {
+    public static string? Evaluate<T1, T2>(this Expression<Func<T1, T2>> mapAction) {
         var expression = mapAction.Body;
 
         var unaryExpression = expression as UnaryExpression;

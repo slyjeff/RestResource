@@ -1,109 +1,92 @@
 ﻿using System.Linq.Expressions;
-using Slysoft.RestResource.Extensions;
 using Slysoft.RestResource.Utils;
 
 namespace Slysoft.RestResource.MappingConfiguration;
 
-/// <summary>
-/// A configuration class that will allow configuration of fields
-/// </summary>
-/// <typeparam name="T">Load data from this type of object</typeparam>
-public interface IConfigureDataMap<T> {
-    /// <summary>
-    /// Load a data value
-    /// </summary>
-    /// <param name="mapAction">Expression to tell the data map which value to load- example: x => x.Name. The name will be the name of the property in camelCase</param>
-    /// <param name="format">Optional parameter that will be used to format the value</param>
-    /// <returns>The configuration class so more values can be configured</returns>
-    IConfigureDataMap<T> Map(Expression<Func<T, object>> mapAction, string? format = null);
-
-    /// <summary>
-    /// Load a data value
-    /// </summary>
-    /// <param name="name">Name to use for the data- will be forced to camelCase</param>
-    /// <param name="mapAction">Expression to tell the data map which value to load- example: x => x.Name</param>
-    /// <param name="format">Optional parameter that will be used to format the value</param>
-    /// <returns>The configuration class so more values can be configured</returns>
-    IConfigureDataMap<T> Map(string name, Expression<Func<T, object>> mapAction, string? format = null);
-
-    /// <summary>
-    /// Automatically maps all properties in T- individual fields can be overridden or excluded
-    /// </summary>
-    /// <returns>The configuration class so more values can be configured</returns>
-    IConfigureDataMap<T> MapAll();
-
-    /// <summary>
-    /// Do not include this property when mapping all (no, all does not mean all)
-    /// </summary>
-    /// <returns>The configuration class so more values can be configured</returns>
-    IConfigureDataMap<T> Exclude(Expression<Func<T, object>> mapAction);
-
-    /// <summary>
-    /// Finish configuring the map
-    /// </summary>
-    /// <returns>The original resource so further elements can be configured</returns>
-    Resource EndMap();
-}
-
-internal sealed class ConfigureDataMap<T> : IConfigureDataMap<T> {
-    private readonly Resource _resource;
+internal sealed class ConfigureDataMap<T, TParent> : IConfigureMap<T, TParent> {
+    private readonly TParent _parent;
     private readonly T _source;
+    private readonly IDictionary<string, object?> _dictionary;
     private readonly IList<string> _excludedProperties = new List<string>();
 
-    public ConfigureDataMap(Resource resource, T source) {
-        _resource = resource;
+    public ConfigureDataMap(TParent parent, T source, IDictionary<string, object?> dictionary) {
+        _parent = parent;
         _source = source;
+        _dictionary = dictionary;
     }
 
-    public IConfigureDataMap<T> Map(Expression<Func<T, object>> mapAction, string? format = null) {
+    public IConfigureMap<T, TParent> Map(Expression<Func<T, object>> mapAction, string? format = null) {
         return Map(string.Empty, mapAction, format);
     }
 
-    public IConfigureDataMap<T> Map(string name, Expression<Func<T, object>> mapAction, string? format = null) {
+    public IConfigureMap<T, TParent> Map(string name, Expression<Func<T, object>> mapAction, string? format = null) {
+        _dictionary.MapValue(_source, name, mapAction, format);
+        return this;
+    }
+
+    public IConfigureMap<TListItemType, IConfigureMap<T, TParent>> MapListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+        return MapListDataFrom(string.Empty, mapAction);
+    }
+
+    public IConfigureMap<TListItemType, IConfigureMap<T, TParent>> MapListDataFrom<TListItemType>(string name, Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+        var destinationList = new List<IDictionary<string, object?>>();
+
         if (_source == null) {
-            return this;
+            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
         var propertyName = mapAction.Evaluate();
         if (propertyName == null) {
-            return this;
+            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
+        }
+
+        if (string.IsNullOrEmpty(name)) {
+            name = propertyName;
         }
 
         var property = _source.GetType().GetProperty(propertyName);
         if (property == null) {
-            return this;
+            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
-        if (string.IsNullOrEmpty(name)) {
-            name = property.Name;
+        if (property.GetValue(_source) is not IEnumerable<TListItemType> sourceList) {
+            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
-        _resource.Data(name, property.GetValue(_source), format);
+        _dictionary[name.ToCamelCase()] = destinationList;
 
-        return this;
+        var copyPairs = new List<CopyPair<TListItemType>>();
+        foreach (var sourceItem in sourceList) {
+            var destination = new Dictionary<string, object?>();
+            destinationList.Add(destination);
+            copyPairs.Add(new CopyPair<TListItemType>(sourceItem, destination));
+        }
+
+        return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, copyPairs);
     }
 
-    public IConfigureDataMap<T> MapAll() {
+    public IConfigureMap<T, TParent> MapAllListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+        throw new NotImplementedException();
+        //return MapListDataFrom(mapAction).MapAll().EndMap();
+    }
+
+    public IConfigureMap<T, TParent> MapAll() {
         foreach (var property in typeof(T).GetProperties()) {
             if (_excludedProperties.Contains(property.Name)) {
                 continue;
             }
 
-            if (_resource.Data.ContainsKey(property.Name.ToCamelCase())) {
+            if (_dictionary.ContainsKey(property.Name.ToCamelCase())) {
                 continue;
             }
 
-            _resource.Data(property.Name, property.GetValue(_source));
+            _dictionary.AddResourceData(property.Name, property.GetValue(_source));
         }
 
         return this;
     }
 
-    public IConfigureDataMap<T> Exclude(Expression<Func<T, object>> mapAction) {
-        if (_source == null) {
-            return this;
-        }
-
+    public IConfigureMap<T, TParent> Exclude(Expression<Func<T, object>> mapAction) {
         var propertyName = mapAction.Evaluate();
         if (propertyName == null) {
             return this;
@@ -113,14 +96,14 @@ internal sealed class ConfigureDataMap<T> : IConfigureDataMap<T> {
 
         propertyName = propertyName.ToCamelCase();
 
-        if (_resource.Data.ContainsKey(propertyName)) {
-            _resource.Data.Remove(propertyName);
+        if (_dictionary.ContainsKey(propertyName)) {
+            _dictionary.Remove(propertyName);
         }
 
         return this;
     }
 
-    public Resource EndMap() {
-        return _resource;
+    public TParent EndMap() {
+        return _parent;
     }
 }
