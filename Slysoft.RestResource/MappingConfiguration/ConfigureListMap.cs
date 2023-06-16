@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using Slysoft.RestResource.Utils;
 
 namespace Slysoft.RestResource.MappingConfiguration;
@@ -51,6 +52,8 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureMap<T, TParent> {
             name = propertyName;
         }
 
+        PropertyInfo? property = null;
+
         foreach (var copyPair in _copyPairs) {
             var destinationList = new List<IDictionary<string, object?>>();
             var source = copyPair.Source;
@@ -58,9 +61,11 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureMap<T, TParent> {
                 continue;
             }
 
-            var property = source.GetType().GetProperty(propertyName);
             if (property == null) {
-                continue;
+                property = source.GetType().GetProperty(propertyName);
+                if (property == null) {
+                    continue;
+                }
             }
 
             if (property.GetValue(source) is not IEnumerable<TListItemType> sourceList) {
