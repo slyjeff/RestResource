@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Slysoft.RestResource;
 
 namespace SlySoft.RestResource.HalJson; 
@@ -20,6 +21,10 @@ public static class ToHalJsonExtensions {
             o.AddLink(new Link("self", resource.Uri));
         }
 
+        foreach (var link in resource.Links) {
+            o.AddLink(link);
+        }
+
         return o.ToString();
     }
 
@@ -29,12 +34,18 @@ public static class ToHalJsonExtensions {
             return;
         }
 
+        if (data.Value is FormattedValue formattedValue) {
+            o[data.Key] = new JRaw(formattedValue.Value);
+            return;
+        }
+
         if (data.Value is IList<object?> listOfObjects) {
             var array = new JArray();
             foreach (var item in listOfObjects) {
                 array.Add(item);
             }
             o[data.Key] = array;
+            return;
         }
 
         if (data.Value is IList<IDictionary<string, object?>> listOfDictionary) {
@@ -43,11 +54,15 @@ public static class ToHalJsonExtensions {
                 array.Add(dictionary.ToJson());
             }
             o[data.Key] = array;
+            return;
         }
 
         if (data.Value is IDictionary<string, object?> dictionaryObject) {
             o[data.Key] = dictionaryObject.ToJson();
+            return;
         }
+
+        o[data.Key] = new JValue(data.Value);
     }
 
     private static JObject ToJson(this IDictionary<string, object?> dictionary) {
@@ -72,6 +87,10 @@ public static class ToHalJsonExtensions {
         var linkObject = new JObject {
             ["href"] = link.Href
         };
+
+        if (link.Templated) {
+            linkObject["templated"] = true;
+        }
 
         links[link.Name] = linkObject;
     }

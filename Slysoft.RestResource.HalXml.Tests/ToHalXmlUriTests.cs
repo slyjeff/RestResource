@@ -7,7 +7,7 @@ namespace Slysoft.RestResource.HalXml.Tests;
 [TestClass]
 public sealed class DataTests {
     [TestMethod]
-    public void DataValuesMustBeConvertedToJson() {
+    public void UriMustBeAddedAsHrefInXml() {
         //arrange
         var uri = GenerateRandom.String();
 

@@ -9,7 +9,7 @@ namespace Slysoft.RestResource.HalJson.Tests;
 [TestClass]
 public sealed class DataTests {
     [TestMethod]
-    public void DataValuesMustBeConvertedToJson() {
+    public void UriMustBeAddedAsLinkInJson() {
         //arrange
         var uri = GenerateRandom.String();
 

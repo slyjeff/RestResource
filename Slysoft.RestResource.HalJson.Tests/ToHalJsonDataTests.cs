@@ -23,7 +23,23 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"stringValue\": \"{stringValue}\",{Environment.NewLine}  \"intValue\": \"{intValue}\"{Environment.NewLine}}}";
+        var expectedJson = $"{{{Environment.NewLine}  \"stringValue\": \"{stringValue}\",{Environment.NewLine}  \"intValue\": {intValue}{Environment.NewLine}}}";
+        Assert.AreEqual(expectedJson, json);
+    }
+
+    [TestMethod]
+    public void FormattedNumberValuesMustBeConvertedToJsonWithoutQuotes() {
+        //arrange
+        var floatValue = GenerateRandom.Float();
+
+        var resource = new Resource()
+            .Data("formatted", floatValue, "#,0.000");
+
+        //act
+        var json = resource.ToHalJson();
+
+        //assert
+        var expectedJson = $"{{{Environment.NewLine}  \"formatted\": {floatValue:#,0.000}{Environment.NewLine}}}";
         Assert.AreEqual(expectedJson, json);
     }
 
@@ -39,7 +55,7 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"testObject\": {{{Environment.NewLine}    \"stringValue\": \"{testObject.StringValue}\",{Environment.NewLine}    \"intValue\": \"{testObject.IntValue}\"{Environment.NewLine}  }}{Environment.NewLine}}}";
+        var expectedJson = $"{{{Environment.NewLine}  \"testObject\": {{{Environment.NewLine}    \"stringValue\": \"{testObject.StringValue}\",{Environment.NewLine}    \"intValue\": {testObject.IntValue}{Environment.NewLine}  }}{Environment.NewLine}}}";
         Assert.AreEqual(expectedJson, json);
     }
 
@@ -75,7 +91,7 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"dataObjects\": [{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[0].StringValue}\",{Environment.NewLine}      \"intValue\": \"{dataObjects[0].IntValue}\"{Environment.NewLine}    }},{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[1].StringValue}\",{Environment.NewLine}      \"intValue\": \"{dataObjects[1].IntValue}\"{Environment.NewLine}    }},{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[2].StringValue}\",{Environment.NewLine}      \"intValue\": \"{dataObjects[2].IntValue}\"{Environment.NewLine}    }}{Environment.NewLine}  ]{Environment.NewLine}}}";
+        var expectedJson = $"{{{Environment.NewLine}  \"dataObjects\": [{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[0].StringValue}\",{Environment.NewLine}      \"intValue\": {dataObjects[0].IntValue}{Environment.NewLine}    }},{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[1].StringValue}\",{Environment.NewLine}      \"intValue\": {dataObjects[1].IntValue}{Environment.NewLine}    }},{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[2].StringValue}\",{Environment.NewLine}      \"intValue\": {dataObjects[2].IntValue}{Environment.NewLine}    }}{Environment.NewLine}  ]{Environment.NewLine}}}";
         Assert.AreEqual(expectedJson, json);
     }
 

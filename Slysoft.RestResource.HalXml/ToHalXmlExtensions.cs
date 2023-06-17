@@ -32,9 +32,11 @@ public static class ToHalXmlExtensions {
     private static void AddData(this XmlWriter xmlWriter, KeyValuePair<string, object?> data) {
         xmlWriter.WriteStartElement(data.Key);
         switch (data.Value) {
-            case string stringValue:
-                xmlWriter.WriteValue(stringValue);
+            case FormattedValue formattedValue: {
+                xmlWriter.WriteValue(formattedValue.Value);
                 break;
+
+                }
             case IList<object?> listOfObjects: {
                 foreach (var value in listOfObjects) {
                     xmlWriter.WriteStartElement("value");
@@ -57,6 +59,9 @@ public static class ToHalXmlExtensions {
             }
             case IDictionary<string, object?> dictionaryObject:
                 xmlWriter.WriteDictionary(dictionaryObject);
+                break;
+            default:
+                xmlWriter.WriteValue(data.Value ?? string.Empty);
                 break;
         }
         xmlWriter.WriteEndElement();

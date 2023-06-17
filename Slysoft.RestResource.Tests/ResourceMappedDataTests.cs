@@ -21,7 +21,7 @@ public sealed class ResourceMappedDataTests {
 
         //assert
         Assert.AreEqual(testObject.StringValue, resource.Data["stringValue"]);
-        Assert.AreEqual(testObject.IntValue.ToString(), resource.Data["intValue"]);
+        Assert.AreEqual(testObject.IntValue, resource.Data["intValue"]);
     }
 
     [TestMethod]
@@ -43,9 +43,9 @@ public sealed class ResourceMappedDataTests {
 
         //assert
         Assert.AreEqual(testObject1.StringValue, resource.Data["stringValue"]);
-        Assert.AreEqual(testObject1.IntValue.ToString(), resource.Data["intValue"]);
-        Assert.AreEqual(testObject2.DateValue.ToString(), resource.Data["dateValue"]);
-        Assert.AreEqual(testObject2.FloatValue.ToString(), resource.Data["floatValue"]);
+        Assert.AreEqual(testObject1.IntValue, resource.Data["intValue"]);
+        Assert.AreEqual(testObject2.DateValue, resource.Data["dateValue"]);
+        Assert.AreEqual(testObject2.FloatValue, resource.Data["floatValue"]);
     }
 
     [TestMethod]
@@ -60,7 +60,7 @@ public sealed class ResourceMappedDataTests {
             .EndMap();
 
         //assert
-        Assert.AreEqual(testObject.DateValue.ToString("hh:mm"), resource.Data["dateValue"]);
+        Assert.AreEqual(testObject.DateValue.ToString("hh:mm"), resource.Data["dateValue"]?.ToString());
     }
 
     [TestMethod]
@@ -75,7 +75,7 @@ public sealed class ResourceMappedDataTests {
             .EndMap();
 
         //assert
-        Assert.AreEqual(testObject.DateValue.ToString("hh:mm"), resource.Data["time"]);
+        Assert.AreEqual(testObject.DateValue.ToString("hh:mm"), resource.Data["time"]?.ToString());
     }
 
     [TestMethod]
@@ -91,7 +91,7 @@ public sealed class ResourceMappedDataTests {
 
         //assert
         Assert.AreEqual(testObject.StringValue, resource.Data["stringValue"]);
-        Assert.AreEqual(testObject.IntValue.ToString(), resource.Data["intValue"]);
+        Assert.AreEqual(testObject.IntValue, resource.Data["intValue"]);
     }
 
     [TestMethod]
@@ -108,7 +108,7 @@ public sealed class ResourceMappedDataTests {
 
         //assert
         Assert.AreEqual(testObject.StringValue, resource.Data["stringValue"]);
-        Assert.AreEqual(testObject.IntValue.ToString("c"), resource.Data["intValue"]);
+        Assert.AreEqual(testObject.IntValue.ToString("c"), resource.Data["intValue"]?.ToString());
     }
 
     [TestMethod]
@@ -174,7 +174,7 @@ public sealed class ResourceMappedDataTests {
 
         //assert
         Assert.AreEqual(testObject.StringValue, resource.Data["stringValue"]);
-        Assert.AreEqual(testObject.IntValue.ToString(), resource.Data["intValue"]);
+        Assert.AreEqual(testObject.IntValue, resource.Data["intValue"]);
         Assert.AreEqual(message, resource.Data["message"]);
     }
 
@@ -194,11 +194,11 @@ public sealed class ResourceMappedDataTests {
         var storedObject = resource.Data["value"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObjects[0].StringValue, storedObject[0]["stringValue"]);
-        Assert.AreEqual(testObjects[0].IntValue.ToString(), storedObject[0]["intValue"]);
+        Assert.AreEqual(testObjects[0].IntValue, storedObject[0]["intValue"]);
         Assert.AreEqual(testObjects[1].StringValue, storedObject[1]["stringValue"]);
-        Assert.AreEqual(testObjects[1].IntValue.ToString(), storedObject[1]["intValue"]);
+        Assert.AreEqual(testObjects[1].IntValue, storedObject[1]["intValue"]);
         Assert.AreEqual(testObjects[2].StringValue, storedObject[2]["stringValue"]);
-        Assert.AreEqual(testObjects[2].IntValue.ToString(), storedObject[2]["intValue"]);
+        Assert.AreEqual(testObjects[2].IntValue, storedObject[2]["intValue"]);
     }
 
     [TestMethod]
@@ -214,9 +214,9 @@ public sealed class ResourceMappedDataTests {
         //assert
         var storedObject = resource.Data["value"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedObject);
-        Assert.AreEqual(testObjects[0].DateValue.ToString("hh:mm"), storedObject[0]["dateValue"]);
-        Assert.AreEqual(testObjects[1].DateValue.ToString("hh:mm"), storedObject[1]["dateValue"]);
-        Assert.AreEqual(testObjects[2].DateValue.ToString("hh:mm"), storedObject[2]["dateValue"]);
+        Assert.AreEqual(testObjects[0].DateValue.ToString("hh:mm"), storedObject[0]["dateValue"]?.ToString());
+        Assert.AreEqual(testObjects[1].DateValue.ToString("hh:mm"), storedObject[1]["dateValue"]?.ToString());
+        Assert.AreEqual(testObjects[2].DateValue.ToString("hh:mm"), storedObject[2]["dateValue"]?.ToString());
     }
 
     [TestMethod]
@@ -232,9 +232,9 @@ public sealed class ResourceMappedDataTests {
         //assert
         var storedObject = resource.Data["value"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedObject);
-        Assert.AreEqual(testObjects[0].DateValue.ToString("hh:mm"), storedObject[0]["time"]);
-        Assert.AreEqual(testObjects[1].DateValue.ToString("hh:mm"), storedObject[1]["time"]);
-        Assert.AreEqual(testObjects[2].DateValue.ToString("hh:mm"), storedObject[2]["time"]);
+        Assert.AreEqual(testObjects[0].DateValue.ToString("hh:mm"), storedObject[0]["time"]?.ToString());
+        Assert.AreEqual(testObjects[1].DateValue.ToString("hh:mm"), storedObject[1]["time"]?.ToString());
+        Assert.AreEqual(testObjects[2].DateValue.ToString("hh:mm"), storedObject[2]["time"]?.ToString());
     }
 
     [TestMethod]
@@ -252,11 +252,11 @@ public sealed class ResourceMappedDataTests {
         var storedObject = resource.Data["value"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObjects[0].StringValue, storedObject[0]["stringValue"]);
-        Assert.AreEqual(testObjects[0].IntValue.ToString(), storedObject[0]["intValue"]);
+        Assert.AreEqual(testObjects[0].IntValue, storedObject[0]["intValue"]);
         Assert.AreEqual(testObjects[1].StringValue, storedObject[1]["stringValue"]);
-        Assert.AreEqual(testObjects[1].IntValue.ToString(), storedObject[1]["intValue"]);
+        Assert.AreEqual(testObjects[1].IntValue, storedObject[1]["intValue"]);
         Assert.AreEqual(testObjects[2].StringValue, storedObject[2]["stringValue"]);
-        Assert.AreEqual(testObjects[2].IntValue.ToString(), storedObject[2]["intValue"]);
+        Assert.AreEqual(testObjects[2].IntValue, storedObject[2]["intValue"]);
     }
 
     [TestMethod]
@@ -298,11 +298,11 @@ public sealed class ResourceMappedDataTests {
         var storedObject = resource.Data["value"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObjects[0].StringValue, storedObject[0]["stringValue"]);
-        Assert.AreEqual(testObjects[0].IntValue.ToString(), storedObject[0]["intValue"]);
+        Assert.AreEqual(testObjects[0].IntValue, storedObject[0]["intValue"]);
         Assert.AreEqual(testObjects[1].StringValue, storedObject[1]["stringValue"]);
-        Assert.AreEqual(testObjects[1].IntValue.ToString(), storedObject[1]["intValue"]);
+        Assert.AreEqual(testObjects[1].IntValue, storedObject[1]["intValue"]);
         Assert.AreEqual(testObjects[2].StringValue, storedObject[2]["stringValue"]);
-        Assert.AreEqual(testObjects[2].IntValue.ToString(), storedObject[2]["intValue"]);
+        Assert.AreEqual(testObjects[2].IntValue, storedObject[2]["intValue"]);
         Assert.AreEqual(message, resource.Data["message"]);
     }
 
@@ -326,13 +326,13 @@ public sealed class ResourceMappedDataTests {
         var storedObject = resource.Data["testObjects"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObject.StringValue, resource.Data["stringValue"]);
-        Assert.AreEqual(testObject.IntValue.ToString(), resource.Data["intValue"]);
+        Assert.AreEqual(testObject.IntValue, resource.Data["intValue"]);
         Assert.AreEqual(testObject.TestObjects[0].StringValue, storedObject[0]["stringValue"]);
-        Assert.AreEqual(testObject.TestObjects[0].IntValue.ToString(), storedObject[0]["intValue"]);
+        Assert.AreEqual(testObject.TestObjects[0].IntValue, storedObject[0]["intValue"]);
         Assert.AreEqual(testObject.TestObjects[1].StringValue, storedObject[1]["stringValue"]);
-        Assert.AreEqual(testObject.TestObjects[1].IntValue.ToString(), storedObject[1]["intValue"]);
+        Assert.AreEqual(testObject.TestObjects[1].IntValue, storedObject[1]["intValue"]);
         Assert.AreEqual(testObject.TestObjects[2].StringValue, storedObject[2]["stringValue"]);
-        Assert.AreEqual(testObject.TestObjects[2].IntValue.ToString(), storedObject[2]["intValue"]);
+        Assert.AreEqual(testObject.TestObjects[2].IntValue, storedObject[2]["intValue"]);
     }
 
     [TestMethod]
@@ -355,15 +355,15 @@ public sealed class ResourceMappedDataTests {
         var storedParent = resource.Data["testObjects"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedParent);
         Assert.AreEqual(testObjects[0].StringValue, storedParent[0]["stringValue"]);
-        Assert.AreEqual(testObjects[0].IntValue.ToString(), storedParent[0]["intValue"]);
+        Assert.AreEqual(testObjects[0].IntValue, storedParent[0]["intValue"]);
 
         var storedChild = storedParent[0]["testObjects"] as IList<IDictionary<string, object?>>;
         Assert.IsNotNull(storedChild);
         Assert.AreEqual(testObjects[0].TestObjects[0].StringValue, storedChild[0]["stringValue"]);
-        Assert.AreEqual(testObjects[0].TestObjects[0].IntValue.ToString(), storedChild[0]["intValue"]);
+        Assert.AreEqual(testObjects[0].TestObjects[0].IntValue, storedChild[0]["intValue"]);
         Assert.AreEqual(testObjects[0].TestObjects[1].StringValue, storedChild[1]["stringValue"]);
-        Assert.AreEqual(testObjects[0].TestObjects[1].IntValue.ToString(), storedChild[1]["intValue"]);
+        Assert.AreEqual(testObjects[0].TestObjects[1].IntValue, storedChild[1]["intValue"]);
         Assert.AreEqual(testObjects[0].TestObjects[2].StringValue, storedChild[2]["stringValue"]);
-        Assert.AreEqual(testObjects[0].TestObjects[2].IntValue.ToString(), storedChild[2]["intValue"]);
+        Assert.AreEqual(testObjects[0].TestObjects[2].IntValue, storedChild[2]["intValue"]);
     }
 }

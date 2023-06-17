@@ -28,6 +28,22 @@ public sealed class ToHalXmlDataTests {
     }
 
     [TestMethod]
+    public void FormattedValuesMustBeConvertedToXml() {
+        //arrange
+        var floatValue = GenerateRandom.Float();
+
+        var resource = new Resource()
+            .Data("formatted", floatValue, "#,0.000");
+
+        //act
+        var xml = resource.ToHalXml();
+
+        //assert
+        var expectedXml = $"{XmlHeader}<resource><formatted>{floatValue:#,0.000}</formatted></resource>";
+        Assert.AreEqual(expectedXml, xml);
+    }
+
+    [TestMethod]
     public void ObjectDataMustBeConvertedToXlm() {
         //arrange
         var testObject = new TestObject();

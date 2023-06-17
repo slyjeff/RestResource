@@ -15,7 +15,7 @@ internal static class DictionaryExtensions {
         }
 
         if (format != null) {
-            return string.Format($"{{0:{format}}}", value);
+            return new FormattedValue(value, format);
         }
 
         var type = value.GetType();
@@ -25,7 +25,7 @@ internal static class DictionaryExtensions {
         }
 
         if (type.IsValueType) {
-            return value.ToString();
+            return value;
         }
 
         if (value is not IEnumerable enumerableValue) {
