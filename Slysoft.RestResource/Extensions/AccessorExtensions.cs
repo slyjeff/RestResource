@@ -12,12 +12,21 @@ public static class AccessorExtensions {
     }
 
     /// <summary>
-    /// Find an input spec in a link
+    /// Find an input item in a link
     /// </summary>
     /// <param name="link">link to search</param>
-    /// <param name="inputSpecName">Name of the input spec to find= case insensitive</param>
-    /// <returns>Input spec matching the name, if one exists</returns>
-    public static InputSpec? GetInputSpec(this Link link, string inputSpecName) {
-        return link.InputSpecs.FirstOrDefault(x => x.Name.Equals(inputSpecName, StringComparison.CurrentCultureIgnoreCase));
+    /// <param name="inputItemName">Name of the input item to find= case insensitive</param>
+    /// <returns>Input item matching the name, if one exists</returns>
+    public static InputItem? GetInputItem(this Link link, string inputItemName) {
+        return link.InputItems.FirstOrDefault(x => x.Name.Equals(inputItemName, StringComparison.CurrentCultureIgnoreCase));
+    }
+
+    /// <summary>
+    /// Get the type of input item this link supports (parameter, field)
+    /// </summary>
+    /// <param name="link">link with the input item</param>
+    /// <returns>Type of input item this link supports (parameter, field)</returns>
+    public static string GetInputItemName(this Link link) {
+        return link.Verb.Equals("GET", StringComparison.CurrentCultureIgnoreCase) ? "parameter" : "field";
     }
 }

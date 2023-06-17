@@ -1,6 +1,7 @@
 ﻿using System.Xml;
+using Slysoft.RestResource.Extensions;
 
-namespace Slysoft.RestResource.HalXml; 
+namespace Slysoft.RestResource.HalXml;
 
 public static class ToHalXmlExtensions {
     /// <summary>
@@ -23,8 +24,13 @@ public static class ToHalXmlExtensions {
                     xmlWriter.AddData(data);
                 }
 
+                foreach (var link in resource.Links) {
+                    xmlWriter.AddLink(link);
+                }
+
                 xmlWriter.WriteEndElement();
             }
+
             return stringWriter.ToString();
         }
     }
@@ -36,13 +42,14 @@ public static class ToHalXmlExtensions {
                 xmlWriter.WriteValue(formattedValue.Value);
                 break;
 
-                }
+            }
             case IList<object?> listOfObjects: {
                 foreach (var value in listOfObjects) {
                     xmlWriter.WriteStartElement("value");
                     if (value != default) {
                         xmlWriter.WriteValue(value);
                     }
+
                     xmlWriter.WriteEndElement();
                 }
 
@@ -64,6 +71,7 @@ public static class ToHalXmlExtensions {
                 xmlWriter.WriteValue(data.Value ?? string.Empty);
                 break;
         }
+
         xmlWriter.WriteEndElement();
     }
 
@@ -71,5 +79,46 @@ public static class ToHalXmlExtensions {
         foreach (var data in dictionary) {
             AddData(xmlWriter, data);
         }
+    }
+
+    private static void AddLink(this XmlWriter xmlWriter, Link link) {
+        xmlWriter.WriteStartElement("link");
+        xmlWriter.WriteAttributeString("rel", link.Name);
+        xmlWriter.WriteAttributeString("href", link.Href);
+
+        if (link.Templated) {
+            xmlWriter.WriteAttributeString("templated", "true");
+        }
+
+        foreach (var inputItem in link.InputItems) {
+            xmlWriter.WriteStartElement(link.GetInputItemName());
+            xmlWriter.WriteAttributeString("name", inputItem.Name);
+
+            if (!string.IsNullOrEmpty(inputItem.Type)) {
+                xmlWriter.WriteStartElement("type");
+                xmlWriter.WriteValue(inputItem.Type);
+                xmlWriter.WriteEndElement();
+            }
+
+            if (!string.IsNullOrEmpty(inputItem.DefaultValue)) {
+                xmlWriter.WriteStartElement("defaultValue");
+                xmlWriter.WriteValue(inputItem.DefaultValue);
+                xmlWriter.WriteEndElement();
+            }
+
+            if (inputItem.ListOfValues.Any()) {
+                xmlWriter.WriteStartElement("listOfValues");
+                foreach (var value in inputItem.ListOfValues) {
+                    xmlWriter.WriteStartElement("value");
+                    xmlWriter.WriteValue(value);
+                    xmlWriter.WriteEndElement();
+                }
+                xmlWriter.WriteEndElement();
+            }
+
+            xmlWriter.WriteEndElement();
+        }
+
+        xmlWriter.WriteEndElement();
     }
 }

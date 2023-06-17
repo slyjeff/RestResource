@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using Slysoft.RestResource;
+using Slysoft.RestResource.Extensions;
 
 namespace SlySoft.RestResource.HalJson; 
 
@@ -91,34 +92,34 @@ public static class ToHalJsonExtensions {
             linkObject["templated"] = true;
         }
 
-        if (link.InputSpecs.Any()) {
-            linkObject.AddInputSpecs(link);
+        if (link.InputItems.Any()) {
+            linkObject.AddInputItems(link);
         }
 
         links[link.Name] = linkObject;
     }
 
-    private static void AddInputSpecs(this JObject linkObject, Link link) {
-        var inputSpecs = new JObject();
-        foreach (var inputSpec in link.InputSpecs) {
-            var inputSpecObject = new JObject();
+    private static void AddInputItems(this JObject linkObject, Link link) {
+        var inputItems = new JObject();
+        foreach (var inputItem in link.InputItems) {
+            var inputItemObject = new JObject();
 
-            if (!string.IsNullOrEmpty(inputSpec.Type)) {
-                inputSpecObject["type"] = inputSpec.Type;
+            if (!string.IsNullOrEmpty(inputItem.Type)) {
+                inputItemObject["type"] = inputItem.Type;
             }
 
-            if (!string.IsNullOrEmpty(inputSpec.DefaultValue)) {
-                inputSpecObject["defaultValue"] = inputSpec.DefaultValue;
+            if (!string.IsNullOrEmpty(inputItem.DefaultValue)) {
+                inputItemObject["defaultValue"] = inputItem.DefaultValue;
             }
 
-            if (inputSpec.ListOfValues.Any()) {
-                inputSpecObject["listOfValues"] = new JArray(inputSpec.ListOfValues);
+            if (inputItem.ListOfValues.Any()) {
+                inputItemObject["listOfValues"] = new JArray(inputItem.ListOfValues);
             }
 
-            inputSpecs[inputSpec.Name] = inputSpecObject;
+            inputItems[inputItem.Name] = inputItemObject;
         }
 
-        var inputSpecsName = link.Verb == "GET" ? "parameters" : "fields";
-        linkObject[inputSpecsName] = inputSpecs;
+        var inputItemsName = link.GetInputItemName() + "s";
+        linkObject[inputItemsName] = inputItems;
     }
 }

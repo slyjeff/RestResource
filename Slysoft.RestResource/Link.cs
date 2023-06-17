@@ -39,7 +39,7 @@ public sealed class Link {
     public bool Templated { get; }
 
     /// <summary>
-    /// List of of input specs that contain information for interacting with the link (ex: form fields, query parameters)
+    /// List of of input items that contain information for interacting with the link (ex: form fields, query parameters)
     /// </summary>
-    public IList<InputSpec> InputSpecs { get; } = new List<InputSpec>();
+    public IList<InputItem> InputItems { get; } = new List<InputItem>();
 }

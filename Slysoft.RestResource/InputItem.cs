@@ -1,19 +1,19 @@
 ﻿namespace Slysoft.RestResource; 
 
 /// <summary>
-/// A class to define the elements of an input (ex: form field, query parameter)
+/// A class to define an item for input (ex: form field, query parameter)
 /// </summary>
-public class InputSpec {
+public class InputItem {
     /// <summary>
-    /// Create an Input Spec for a link
+    /// Create an input item for a link
     /// </summary>
-    /// <param name="name">Name of the input spec</param>
-    public InputSpec(string name) {
+    /// <param name="name">Name of the input item</param>
+    public InputItem(string name) {
         Name = name;
     }
 
     /// <summary>
-    /// Name of the input spec
+    /// Name of the input item
     /// </summary>
     public string Name { get; }
 
@@ -23,7 +23,7 @@ public class InputSpec {
     public string? Type { get; set; }
 
     /// <summary>
-    /// Default value for the inputc
+    /// Default value for the input item
     /// </summary>
     public string? DefaultValue { get; set; }
 

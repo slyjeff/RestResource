@@ -80,8 +80,8 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        Assert.IsNotNull(link.GetInputSpec("lastName"));
-        Assert.IsNotNull(link.GetInputSpec("firstName"));
+        Assert.IsNotNull(link.GetInputItem("lastName"));
+        Assert.IsNotNull(link.GetInputItem("firstName"));
         Assert.IsNotNull(resource.GetLink("getUser"));
     }
 
@@ -96,7 +96,7 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputSpec("position");
+        var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("admin", queryParameter.DefaultValue);
     }
@@ -112,7 +112,7 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputSpec("position");
+        var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
         Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
@@ -129,7 +129,7 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputSpec("yearsEmployed");
+        var queryParameter = link.GetInputItem("yearsEmployed");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("number", queryParameter.Type);
     }
@@ -147,8 +147,8 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        Assert.IsNotNull(link.GetInputSpec("lastName"));
-        Assert.IsNotNull(link.GetInputSpec("firstName"));
+        Assert.IsNotNull(link.GetInputItem("lastName"));
+        Assert.IsNotNull(link.GetInputItem("firstName"));
         Assert.IsNotNull(resource.GetLink("getUser"));
     }
 
@@ -163,7 +163,7 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputSpec("position");
+        var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("admin", queryParameter.DefaultValue);
     }
@@ -179,7 +179,7 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputSpec("position");
+        var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
         Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
@@ -196,7 +196,7 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputSpec("yearsEmployed");
+        var queryParameter = link.GetInputItem("yearsEmployed");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("number", queryParameter.Type);
     }
@@ -212,7 +212,7 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputSpec("isRegistered");
+        var queryParameter = link.GetInputItem("isRegistered");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("True", queryParameter.ListOfValues[0]);
         Assert.AreEqual("False", queryParameter.ListOfValues[1]);
@@ -229,11 +229,11 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        Assert.IsNotNull(link.GetInputSpec("lastName"));
-        Assert.IsNotNull(link.GetInputSpec("firstName"));
-        Assert.IsNotNull(link.GetInputSpec("position"));
-        Assert.IsNotNull(link.GetInputSpec("yearsEmployed"));
-        Assert.IsNotNull(link.GetInputSpec("position"));
+        Assert.IsNotNull(link.GetInputItem("lastName"));
+        Assert.IsNotNull(link.GetInputItem("firstName"));
+        Assert.IsNotNull(link.GetInputItem("position"));
+        Assert.IsNotNull(link.GetInputItem("yearsEmployed"));
+        Assert.IsNotNull(link.GetInputItem("position"));
     }
 
     [TestMethod]
@@ -249,11 +249,11 @@ public class GetTests {
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
         Assert.IsNotNull(link);
-        Assert.IsNotNull(link.GetInputSpec("lastName"));
-        Assert.IsNull(link.GetInputSpec("firstName"));
-        Assert.IsNotNull(link.GetInputSpec("position"));
-        Assert.IsNotNull(link.GetInputSpec("yearsEmployed"));
-        Assert.IsNotNull(link.GetInputSpec("position"));
+        Assert.IsNotNull(link.GetInputItem("lastName"));
+        Assert.IsNull(link.GetInputItem("firstName"));
+        Assert.IsNotNull(link.GetInputItem("position"));
+        Assert.IsNotNull(link.GetInputItem("yearsEmployed"));
+        Assert.IsNotNull(link.GetInputItem("position"));
     }
 
     [TestMethod]
@@ -266,11 +266,11 @@ public class GetTests {
         //assert
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
-        Assert.IsNotNull(link.GetInputSpec("lastName"));
-        Assert.IsNotNull(link.GetInputSpec("firstName"));
-        Assert.IsNotNull(link.GetInputSpec("position"));
-        Assert.IsNotNull(link.GetInputSpec("yearsEmployed"));
-        Assert.IsNotNull(link.GetInputSpec("position"));
+        Assert.IsNotNull(link.GetInputItem("lastName"));
+        Assert.IsNotNull(link.GetInputItem("firstName"));
+        Assert.IsNotNull(link.GetInputItem("position"));
+        Assert.IsNotNull(link.GetInputItem("yearsEmployed"));
+        Assert.IsNotNull(link.GetInputItem("position"));
         Assert.IsNotNull(resource.GetLink("getUser"));
     }
 }
