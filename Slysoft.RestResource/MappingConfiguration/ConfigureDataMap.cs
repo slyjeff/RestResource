@@ -3,7 +3,7 @@ using Slysoft.RestResource.Utils;
 
 namespace Slysoft.RestResource.MappingConfiguration;
 
-internal sealed class ConfigureDataMap<T, TParent> : IConfigureMap<T, TParent> {
+internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, TParent> {
     private readonly TParent _parent;
     private readonly T _source;
     private readonly IDictionary<string, object?> _dictionary;
@@ -15,29 +15,29 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureMap<T, TParent> {
         _dictionary = dictionary;
     }
 
-    public IConfigureMap<T, TParent> Map(Expression<Func<T, object>> mapAction, string? format = null) {
+    public IConfigureParametersMap<T, TParent> Map(Expression<Func<T, object>> mapAction, string? format = null) {
         return Map(string.Empty, mapAction, format);
     }
 
-    public IConfigureMap<T, TParent> Map(string name, Expression<Func<T, object>> mapAction, string? format = null) {
+    public IConfigureParametersMap<T, TParent> Map(string name, Expression<Func<T, object>> mapAction, string? format = null) {
         _dictionary.MapValue(_source, name, mapAction, format);
         return this;
     }
 
-    public IConfigureMap<TListItemType, IConfigureMap<T, TParent>> MapListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+    public IConfigureParametersMap<TListItemType, IConfigureParametersMap<T, TParent>> MapListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
         return MapListDataFrom(string.Empty, mapAction);
     }
 
-    public IConfigureMap<TListItemType, IConfigureMap<T, TParent>> MapListDataFrom<TListItemType>(string name, Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+    public IConfigureParametersMap<TListItemType, IConfigureParametersMap<T, TParent>> MapListDataFrom<TListItemType>(string name, Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
         var destinationList = new List<IDictionary<string, object?>>();
 
         if (_source == null) {
-            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
+            return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
         var propertyName = mapAction.Evaluate();
         if (propertyName == null) {
-            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
+            return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
         if (string.IsNullOrEmpty(name)) {
@@ -46,11 +46,11 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureMap<T, TParent> {
 
         var property = _source.GetType().GetProperty(propertyName);
         if (property == null) {
-            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
+            return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
         if (property.GetValue(_source) is not IEnumerable<TListItemType> sourceList) {
-            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
+            return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
         _dictionary[name.ToCamelCase()] = destinationList;
@@ -62,15 +62,15 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureMap<T, TParent> {
             copyPairs.Add(new CopyPair<TListItemType>(sourceItem, destination));
         }
 
-        return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, copyPairs);
+        return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, copyPairs);
     }
 
-    public IConfigureMap<T, TParent> MapAllListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+    public IConfigureParametersMap<T, TParent> MapAllListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
         throw new NotImplementedException();
         //return MapListDataFrom(mapAction).MapAll().EndMap();
     }
 
-    public IConfigureMap<T, TParent> MapAll() {
+    public IConfigureParametersMap<T, TParent> MapAll() {
         foreach (var property in typeof(T).GetProperties()) {
             if (_excludedProperties.Contains(property.Name)) {
                 continue;
@@ -86,7 +86,7 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureMap<T, TParent> {
         return this;
     }
 
-    public IConfigureMap<T, TParent> Exclude(Expression<Func<T, object>> mapAction) {
+    public IConfigureParametersMap<T, TParent> Exclude(Expression<Func<T, object>> mapAction) {
         var propertyName = mapAction.Evaluate();
         if (propertyName == null) {
             return this;

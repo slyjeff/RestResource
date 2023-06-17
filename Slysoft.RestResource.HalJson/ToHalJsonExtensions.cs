@@ -59,7 +59,7 @@ public static class ToHalJsonExtensions {
         return jObject;
     }
 
-    private static void AddLink(this JObject o, ILink link) {
+    private static void AddLink(this JObject o, Link link) {
         if (!o.ContainsKey("_links")) {
             o["_links"] = new JObject();
         }
@@ -70,7 +70,7 @@ public static class ToHalJsonExtensions {
         }
 
         var linkObject = new JObject {
-            ["href"] = link.Uri
+            ["href"] = link.Href
         };
 
         links[link.Name] = linkObject;

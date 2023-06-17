@@ -35,7 +35,7 @@ public static class DataExtensions {
     /// <param name="resource">The data will be added to this resource</param>
     /// <param name="source">Data will be read from this object</param>
     /// <returns>A configuration class that will allow configuration of fields</returns>
-    public static IConfigureMap<T, Resource> MapDataFrom<T>(this Resource resource, T source) {
+    public static IConfigureParametersMap<T, Resource> MapDataFrom<T>(this Resource resource, T source) {
         return new ConfigureDataMap<T, Resource>(resource, source, resource.Data);
     }
 
@@ -58,7 +58,7 @@ public static class DataExtensions {
     /// <param name="name">Name of the element- will be converted to camelcase</param>
     /// <param name="sourceList">List of items to be mapped</param>
     /// <returns>A configuration class that will allow configuration of fields</returns>
-    public static IConfigureMap<T, Resource> MapListDataFrom<T>(this Resource resource, string name, IEnumerable<T> sourceList) {
+    public static IConfigureParametersMap<T, Resource> MapListDataFrom<T>(this Resource resource, string name, IEnumerable<T> sourceList) {
         var destinationList = new List<IDictionary<string, object?>>();
 
         var dataName = name.ToCamelCase();

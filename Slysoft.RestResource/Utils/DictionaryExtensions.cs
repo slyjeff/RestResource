@@ -9,7 +9,7 @@ internal static class DictionaryExtensions {
         dictionary[dataName] = ConvertValueToResourceData(value, format);
     }
 
-    private static object? ConvertValueToResourceData(object? value, string? format, bool fromConvertedList = false) {
+    private static object? ConvertValueToResourceData(object? value, string? format) {
         if (value == null) {
             return null;
         }

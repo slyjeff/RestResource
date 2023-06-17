@@ -14,7 +14,7 @@ internal sealed class CopyPair<T> {
 }
 
 
-internal sealed class ConfigureListMap<T, TParent> : IConfigureMap<T, TParent> {
+internal sealed class ConfigureListMap<T, TParent> : IConfigureParametersMap<T, TParent> {
     private readonly IList<string> _excludedProperties = new List<string>();
     private readonly TParent _parent;
     private readonly IList<CopyPair<T>> _copyPairs;
@@ -24,11 +24,11 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureMap<T, TParent> {
         _copyPairs = copyPairs;
     }
 
-    public IConfigureMap<T, TParent> Map(Expression<Func<T, object>> mapAction, string? format = null) {
+    public IConfigureParametersMap<T, TParent> Map(Expression<Func<T, object>> mapAction, string? format = null) {
         return Map(string.Empty, mapAction, format);
     }
 
-    public IConfigureMap<T, TParent> Map(string name, Expression<Func<T, object>> mapAction, string? format = null) {
+    public IConfigureParametersMap<T, TParent> Map(string name, Expression<Func<T, object>> mapAction, string? format = null) {
         foreach (var copyPair in _copyPairs) {
             copyPair.Destination.MapValue(copyPair.Source, name, mapAction, format);
         }
@@ -36,16 +36,16 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureMap<T, TParent> {
         return this;
     }
 
-    public IConfigureMap<TListItemType, IConfigureMap<T, TParent>> MapListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+    public IConfigureParametersMap<TListItemType, IConfigureParametersMap<T, TParent>> MapListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
         return MapListDataFrom(string.Empty, mapAction);
     }
 
-    public IConfigureMap<TListItemType, IConfigureMap<T, TParent>> MapListDataFrom<TListItemType>(string name, Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+    public IConfigureParametersMap<TListItemType, IConfigureParametersMap<T, TParent>> MapListDataFrom<TListItemType>(string name, Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
         var subListCopyPairs = new List<CopyPair<TListItemType>>();
 
         var propertyName = mapAction.Evaluate();
         if (propertyName == null) {
-            return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, subListCopyPairs);
+            return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, subListCopyPairs);
         }
 
         if (string.IsNullOrEmpty(name)) {
@@ -80,14 +80,14 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureMap<T, TParent> {
             }
 
         }
-        return new ConfigureListMap<TListItemType, IConfigureMap<T, TParent>>(this, subListCopyPairs);
+        return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, subListCopyPairs);
     }
 
-    public IConfigureMap<T, TParent> MapAllListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
+    public IConfigureParametersMap<T, TParent> MapAllListDataFrom<TListItemType>(Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
         return MapListDataFrom(mapAction).MapAll().EndMap();
     }
 
-    public IConfigureMap<T, TParent> MapAll() {
+    public IConfigureParametersMap<T, TParent> MapAll() {
         foreach (var copyPair in _copyPairs) {
             foreach (var property in typeof(T).GetProperties()) {
                 if (_excludedProperties.Contains(property.Name)) {
@@ -105,7 +105,7 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureMap<T, TParent> {
         return this;
     }
 
-    public IConfigureMap<T, TParent> Exclude(Expression<Func<T, object>> mapAction) {
+    public IConfigureParametersMap<T, TParent> Exclude(Expression<Func<T, object>> mapAction) {
         var propertyName = mapAction.Evaluate();
         if (propertyName == null) {
             return this;
