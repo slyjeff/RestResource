@@ -30,4 +30,18 @@ public static class GetExtensions {
         resource.Links.Add(link);
         return new ConfigureQuery(resource, link);
     }
+
+    /// <summary>
+    /// Create a GET link with a type safe configurable query parameters to tell the consumer what values are expected
+    /// </summary>
+    /// <param name="resource">The GET link will be added to this resource</param>
+    /// <param name="name">Name of the element- will be converted to camelcase</param>
+    /// <param name="href">HREF of the link</param>
+    /// <param name="templated">Whether or not the URI is templated</param>
+    /// <returns>A configuration class that will allow configuration of query parameters</returns>
+    public static IConfigureQuery<T> Query<T>(this Resource resource, string name, string href, bool templated = false) {
+        var link = new Link(name.ToCamelCase(), href, templated: templated);
+        resource.Links.Add(link);
+        return new ConfigureQuery<T>(resource, link);
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Slysoft.RestResource.Extensions;
+using TestUtils;
 
 namespace Slysoft.RestResource.Tests; 
 
@@ -131,5 +132,89 @@ public class GetTests {
         var queryParameter = link.GetInputSpec("yearsEmployed");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("number", queryParameter.Type);
+    }
+
+    [TestMethod]
+    public void QueryMustAllowMappingConfigurationOfParameters() {
+        //act
+        var resource = new Resource()
+            .Query<UserSearch>("search", "/api/user")
+                .Parameter(x => x.LastName)
+                .Parameter(x => x.FirstName)
+            .EndQuery()
+            .Get("getUser", "/api/user{id}", templated: true); //just to prove we can do chaining after a query
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        Assert.IsNotNull(link.GetInputSpec("lastName"));
+        Assert.IsNotNull(link.GetInputSpec("firstName"));
+        Assert.IsNotNull(resource.GetLink("getUser"));
+    }
+
+    [TestMethod]
+    public void QueryMappingMustAllowSettingOfDefaultValues() {
+        //act
+        var resource = new Resource()
+            .Query<UserSearch>("search", "/api/user")
+                .Parameter(x => x.Position, defaultValue: "admin")
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputSpec("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("admin", queryParameter.DefaultValue);
+    }
+
+    [TestMethod]
+    public void QueryMappingMustAllowSettingListOfValues() {
+        //act
+        var resource = new Resource()
+            .Query<UserSearch>("search", "/api/user")
+                .Parameter(x => x.Position, listOfValues: new[] { "Standard", "Admin" })
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputSpec("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
+        Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
+    public void QueryMappingMustAllowSettingValueType() {
+        //act
+        var resource = new Resource()
+            .Query<UserSearch>("search", "/api/user")
+                .Parameter(x => x.YearsEmployed, type: "number")
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputSpec("yearsEmployed");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("number", queryParameter.Type);
+    }
+
+    [TestMethod]
+    public void QueryMappingMustAutomaticallyPopulateListOfValuesForBoolean() {
+        //act
+        var resource = new Resource()
+            .Query<UserSearch>("search", "/api/user")
+                .Parameter(x => x.IsRegistered)
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputSpec("isRegistered");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("True", queryParameter.ListOfValues[0]);
+        Assert.AreEqual("False", queryParameter.ListOfValues[1]);
     }
 }
