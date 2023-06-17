@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Xml;
 using Slysoft.RestResource.Extensions;
 using Slysoft.RestResource.Utils;
 
@@ -31,7 +32,7 @@ internal sealed class ConfigureQuery : IConfigureQuery {
         _link = link;
     }
 
-    public IConfigureQuery Parameter(string parameterName, string? type, string? defaultValue = null, IList<string>? listOfValues = null) {
+    public IConfigureQuery Parameter(string parameterName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
         _link.AddInputSpec(parameterName, type, defaultValue, listOfValues);
         return this;
     }
@@ -53,6 +54,19 @@ public interface IConfigureQuery<T> {
     public IConfigureQuery<T> Parameter(Expression<Func<T, object>> mapAction, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null);
 
     /// <summary>
+    /// Automatically maps all parameters in T- individual fields can be overridden or excluded
+    /// </summary>
+    /// <returns>The configuration class so more values can be configured</returns>
+    public IConfigureQuery<T> MapAll();
+    
+    /// <summary>
+    /// Do not include this property when mapping all (no, all does not mean all)
+    /// </summary>
+    /// <param name="mapAction">Expression to tell the data map which value to exclude- example: x => x.Name</param>
+    /// <returns>The configuration class so more values can be configured</returns>
+    public IConfigureQuery<T> Exclude(Expression<Func<T, object>> mapAction);
+    
+    /// <summary>
     /// Finish configuring the query
     /// </summary>
     /// <returns>The resource so further elements can be configured</returns>
@@ -62,18 +76,52 @@ public interface IConfigureQuery<T> {
 internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
     private readonly Resource _resource;
     private readonly Link _link;
+    private readonly IList<string> _excludedParameters = new List<string>();
 
     public ConfigureQuery(Resource resource, Link link) {
         _resource = resource;
         _link = link;
     }
 
-    public IConfigureQuery<T> Parameter(Expression<Func<T, object>> mapAction, string? type, string? defaultValue = null, IList<string>? listOfValues = null) {
+    public IConfigureQuery<T> Parameter(Expression<Func<T, object>> mapAction, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
         var parameterName = mapAction.Evaluate();
         if (parameterName == null) {
             return this;
         }
 
+        AddParameter(parameterName, type, defaultValue, listOfValues);
+
+        return this;
+    }
+
+    public IConfigureQuery<T> MapAll() {
+        foreach (var property in typeof(T).GetAllProperties()) {
+            if (_excludedParameters.Any(x => x.Equals(property.Name, StringComparison.CurrentCultureIgnoreCase))) {
+                continue;
+            }
+            AddParameter(property.Name);
+        }
+
+        return this;
+    }
+
+    public IConfigureQuery<T> Exclude(Expression<Func<T, object>> mapAction) {
+        var parameterName = mapAction.Evaluate();
+        if (parameterName == null) {
+            return this;
+        }
+
+        _excludedParameters.Add(parameterName);
+
+        var parameter = _link.GetInputSpec(parameterName);
+        if (parameter != null) {
+            _link.InputSpecs.Remove(parameter);
+        }
+
+        return this;
+    }
+
+    private void AddParameter(string parameterName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
         if (listOfValues == null) {
             var property = typeof(T).GetProperty(parameterName);
             if (property?.PropertyType == typeof(bool)) {
@@ -82,7 +130,7 @@ internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
         }
 
         _link.AddInputSpec(parameterName, type, defaultValue, listOfValues);
-        return this;
+
     }
 
     public Resource EndQuery() {

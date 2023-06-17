@@ -71,7 +71,7 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, 
     }
 
     public IConfigureParametersMap<T, TParent> MapAll() {
-        foreach (var property in typeof(T).GetProperties()) {
+        foreach (var property in typeof(T).GetAllProperties()) {
             if (_excludedProperties.Contains(property.Name)) {
                 continue;
             }

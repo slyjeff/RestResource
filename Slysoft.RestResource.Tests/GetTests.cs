@@ -138,7 +138,7 @@ public class GetTests {
     public void QueryMustAllowMappingConfigurationOfParameters() {
         //act
         var resource = new Resource()
-            .Query<UserSearch>("search", "/api/user")
+            .QueryMap<UserSearch>("search", "/api/user")
                 .Parameter(x => x.LastName)
                 .Parameter(x => x.FirstName)
             .EndQuery()
@@ -156,7 +156,7 @@ public class GetTests {
     public void QueryMappingMustAllowSettingOfDefaultValues() {
         //act
         var resource = new Resource()
-            .Query<UserSearch>("search", "/api/user")
+            .QueryMap<UserSearch>("search", "/api/user")
                 .Parameter(x => x.Position, defaultValue: "admin")
             .EndQuery();
 
@@ -172,7 +172,7 @@ public class GetTests {
     public void QueryMappingMustAllowSettingListOfValues() {
         //act
         var resource = new Resource()
-            .Query<UserSearch>("search", "/api/user")
+            .QueryMap<UserSearch>("search", "/api/user")
                 .Parameter(x => x.Position, listOfValues: new[] { "Standard", "Admin" })
             .EndQuery();
 
@@ -189,7 +189,7 @@ public class GetTests {
     public void QueryMappingMustAllowSettingValueType() {
         //act
         var resource = new Resource()
-            .Query<UserSearch>("search", "/api/user")
+            .QueryMap<UserSearch>("search", "/api/user")
                 .Parameter(x => x.YearsEmployed, type: "number")
             .EndQuery();
 
@@ -205,7 +205,7 @@ public class GetTests {
     public void QueryMappingMustAutomaticallyPopulateListOfValuesForBoolean() {
         //act
         var resource = new Resource()
-            .Query<UserSearch>("search", "/api/user")
+            .QueryMap<UserSearch>("search", "/api/user")
                 .Parameter(x => x.IsRegistered)
             .EndQuery();
 
@@ -216,5 +216,61 @@ public class GetTests {
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("True", queryParameter.ListOfValues[0]);
         Assert.AreEqual("False", queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
+    public void QueryMappingMustSupportMapAll() {
+        //act
+        var resource = new Resource()
+            .QueryMap<UserSearch>("search", "/api/user")
+                .MapAll()
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        Assert.IsNotNull(link.GetInputSpec("lastName"));
+        Assert.IsNotNull(link.GetInputSpec("firstName"));
+        Assert.IsNotNull(link.GetInputSpec("position"));
+        Assert.IsNotNull(link.GetInputSpec("yearsEmployed"));
+        Assert.IsNotNull(link.GetInputSpec("position"));
+    }
+
+    [TestMethod]
+    public void QueryMappingMustSupportExcludingAParameter() {
+        //act
+        var resource = new Resource()
+            .QueryMap<UserSearch>("search", "/api/user")
+                .Exclude(x => x.FirstName)
+                .MapAll()
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        Assert.IsNotNull(link);
+        Assert.IsNotNull(link.GetInputSpec("lastName"));
+        Assert.IsNull(link.GetInputSpec("firstName"));
+        Assert.IsNotNull(link.GetInputSpec("position"));
+        Assert.IsNotNull(link.GetInputSpec("yearsEmployed"));
+        Assert.IsNotNull(link.GetInputSpec("position"));
+    }
+
+    [TestMethod]
+    public void QueryWithTypeMustMapAllWithNoConfiguration() {
+        //act
+        var resource = new Resource()
+            .Query<UserSearch>("search", "/api/user")
+            .Get("getUser", "/api/user{id}", templated: true); //just to prove we can do chaining after a query
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        Assert.IsNotNull(link.GetInputSpec("lastName"));
+        Assert.IsNotNull(link.GetInputSpec("firstName"));
+        Assert.IsNotNull(link.GetInputSpec("position"));
+        Assert.IsNotNull(link.GetInputSpec("yearsEmployed"));
+        Assert.IsNotNull(link.GetInputSpec("position"));
+        Assert.IsNotNull(resource.GetLink("getUser"));
     }
 }

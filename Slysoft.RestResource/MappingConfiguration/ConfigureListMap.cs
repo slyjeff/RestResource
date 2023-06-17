@@ -89,7 +89,7 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureParametersMap<T, 
 
     public IConfigureParametersMap<T, TParent> MapAll() {
         foreach (var copyPair in _copyPairs) {
-            foreach (var property in typeof(T).GetProperties()) {
+            foreach (var property in typeof(T).GetAllProperties()) {
                 if (_excludedProperties.Contains(property.Name)) {
                     continue;
                 }
