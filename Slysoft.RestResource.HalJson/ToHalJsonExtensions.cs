@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Slysoft.RestResource;
 
 namespace SlySoft.RestResource.HalJson; 
@@ -92,6 +91,34 @@ public static class ToHalJsonExtensions {
             linkObject["templated"] = true;
         }
 
+        if (link.InputSpecs.Any()) {
+            linkObject.AddInputSpecs(link);
+        }
+
         links[link.Name] = linkObject;
+    }
+
+    private static void AddInputSpecs(this JObject linkObject, Link link) {
+        var inputSpecs = new JObject();
+        foreach (var inputSpec in link.InputSpecs) {
+            var inputSpecObject = new JObject();
+
+            if (!string.IsNullOrEmpty(inputSpec.Type)) {
+                inputSpecObject["type"] = inputSpec.Type;
+            }
+
+            if (!string.IsNullOrEmpty(inputSpec.DefaultValue)) {
+                inputSpecObject["defaultValue"] = inputSpec.DefaultValue;
+            }
+
+            if (inputSpec.ListOfValues.Any()) {
+                inputSpecObject["listOfValues"] = new JArray(inputSpec.ListOfValues);
+            }
+
+            inputSpecs[inputSpec.Name] = inputSpecObject;
+        }
+
+        var inputSpecsName = link.Verb == "GET" ? "parameters" : "fields";
+        linkObject[inputSpecsName] = inputSpecs;
     }
 }

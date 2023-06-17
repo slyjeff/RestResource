@@ -1,5 +1,6 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Slysoft.RestResource.Extensions;
 using SlySoft.RestResource.HalJson;
 using TestUtils;
@@ -20,7 +21,14 @@ public sealed class DataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"_links\": {{{Environment.NewLine}    \"self\": {{{Environment.NewLine}      \"href\": \"{uri}\"{Environment.NewLine}    }}{Environment.NewLine}  }}{Environment.NewLine}}}";
+        var expected = new {
+            _links = new {
+                self = new  {
+                    href = uri
+                }
+            }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
         Assert.AreEqual(expectedJson, json);
     }
 }

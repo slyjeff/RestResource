@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Slysoft.RestResource.Extensions;
 using SlySoft.RestResource.HalJson;
 using TestUtils;
+
+// ReSharper disable RedundantAnonymousTypePropertyName
 
 namespace Slysoft.RestResource.HalJson.Tests; 
 
@@ -23,7 +26,12 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"stringValue\": \"{stringValue}\",{Environment.NewLine}  \"intValue\": {intValue}{Environment.NewLine}}}";
+        var expected = new {
+            stringValue = stringValue,
+            intValue = intValue
+        };
+
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
         Assert.AreEqual(expectedJson, json);
     }
 
@@ -39,6 +47,7 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
+        //we can't use an anonymous object for this because it adds quotes when we format the number
         var expectedJson = $"{{{Environment.NewLine}  \"formatted\": {floatValue:#,0.000}{Environment.NewLine}}}";
         Assert.AreEqual(expectedJson, json);
     }
@@ -55,7 +64,13 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"testObject\": {{{Environment.NewLine}    \"stringValue\": \"{testObject.StringValue}\",{Environment.NewLine}    \"intValue\": {testObject.IntValue}{Environment.NewLine}  }}{Environment.NewLine}}}";
+        var expected = new {
+            testObject = new { 
+                stringValue = testObject.StringValue,
+                intValue = testObject.IntValue,
+            }
+        }; 
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
         Assert.AreEqual(expectedJson, json);
     }
 
@@ -75,7 +90,11 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"strings\": [{Environment.NewLine}    \"{strings[0]}\",{Environment.NewLine}    \"{strings[1]}\",{Environment.NewLine}    \"{strings[2]}\"{Environment.NewLine}  ]{Environment.NewLine}}}";
+        var expected = new {
+            strings = new[] { strings[0], strings[1], strings[2] }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
+
         Assert.AreEqual(expectedJson, json);
     }
 
@@ -91,8 +110,14 @@ public sealed class ToHalJsonDataTests {
         var json = resource.ToHalJson();
 
         //assert
-        var expectedJson = $"{{{Environment.NewLine}  \"dataObjects\": [{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[0].StringValue}\",{Environment.NewLine}      \"intValue\": {dataObjects[0].IntValue}{Environment.NewLine}    }},{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[1].StringValue}\",{Environment.NewLine}      \"intValue\": {dataObjects[1].IntValue}{Environment.NewLine}    }},{Environment.NewLine}    {{{Environment.NewLine}      \"stringValue\": \"{dataObjects[2].StringValue}\",{Environment.NewLine}      \"intValue\": {dataObjects[2].IntValue}{Environment.NewLine}    }}{Environment.NewLine}  ]{Environment.NewLine}}}";
+        var expected = new {
+            dataObjects = new [] {
+                new { stringValue = dataObjects[0].StringValue, intValue = dataObjects[0].IntValue },
+                new { stringValue = dataObjects[1].StringValue, intValue = dataObjects[1].IntValue },
+                new { stringValue = dataObjects[2].StringValue, intValue = dataObjects[2].IntValue },
+            }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
         Assert.AreEqual(expectedJson, json);
     }
-
 }
