@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtils", "TestUtils\TestUtils.csproj", "{5BBA0026-2BD9-47B1-9B3C-1E5C762D2A8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtils", "TestUtils\TestUtils.csproj", "{5BBA0026-2BD9-47B1-9B3C-1E5C762D2A8D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B71514A4-AA29-4997-9816-7F0883EA6B56}"
 EndProject
