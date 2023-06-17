@@ -6,6 +6,6 @@ internal static class StringExtensions {
             return string.Empty;
         }
 
-        return value.First().ToString().ToLower() + value[1..];
+        return value.First().ToString().ToLower() + value.Substring(1);
     }
 }
