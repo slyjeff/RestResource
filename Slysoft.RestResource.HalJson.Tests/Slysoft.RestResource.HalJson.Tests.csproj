@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource.HalJson\Slysoft.RestResource.HalJson.csproj" />
     <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj" />
     <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
   </ItemGroup>

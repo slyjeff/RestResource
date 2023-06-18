@@ -8,7 +8,7 @@ public static class ToHalXmlExtensions {
     /// Create a resource, formatted as XML using HAL, with extensions to support expanded links.
     /// MIME type = application/slysoft.hal+xml
     /// </summary>
-    /// <param name="resource">Resource that contains the data to represent as json</param>
+    /// <param name="resource">Resource that contains the data to represent as xml</param>
     /// <returns>XML text in a HAL format (with slysoft extensions)</returns>
     public static string ToHalXml(this Resource resource) {
         using (var stringWriter = new StringWriter()) {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Slysoft.RestResource;
+using Slysoft.RestResource.Extensions;
 
 namespace WebTest.Controllers;
 
@@ -7,6 +9,10 @@ namespace WebTest.Controllers;
 public sealed class ApplicationController  : ControllerBase {
     [HttpGet]
     public IActionResult GetApplication() {
-        return StatusCode(200, "Hello World!");
+        var resource = new Resource()
+            .Uri("/")
+            .Data("message", "Hello World!");
+
+        return StatusCode(200, resource);
     }
 }
