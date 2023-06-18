@@ -1,4 +1,5 @@
-﻿using Slysoft.RestResource.Extensions;
+﻿using System.Collections;
+using Slysoft.RestResource.Extensions;
 using System.Web.UI;
 
 namespace Slysoft.RestResource.Html;
@@ -210,11 +211,17 @@ td:last-child {
             htmlWriter.RenderEndTag(); //td
 
             switch (dataItem.Value) {
-                case string dataValue:
-                    WriteValue(htmlWriter, dataValue);
+                case IList<IDictionary<string, object?>> list:
+                    WriteListOfObjects(htmlWriter, list);
                     break;
-                case IList<Dictionary<string, object>> list:
-                    WriteList(htmlWriter, list);
+                case string stringValue:
+                    WriteValue(htmlWriter, stringValue);
+                    break;
+                case IEnumerable enumerable:
+                    WriteEnumerable(htmlWriter, enumerable);
+                    break;
+                default:
+                    WriteValue(htmlWriter, dataItem.Value);
                     break;
             }
 
@@ -224,13 +231,7 @@ td:last-child {
         htmlWriter.RenderEndTag(); //table
     }
 
-    private static void WriteValue(HtmlTextWriter htmlWriter, string value) {
-        htmlWriter.RenderBeginTag(HtmlTextWriterTag.Td);
-        htmlWriter.Write(value);
-        htmlWriter.RenderEndTag(); //td
-    }
-
-    private static void WriteList(HtmlTextWriter htmlWriter, IList<Dictionary<string, object>> list) {
+    private static void WriteListOfObjects(HtmlTextWriter htmlWriter, IList<IDictionary<string, object?>> list) {
         htmlWriter.RenderBeginTag(HtmlTextWriterTag.Td);
 
         htmlWriter.RenderBeginTag(HtmlTextWriterTag.Table);
@@ -251,10 +252,19 @@ td:last-child {
             htmlWriter.RenderBeginTag(HtmlTextWriterTag.Tr);
 
             foreach (var data in item) {
-                if (data.Value is IList<Dictionary<string, object>> subList) {
-                    WriteList(htmlWriter, subList);
-                } else {
-                    WriteValue(htmlWriter, data.Value as string ?? string.Empty);
+                switch (data.Value) {
+                    case IList<IDictionary<string, object?>> subList:
+                        WriteListOfObjects(htmlWriter, subList);
+                        break;
+                    case string stringValue:
+                        WriteValue(htmlWriter, stringValue);
+                        break;
+                    case IEnumerable enumerable:
+                        WriteEnumerable(htmlWriter, enumerable);
+                        break;
+                    default:
+                        WriteValue(htmlWriter, data.Value);
+                        break;
                 }
             }
 
@@ -263,7 +273,18 @@ td:last-child {
 
         htmlWriter.RenderEndTag(); //table
         htmlWriter.RenderEndTag(); //td
-    } 
+    }
+
+    private static void WriteEnumerable(HtmlTextWriter htmlWriter, IEnumerable enumerable) {
+        var values = (from object item in enumerable select item.ToString()).ToList();
+        WriteValue(htmlWriter, string.Join(", ", values));
+    }
+
+    private static void WriteValue(HtmlTextWriter htmlWriter, object? value) {
+        htmlWriter.RenderBeginTag(HtmlTextWriterTag.Td);
+        htmlWriter.Write(value);
+        htmlWriter.RenderEndTag(); //td
+    }
 
     private const string UpdateLinkScript =
         @"var {link}_link= document.getElementById('{link}_link');

@@ -4,14 +4,14 @@ using Slysoft.RestResource.Extensions;
 
 namespace WebTest.Controllers;
 
-//[Route("[controller]/[action]")]
 [Route("")]
 public sealed class ApplicationController  : ControllerBase {
     [HttpGet]
     public IActionResult GetApplication() {
         var resource = new Resource()
             .Uri("/")
-            .Data("message", "Hello World!");
+            .Data("message", "Hello World!")
+            .Get("getUsers", "/user");
 
         return StatusCode(200, resource);
     }

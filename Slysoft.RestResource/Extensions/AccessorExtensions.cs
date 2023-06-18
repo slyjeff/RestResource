@@ -55,7 +55,7 @@ public static class AccessorExtensions {
 
             var parameterStart = index + 1;
             var parameterEnd = closingBracketIndex - 1;
-            parameters.Add(link.Href.Substring(parameterStart, parameterEnd - parameterStart));
+            parameters.Add(link.Href.Substring(parameterStart, parameterEnd - parameterStart + 1));
         }
 
         return parameters;
