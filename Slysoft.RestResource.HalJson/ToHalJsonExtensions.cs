@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Data;
+using Newtonsoft.Json.Linq;
 using Slysoft.RestResource;
 using Slysoft.RestResource.Extensions;
 
@@ -12,7 +13,12 @@ public static class ToHalJsonExtensions {
     /// <param name="resource">Resource that contains the data to represent as json</param>
     /// <returns>JSON text in a HAL format (with slysoft extensions)</returns>
     public static string ToHalJson(this Resource resource) {
+        return resource.CreateJObject().ToString();
+    }
+
+    private static JObject CreateJObject(this Resource resource) {
         var o = new JObject();
+
         foreach (var data in resource.Data) {
             o.AddData(data);
         }
@@ -25,7 +31,11 @@ public static class ToHalJsonExtensions {
             o.AddLink(link);
         }
 
-        return o.ToString();
+        foreach (var embeddedResource in resource.EmbeddedResources) {
+            o.AddEmbeddedResource(embeddedResource.Key, embeddedResource.Value);
+        }
+
+        return o;
     }
 
     private static void AddData(this JObject o, KeyValuePair<string, object?> data) {
@@ -121,5 +131,32 @@ public static class ToHalJsonExtensions {
 
         var inputItemsName = link.GetInputItemName() + "s";
         linkObject[inputItemsName] = inputItems;
+    }
+
+    private static void AddEmbeddedResource(this JObject o, string name, object resourceObject) {
+        if (!o.ContainsKey("_embedded")) {
+            o["_embedded"] = new JObject();
+        }
+
+        var embedded = o["_embedded"];
+        if (embedded == null) {
+            return;
+        }
+
+        switch (resourceObject) {
+            case Resource resource: {
+                embedded[name] = resource.CreateJObject();
+                return;
+            }
+
+            case IList<Resource> resourceList: {
+                var jArray = new JArray();
+                foreach (var resource in resourceList) {
+                    jArray.Add(resource.CreateJObject());
+                }
+                embedded[name] = jArray;
+                break;
+            }
+        }
     }
 }
