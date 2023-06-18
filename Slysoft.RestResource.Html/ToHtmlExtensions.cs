@@ -474,23 +474,27 @@ td:last-child {
     }
 
     private static void WriteEmbedded(HtmlTextWriter htmlWriter, Resource resource, IList<string> scripts) {
-        //foreach (var embedded in resource.Embedded) {
-        //    htmlWriter.RenderBeginTag(HtmlTextWriterTag.Br);
-        //    htmlWriter.RenderEndTag(); //br
+        foreach (var embedded in resource.EmbeddedResources) {
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Br);
+            htmlWriter.RenderEndTag(); //br
 
-        //    htmlWriter.RenderBeginTag(HtmlTextWriterTag.H3);
-        //    htmlWriter.Write(embedded.Key);
-        //    htmlWriter.RenderEndTag(); //h3
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.H3);
+            htmlWriter.Write(embedded.Key);
+            htmlWriter.RenderEndTag(); //h3
 
-        //    htmlWriter.AddAttribute(HtmlTextWriterAttribute.Class, "embedded");
-        //    htmlWriter.RenderBeginTag(HtmlTextWriterTag.Div);
+            htmlWriter.AddAttribute(HtmlTextWriterAttribute.Class, "embedded");
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Div);
 
-        //    foreach (var embeddedResource in embedded.Value) {
-        //        WriteResourceAsHtml(htmlWriter, embeddedResource, scripts, false);
-        //    }
+            if (embedded.Value is Resource embeddedResource) {
+                WriteResourceAsHtml(htmlWriter, embeddedResource, scripts, false);
+            } else if (embedded.Value is IList<Resource> resourceList) {
+                foreach (var resourceListItem in resourceList) {
+                    WriteResourceAsHtml(htmlWriter, resourceListItem, scripts, false);
+                }
+            }
 
-        //    htmlWriter.RenderEndTag(); //div
-        //}
+            htmlWriter.RenderEndTag(); //div
+        }
     }
 
     private static void WriteScripts(HtmlTextWriter htmlWriter, List<string> scripts) {
