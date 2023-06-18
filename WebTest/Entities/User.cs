@@ -2,7 +2,14 @@
 
 public enum UserRole {Basic, Admin}
 
-public sealed class User {
+public interface IUserData {
+    string Username { get; }
+    string LastName { get; }
+    string FirstName { get; }
+    IList<UserRole> Roles { get; }
+}
+
+public sealed class User : IUserData {
     public int Id { get; set; }
     public string Username { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

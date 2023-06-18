@@ -160,10 +160,27 @@ td:last-child {
 
         htmlWriter.AddAttribute(HtmlTextWriterAttribute.Class, "header-heading");
         htmlWriter.RenderBeginTag(isRoot ? HtmlTextWriterTag.H1 : HtmlTextWriterTag.H2);
-        htmlWriter.Write(resource.Uri == "/" ? "Application" : resource.Uri);
+
+        htmlWriter.Write(resource.GetResourceName());
         htmlWriter.RenderEndTag(); // H1/H2
 
         htmlWriter.RenderEndTag(); //div
+    }
+
+    private static string GetResourceName(this Resource resource) {
+        if (resource.Uri == "/") {
+            return "application";
+        }
+
+        //find the last segment that isn't a number
+        var segments = resource.Uri.Split('/');
+        foreach (var segment in segments.Reverse()) {
+            if (!int.TryParse(segment, out var _)) {
+                return segment;
+            }
+        }
+
+        return resource.Uri;
     }
 
     private static void WriteResourceAsHtml(HtmlTextWriter htmlWriter, Resource resource, IList<string> scripts, bool isRoot = true) {
