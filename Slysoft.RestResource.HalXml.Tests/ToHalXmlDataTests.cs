@@ -23,7 +23,7 @@ public sealed class ToHalXmlDataTests {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><stringValue>{stringValue}</stringValue><intValue>{intValue}</intValue></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><stringValue>{stringValue}</stringValue><intValue>{intValue}</intValue></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -39,7 +39,7 @@ public sealed class ToHalXmlDataTests {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><formatted>{floatValue:#,0.000}</formatted></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><formatted>{floatValue:#,0.000}</formatted></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -55,7 +55,7 @@ public sealed class ToHalXmlDataTests {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><testObject><stringValue>{testObject.StringValue}</stringValue><intValue>{testObject.IntValue}</intValue></testObject></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><testObject><stringValue>{testObject.StringValue}</stringValue><intValue>{testObject.IntValue}</intValue></testObject></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -75,7 +75,7 @@ public sealed class ToHalXmlDataTests {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><strings><value>{strings[0]}</value><value>{strings[1]}</value><value>{strings[2]}</value></strings></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><strings><value>{strings[0]}</value><value>{strings[1]}</value><value>{strings[2]}</value></strings></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -91,7 +91,7 @@ public sealed class ToHalXmlDataTests {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><dataObjects><value><stringValue>{dataObjects[0].StringValue}</stringValue><intValue>{dataObjects[0].IntValue}</intValue></value><value><stringValue>{dataObjects[1].StringValue}</stringValue><intValue>{dataObjects[1].IntValue}</intValue></value><value><stringValue>{dataObjects[2].StringValue}</stringValue><intValue>{dataObjects[2].IntValue}</intValue></value></dataObjects></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><dataObjects><value><stringValue>{dataObjects[0].StringValue}</stringValue><intValue>{dataObjects[0].IntValue}</intValue></value><value><stringValue>{dataObjects[1].StringValue}</stringValue><intValue>{dataObjects[1].IntValue}</intValue></value><value><stringValue>{dataObjects[2].StringValue}</stringValue><intValue>{dataObjects[2].IntValue}</intValue></value></dataObjects></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 }

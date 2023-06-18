@@ -22,7 +22,7 @@ public class ToHalJsonGetLinkTest {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><message>{message}</message><link rel=\"getLink\" href=\"{href}\" /></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\" /></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -42,7 +42,7 @@ public class ToHalJsonGetLinkTest {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><message>{message}</message><link rel=\"getLink1\" href=\"{href1}\" /><link rel=\"getLink2\" href=\"{href2}\" /></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink1\" href=\"{href1}\" /><link rel=\"getLink2\" href=\"{href2}\" /></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -60,7 +60,7 @@ public class ToHalJsonGetLinkTest {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><message>{message}</message><link rel=\"getLink\" href=\"{href}\" templated=\"true\" /></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\" templated=\"true\" /></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -81,7 +81,7 @@ public class ToHalJsonGetLinkTest {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><message>{message}</message><link rel=\"getLink\" href=\"{href}\"><parameter name=\"firstName\" /><parameter name=\"lastName\" /></link></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\"><parameter name=\"firstName\" /><parameter name=\"lastName\" /></link></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 
@@ -102,7 +102,7 @@ public class ToHalJsonGetLinkTest {
         var xml = resource.ToHalXml();
 
         //assert
-        var expectedXml = $"{XmlHeader}<resource><message>{message}</message><link rel=\"getLink\" href=\"{href}\"><parameter name=\"position\"><defaultValue>Admin</defaultValue><listOfValues><value>Standard</value><value>Admin</value></listOfValues></parameter><parameter name=\"yearsEmployed\"><type>number</type></parameter></link></resource>";
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\"><parameter name=\"position\"><defaultValue>Admin</defaultValue><listOfValues><value>Standard</value><value>Admin</value></listOfValues></parameter><parameter name=\"yearsEmployed\"><type>number</type></parameter></link></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
 }

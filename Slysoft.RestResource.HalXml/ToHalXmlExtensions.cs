@@ -13,26 +13,36 @@ public static class ToHalXmlExtensions {
     public static string ToHalXml(this Resource resource) {
         using (var stringWriter = new StringWriter()) {
             using (var xmlWriter = XmlWriter.Create(stringWriter)) {
-                xmlWriter.WriteStartElement("resource");
-
-                if (!string.IsNullOrEmpty(resource.Uri)) {
-                    xmlWriter.WriteAttributeString("rel", "self");
-                    xmlWriter.WriteAttributeString("href", resource.Uri);
-                }
-
-                foreach (var data in resource.Data) {
-                    xmlWriter.AddData(data);
-                }
-
-                foreach (var link in resource.Links) {
-                    xmlWriter.AddLink(link);
-                }
-
-                xmlWriter.WriteEndElement();
+                xmlWriter.WriteResource(resource, "self");
             }
 
             return stringWriter.ToString();
         }
+    }
+
+    private static void WriteResource(this XmlWriter xmlWriter, Resource resource, string name) {
+        xmlWriter.WriteStartElement("resource");
+
+        //if there's no URI and this is the root, we don't need to write "self"
+        xmlWriter.WriteAttributeString("rel", name);
+
+        if (!string.IsNullOrEmpty(resource.Uri)) {
+            xmlWriter.WriteAttributeString("href", resource.Uri);
+        }
+
+        foreach (var data in resource.Data) {
+            xmlWriter.AddData(data);
+        }
+
+        foreach (var link in resource.Links) {
+            xmlWriter.AddLink(link);
+        }
+
+        foreach (var embedded in resource.EmbeddedResources) {
+            xmlWriter.AddEmbedded(embedded.Key, embedded.Value);
+        }
+
+        xmlWriter.WriteEndElement();
     }
 
     private static void AddData(this XmlWriter xmlWriter, KeyValuePair<string, object?> data) {
@@ -96,13 +106,13 @@ public static class ToHalXmlExtensions {
 
             if (!string.IsNullOrEmpty(inputItem.Type)) {
                 xmlWriter.WriteStartElement("type");
-                xmlWriter.WriteValue(inputItem.Type);
+                xmlWriter.WriteValue(inputItem.Type!);
                 xmlWriter.WriteEndElement();
             }
 
             if (!string.IsNullOrEmpty(inputItem.DefaultValue)) {
                 xmlWriter.WriteStartElement("defaultValue");
-                xmlWriter.WriteValue(inputItem.DefaultValue);
+                xmlWriter.WriteValue(inputItem.DefaultValue!);
                 xmlWriter.WriteEndElement();
             }
 
@@ -113,6 +123,7 @@ public static class ToHalXmlExtensions {
                     xmlWriter.WriteValue(value);
                     xmlWriter.WriteEndElement();
                 }
+
                 xmlWriter.WriteEndElement();
             }
 
@@ -120,5 +131,19 @@ public static class ToHalXmlExtensions {
         }
 
         xmlWriter.WriteEndElement();
+    }
+
+    private static void AddEmbedded(this XmlWriter xmlWriter, string name, object resourceObject) {
+        switch (resourceObject) {
+            case Resource resource:
+                xmlWriter.WriteResource(resource, name);
+                return;
+            case IList<Resource> resourceList: {
+                foreach (var resourceListItem in resourceList) {
+                    xmlWriter.WriteResource(resourceListItem, name);
+                }
+                return;
+            }
+        }
     }
 }
