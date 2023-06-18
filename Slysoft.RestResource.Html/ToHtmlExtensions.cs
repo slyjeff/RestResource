@@ -485,11 +485,16 @@ td:last-child {
             htmlWriter.AddAttribute(HtmlTextWriterAttribute.Class, "embedded");
             htmlWriter.RenderBeginTag(HtmlTextWriterTag.Div);
 
-            if (embedded.Value is Resource embeddedResource) {
-                WriteResourceAsHtml(htmlWriter, embeddedResource, scripts, false);
-            } else if (embedded.Value is IList<Resource> resourceList) {
-                foreach (var resourceListItem in resourceList) {
-                    WriteResourceAsHtml(htmlWriter, resourceListItem, scripts, false);
+            switch (embedded.Value) {
+                case Resource embeddedResource:
+                    WriteResourceAsHtml(htmlWriter, embeddedResource, scripts, false);
+                    break;
+                case IList<Resource> resourceList: {
+                    foreach (var resourceListItem in resourceList) {
+                        WriteResourceAsHtml(htmlWriter, resourceListItem, scripts, false);
+                    }
+
+                    break;
                 }
             }
 
