@@ -1,8 +1,43 @@
 ﻿using System.Drawing;
+using System.Runtime.Versioning;
 
-namespace Slysoft.RestResource.Extensions; 
+namespace Slysoft.RestResource.Extensions;
 
 public static class AccessorExtensions {
+    /// <summary>
+    /// Get a single embedded resource by name
+    /// </summary>
+    /// <param name="resource">Resource to search</param>
+    /// <param name="embeddedName">Name of the embedded resource to find= case insensitive</param>
+    /// <returns>A resource matching the passed in name</returns>
+    public static Resource? GetEmbedded(this Resource resource, string embeddedName) {
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        foreach (var embedded in resource.EmbeddedResources) {
+            if (embedded.Key.Equals(embeddedName, StringComparison.CurrentCultureIgnoreCase)) {
+                return embedded.Value as Resource;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Get an embedded resource list by name
+    /// </summary>
+    /// <param name="resource">Resource to search</param>
+    /// <param name="embeddedName">Name of the embedded resource list to find= case insensitive</param>
+    /// <returns>A resource matching the passed in name</returns>
+    public static IList<Resource>? GetEmbeddedList(this Resource resource, string embeddedName) {
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        foreach (var embedded in resource.EmbeddedResources) {
+            if (embedded.Key.Equals(embeddedName, StringComparison.CurrentCultureIgnoreCase)) {
+                return embedded.Value as IList<Resource>;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Find a link in a resource
     /// </summary>
@@ -20,7 +55,8 @@ public static class AccessorExtensions {
     /// <param name="inputItemName">Name of the input item to find= case insensitive</param>
     /// <returns>Input item matching the name, if one exists</returns>
     public static InputItem? GetInputItem(this Link link, string inputItemName) {
-        return link.InputItems.FirstOrDefault(x => x.Name.Equals(inputItemName, StringComparison.CurrentCultureIgnoreCase));
+        return link.InputItems.FirstOrDefault(x =>
+            x.Name.Equals(inputItemName, StringComparison.CurrentCultureIgnoreCase));
     }
 
     /// <summary>

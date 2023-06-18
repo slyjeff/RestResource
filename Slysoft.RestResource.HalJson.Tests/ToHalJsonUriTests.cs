@@ -8,7 +8,7 @@ using TestUtils;
 namespace Slysoft.RestResource.HalJson.Tests; 
 
 [TestClass]
-public sealed class DataTests {
+public sealed class ToHalJsonUriTests {
     [TestMethod]
     public void UriMustBeAddedAsLinkInJson() {
         //arrange

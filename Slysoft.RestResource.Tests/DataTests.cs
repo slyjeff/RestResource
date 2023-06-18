@@ -6,7 +6,7 @@ using TestUtils;
 namespace Slysoft.RestResource.Tests;
 
 [TestClass]
-public sealed class ResourceDataTests {
+public sealed class DataTests {
     [TestMethod]
     public void MustBeAbleToAddDataToResource() {
         //arrange

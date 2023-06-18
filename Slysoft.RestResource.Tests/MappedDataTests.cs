@@ -6,7 +6,7 @@ using TestUtils;
 namespace Slysoft.RestResource.Tests; 
 
 [TestClass]
-public sealed class ResourceMappedDataTests {
+public sealed class MappedDataTests {
     [TestMethod]
     public void MustBeAbleToMapDataFromObject() {
         //arrange

@@ -5,7 +5,7 @@ using TestUtils;
 namespace Slysoft.RestResource.Tests;
 
 [TestClass]
-public sealed class ResourceUriTests {
+public sealed class UriTests {
     [TestMethod]
     public void MustBeABleToSpecifyResourceUri() {
         //arrange
