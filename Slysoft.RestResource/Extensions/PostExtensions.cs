@@ -19,10 +19,10 @@ public static class PostExtensions {
     }
 
     /// <summary>
-    /// Create a GET POST with a type safe configurable query parameters to tell the consumer what values are expected
+    /// Create a POST with a type safe configurable query parameters to tell the consumer what values are expected
     /// </summary>
     /// <typeparam name="T">The type of object to use for mapping properties</typeparam>
-    /// <param name="resource">The GET link will be added to this resource</param>
+    /// <param name="resource">The POST link will be added to this resource</param>
     /// <param name="name">Name of the link- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
