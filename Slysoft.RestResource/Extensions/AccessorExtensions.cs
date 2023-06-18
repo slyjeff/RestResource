@@ -1,4 +1,6 @@
-﻿namespace Slysoft.RestResource.Extensions; 
+﻿using System.Drawing;
+
+namespace Slysoft.RestResource.Extensions; 
 
 public static class AccessorExtensions {
     /// <summary>
@@ -28,5 +30,34 @@ public static class AccessorExtensions {
     /// <returns>Type of input item this link supports (parameter, field)</returns>
     public static string GetInputItemName(this Link link) {
         return link.Verb.Equals("GET", StringComparison.CurrentCultureIgnoreCase) ? "parameter" : "field";
+    }
+
+    /// <summary>
+    /// Get a list of parameters in a templated link href
+    /// </summary>
+    /// <param name="link">Link containing the parameters</param>
+    /// <returns>List of parameters</returns>
+    public static IEnumerable<string> GetParameters(this Link link) {
+        var parameters = new List<string>();
+        if (!link.Templated) {
+            return parameters;
+        }
+
+        for (var index = 0; index < link.Href.Length; index++) {
+            if (link.Href[index] != '{') {
+                continue;
+            }
+
+            var closingBracketIndex = link.Href.IndexOf('}', index);
+            if (closingBracketIndex < index) {
+                continue;
+            }
+
+            var parameterStart = index + 1;
+            var parameterEnd = closingBracketIndex - 1;
+            parameters.Add(link.Href.Substring(parameterStart, parameterEnd - parameterStart));
+        }
+
+        return parameters;
     }
 }
