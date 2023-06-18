@@ -5,80 +5,50 @@ using TestUtils;
 namespace Slysoft.RestResource.Tests; 
 
 [TestClass]
-public class GetTests {
+public class PostTests {
     [TestMethod]
-    public void GetMustAddLink() {
+    public void PostMustAddLink() {
         //arrange
         const string uri = "/api/user";
 
         //act
         var resource = new Resource()
-            .Get("GetUsers", uri);
+            .Post("CreateUser", uri)
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("getUsers");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
-        Assert.AreEqual("getUsers", link.Name);
+        Assert.AreEqual("createUser", link.Name);
         Assert.AreEqual(uri, link.Href);
         Assert.IsFalse(link.Templated);
-        Assert.AreEqual("GET", link.Verb);
+        Assert.AreEqual("POST", link.Verb);
     }
 
     [TestMethod]
-    public void GetMustAllowForTemplating() {
+    public void PostMustAllowForTemplating() {
         //act
         var resource = new Resource()
-            .Get("getUser", "/api/user/{id}", templated: true);
+            .Get("createUser", "/api/user/{userType}", templated: true);
 
         //assert
-        var link = resource.GetLink("getUser");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         Assert.IsTrue(link.Templated);
     }
 
     [TestMethod]
-    public void QueryMustAddLink() {
-        //arrange
-        const string uri = "/api/user";
-
+    public void PostMustAllowConfigurationOfField() {
         //act
         var resource = new Resource()
-            .Query("search", uri)
-            .EndQuery();
+            .Post("createUser", "/api/user")
+                .Field("lastName")
+                .Field("firstName")
+            .EndBody()
+            .Get("getUser", "/api/user{id}", templated: true); //just to prove we can do chaining after a post
 
         //assert
-        var link = resource.GetLink("search");
-        Assert.IsNotNull(link);
-        Assert.AreEqual(uri, link.Href);
-        Assert.IsFalse(link.Templated);
-        Assert.AreEqual("GET", link.Verb);
-    }
-
-    [TestMethod]
-    public void QueryMustAllowForTemplating() {
-        //act
-        var resource = new Resource()
-            .Query("searchUserByType", "/api/user/{type}", templated: true)
-            .EndQuery();
-
-        //assert
-        var link = resource.GetLink("searchUserByType");
-        Assert.IsNotNull(link);
-        Assert.IsTrue(link.Templated);
-    }
-
-    [TestMethod]
-    public void QueryMustAllowConfigurationOfParameters() {
-        //act
-        var resource = new Resource()
-            .Query("search", "/api/user")
-                .Parameter("lastName")
-                .Parameter("firstName")
-            .EndQuery()
-            .Get("getUser", "/api/user{id}", templated: true); //just to prove we can do chaining after a query
-
-        //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         Assert.IsNotNull(link.GetInputItem("lastName"));
         Assert.IsNotNull(link.GetInputItem("firstName"));
@@ -86,15 +56,15 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMustAllowSettingOfDefaultValues() {
+    public void PostMustAllowSettingOfDefaultValues() {
         //act
         var resource = new Resource()
-            .Query("search", "/api/user")
-                .Parameter("position", defaultValue: "admin")
-            .EndQuery();
+            .Post("createUser", "/api/user")
+                .Field("position", defaultValue: "admin")
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
@@ -102,35 +72,15 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMustAllowSettingListOfValues() {
+    public void PostMustAllowSettingListOfValues() {
         //act
         var resource = new Resource()
-            .Query("search", "/api/user")
-                .Parameter("position", listOfValues: new[] { "Standard", "Admin" })
-            .EndQuery();
+            .Post("createUser", "/api/user")
+                .Field("position", listOfValues: new[] { "Standard", "Admin" })
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
-        Assert.IsNotNull(link);
-        var queryParameter = link.GetInputItem("position");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
-        Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
-    }
-
-    // ReSharper disable once UnusedMember.Local
-    private enum PositionEnum { Standard, Admin };
-
-    [TestMethod]
-    public void MustBeAbleSetListOfValuesFromEnumeration() {
-        //act
-        var resource = new Resource()
-            .Query("search", "/api/user")
-            .Parameter("position", listOfValues: new ListOfValues<PositionEnum>())
-            .EndQuery();
-
-        //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
@@ -139,15 +89,15 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMustAllowSettingValueType() {
+    public void PostMustAllowSettingValueType() {
         //act
         var resource = new Resource()
-            .Query("search", "/api/user")
-                .Parameter("yearsEmployed", type: "number")
-            .EndQuery();
+            .Post("createUser", "/api/user")
+                .Field("yearsEmployed", type: "number")
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         var queryParameter = link.GetInputItem("yearsEmployed");
         Assert.IsNotNull(queryParameter);
@@ -155,33 +105,34 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMustAllowMappingConfigurationOfParameters() {
+    public void PostMustAllowMappingConfigurationOfParameters() {
         //act
         var resource = new Resource()
-            .Query<User>("search", "/api/user")
-                .Parameter(x => x.LastName)
-                .Parameter(x => x.FirstName)
-            .EndQuery()
+            .Post<User>("createUser", "/api/user")
+                .Field(x => x.LastName)
+                .Field(x => x.FirstName)
+            .EndBody()
             .Get("getUser", "/api/user{id}", templated: true); //just to prove we can do chaining after a query
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         Assert.IsNotNull(link.GetInputItem("lastName"));
         Assert.IsNotNull(link.GetInputItem("firstName"));
+        Assert.AreEqual("POST", link.Verb);
         Assert.IsNotNull(resource.GetLink("getUser"));
     }
 
     [TestMethod]
-    public void QueryMappingMustAllowSettingOfDefaultValues() {
+    public void PostMappingMustAllowSettingOfDefaultValues() {
         //act
         var resource = new Resource()
-            .Query<User>("search", "/api/user")
-                .Parameter(x => x.Position, defaultValue: "admin")
-            .EndQuery();
+            .Post<User>("createUser", "/api/user")
+                .Field(x => x.Position, defaultValue: "admin")
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
@@ -189,15 +140,15 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMappingMustAllowSettingListOfValues() {
+    public void PostMappingMustAllowSettingListOfValues() {
         //act
         var resource = new Resource()
-            .Query<User>("search", "/api/user")
-                .Parameter(x => x.Position, listOfValues: new[] { "Standard", "Admin" })
-            .EndQuery();
+            .Post<User>("createUser", "/api/user")
+                .Field(x => x.Position, listOfValues: new[] { "Standard", "Admin" })
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         var queryParameter = link.GetInputItem("position");
         Assert.IsNotNull(queryParameter);
@@ -206,15 +157,15 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMappingMustAllowSettingValueType() {
+    public void PostMappingMustAllowSettingValueType() {
         //act
         var resource = new Resource()
-            .Query<User>("search", "/api/user")
-                .Parameter(x => x.YearsEmployed, type: "number")
-            .EndQuery();
+            .Post<User>("createUser", "/api/user")
+                .Field(x => x.YearsEmployed, type: "number")
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         var queryParameter = link.GetInputItem("yearsEmployed");
         Assert.IsNotNull(queryParameter);
@@ -222,15 +173,15 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMappingMustAutomaticallyPopulateListOfValuesForBoolean() {
+    public void PostMappingMustAutomaticallyPopulateListOfValuesForBoolean() {
         //act
         var resource = new Resource()
-            .Query<User>("search", "/api/user")
-                .Parameter(x => x.IsRegistered)
-            .EndQuery();
+            .Post<User>("createUser", "/api/user")
+                .Field(x => x.IsRegistered)
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         var queryParameter = link.GetInputItem("isRegistered");
         Assert.IsNotNull(queryParameter);
@@ -239,15 +190,15 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMappingMustSupportMapAll() {
+    public void PostMappingMustSupportMapAll() {
         //act
         var resource = new Resource()
-            .Query<User>("search", "/api/user")
+            .Post<User>("createUser", "/api/user")
                 .MapAll()
-            .EndQuery();
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         Assert.IsNotNull(link.GetInputItem("lastName"));
         Assert.IsNotNull(link.GetInputItem("firstName"));
@@ -257,16 +208,16 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryMappingMustSupportExcludingAParameter() {
+    public void PostMappingMustSupportExcludingAParameter() {
         //act
         var resource = new Resource()
-            .Query<User>("search", "/api/user")
+            .Post<User>("createUser", "/api/user")
                 .Exclude(x => x.FirstName)
                 .MapAll()
-            .EndQuery();
+            .EndBody();
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         Assert.IsNotNull(link);
         Assert.IsNotNull(link.GetInputItem("lastName"));
@@ -277,20 +228,21 @@ public class GetTests {
     }
 
     [TestMethod]
-    public void QueryWithAllParametersMustMapAllWithNoConfiguration() {
+    public void PostWithAllFieldsMustMapAllWithNoConfiguration() {
         //act
         var resource = new Resource()
-            .QueryWithAllParameters<User>("search", "/api/user")
+            .PostWithAllFields<User>("createUser", "/api/user")
             .Get("getUser", "/api/user{id}", templated: true); //just to prove we can do chaining after a query
 
         //assert
-        var link = resource.GetLink("search");
+        var link = resource.GetLink("createUser");
         Assert.IsNotNull(link);
         Assert.IsNotNull(link.GetInputItem("lastName"));
         Assert.IsNotNull(link.GetInputItem("firstName"));
         Assert.IsNotNull(link.GetInputItem("position"));
         Assert.IsNotNull(link.GetInputItem("yearsEmployed"));
         Assert.IsNotNull(link.GetInputItem("position"));
+        Assert.AreEqual("POST", link.Verb);
         Assert.IsNotNull(resource.GetLink("getUser"));
     }
 }

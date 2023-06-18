@@ -1,6 +1,6 @@
 ﻿namespace TestUtils; 
 
-public sealed class UserSearch {
+public sealed class User {
     public string LastName { get; set; } = GenerateRandom.String();
     public string FirstName { get; set; } = GenerateRandom.String();
     public string Position { get; set; } = "Standard";
