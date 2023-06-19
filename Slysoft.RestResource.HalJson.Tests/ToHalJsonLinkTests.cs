@@ -8,7 +8,7 @@ using TestUtils;
 namespace Slysoft.RestResource.HalJson.Tests; 
 
 [TestClass]
-public class ToHalJsonGetLinkTests {
+public class ToHalJsonLinkTests {
     [TestMethod]
     public void GetMustBeConvertedToLinkInJson() {
         //arrange
@@ -134,6 +134,101 @@ public class ToHalJsonGetLinkTests {
                         position = new { defaultValue = "Admin", listOfValues = new[]{"Standard", "Admin"}}, 
                         yearsEmployed = new { type = "number" }
                     }
+                }
+            }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
+        Assert.AreEqual(expectedJson, json);
+    }
+
+    [TestMethod]
+    public void PostLinkMustContainVerb() {
+        //arrange
+        var href = GenerateRandom.String();
+        var resource = new Resource()
+            .Post("postLink", href)
+            .EndBody();
+
+        //act
+        var json = resource.ToHalJson();
+
+        //assert
+        var expected = new {
+            _links = new {
+                postLink = new {
+                    href = href,
+                    verb = "POST"
+                }
+            }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
+        Assert.AreEqual(expectedJson, json);
+    }
+
+    [TestMethod]
+    public void PutLinkMustContainVerb() {
+        //arrange
+        var href = GenerateRandom.String();
+        var resource = new Resource()
+            .Put("putLink", href)
+            .EndBody();
+
+        //act
+        var json = resource.ToHalJson();
+
+        //assert
+        var expected = new {
+            _links = new {
+                putLink = new {
+                    href = href,
+                    verb = "PUT"
+                }
+            }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
+        Assert.AreEqual(expectedJson, json);
+    }
+    
+    [TestMethod]
+    public void PatchLinkMustContainVerb() {
+        //arrange
+        var href = GenerateRandom.String();
+        var resource = new Resource()
+            .Patch("patchLink", href)
+            .EndBody();
+
+        //act
+        var json = resource.ToHalJson();
+
+        //assert
+        var expected = new {
+            _links = new {
+                patchLink = new {
+                    href = href,
+                    verb = "PATCH"
+                }
+            }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
+        Assert.AreEqual(expectedJson, json);
+    }
+
+    [TestMethod]
+    public void DeleteLinkMustContainVerb() {
+        //arrange
+        var href = GenerateRandom.String();
+        var resource = new Resource()
+            .Delete("deleteLink", href);
+
+        //act
+        var json = resource.ToHalJson();
+
+        //assert
+        var expected = new {
+            _links = new {
+                deleteLink = new {
+                    href = href,
+                    verb = "DELETE"
                 }
             }
         };

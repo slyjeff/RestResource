@@ -100,6 +100,10 @@ public static class ToHalXmlExtensions {
             xmlWriter.WriteAttributeString("templated", "true");
         }
 
+        if (link.Verb != "GET") {
+            xmlWriter.WriteAttributeString("verb", link.Verb);
+        }
+
         foreach (var inputItem in link.InputItems) {
             xmlWriter.WriteStartElement(link.GetInputItemName());
             xmlWriter.WriteAttributeString("name", inputItem.Name);

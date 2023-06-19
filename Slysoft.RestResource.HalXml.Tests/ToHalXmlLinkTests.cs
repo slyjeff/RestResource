@@ -105,4 +105,79 @@ public class ToHalJsonGetLinkTest {
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\"><parameter name=\"position\"><defaultValue>Admin</defaultValue><listOfValues><value>Standard</value><value>Admin</value></listOfValues></parameter><parameter name=\"yearsEmployed\"><type>number</type></parameter></link></resource>";
         Assert.AreEqual(expectedXml, xml);
     }
+
+    [TestMethod]
+    public void PostLinkMustContainVerb() {
+        //arrange
+        var message = GenerateRandom.String();
+        var href = GenerateRandom.String();
+
+        var resource = new Resource()
+            .Data("message", message)
+            .Post("postLink", href)
+            .EndBody();
+
+        //act
+        var xml = resource.ToHalXml();
+
+        //assert
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"postLink\" href=\"{href}\" verb=\"POST\" /></resource>";
+        Assert.AreEqual(expectedXml, xml);
+    }
+
+    [TestMethod]
+    public void PutLinkMustContainVerb() {
+        //arrange
+        var message = GenerateRandom.String();
+        var href = GenerateRandom.String();
+
+        var resource = new Resource()
+            .Data("message", message)
+            .Put("putLink", href)
+            .EndBody();
+
+        //act
+        var xml = resource.ToHalXml();
+
+        //assert
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"putLink\" href=\"{href}\" verb=\"PUT\" /></resource>";
+        Assert.AreEqual(expectedXml, xml);
+    }
+
+    [TestMethod]
+    public void PatchLinkMustContainVerb() {
+        //arrange
+        var message = GenerateRandom.String();
+        var href = GenerateRandom.String();
+
+        var resource = new Resource()
+            .Data("message", message)
+            .Patch("patchLink", href)
+            .EndBody();
+
+        //act
+        var xml = resource.ToHalXml();
+
+        //assert
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"patchLink\" href=\"{href}\" verb=\"PATCH\" /></resource>";
+        Assert.AreEqual(expectedXml, xml);
+    }
+
+    [TestMethod]
+    public void DeleteLinkMustContainVerb() {
+        //arrange
+        var message = GenerateRandom.String();
+        var href = GenerateRandom.String();
+
+        var resource = new Resource()
+            .Data("message", message)
+            .Delete("deleteLink", href);
+
+        //act
+        var xml = resource.ToHalXml();
+
+        //assert
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"deleteLink\" href=\"{href}\" verb=\"DELETE\" /></resource>";
+        Assert.AreEqual(expectedXml, xml);
+    }
 }

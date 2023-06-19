@@ -102,6 +102,10 @@ public static class ToHalJsonExtensions {
             linkObject["templated"] = true;
         }
 
+        if (link.Verb != "GET") {
+            linkObject["verb"] = link.Verb;
+        }
+
         if (link.InputItems.Any()) {
             linkObject.AddInputItems(link);
         }
