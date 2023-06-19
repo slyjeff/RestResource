@@ -190,11 +190,28 @@ public class PatchTests {
     }
 
     [TestMethod]
+    public void PostMappingMustAutomaticallyPopulateListOfValuesForEnumerations() {
+        //act
+        var resource = new Resource()
+            .Patch<User>("updateUser", "/api/user")
+                .Field(x => x.Position)
+            .EndBody();
+
+        //assert
+        var link = resource.GetLink("updateUser");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputItem("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), queryParameter.ListOfValues[0]);
+        Assert.AreEqual(UserPosition.Admin.ToString(), queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
     public void PatchMappingMustSupportMapAll() {
         //act
         var resource = new Resource()
             .Patch<User>("updateUser", "/api/user")
-                .MapAll()
+                .AllFields()
             .EndBody();
 
         //assert
@@ -213,7 +230,7 @@ public class PatchTests {
         var resource = new Resource()
             .Patch<User>("updateUser", "/api/user")
                 .Exclude(x => x.FirstName)
-                .MapAll()
+                .AllFields()
             .EndBody();
 
         //assert

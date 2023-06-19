@@ -56,7 +56,7 @@ public interface IConfigureBody<T> {
     /// Automatically maps all field in T- individual fields can be overridden or excluded
     /// </summary>
     /// <returns>The configuration class so more values can be configured</returns>
-    public IConfigureBody<T> MapAll();
+    public IConfigureBody<T> AllFields();
     
     /// <summary>
     /// Do not include this field when mapping all (no, all does not mean all)
@@ -93,7 +93,7 @@ internal sealed class ConfigureBody<T> : IConfigureBody<T> {
         return this;
     }
 
-    public IConfigureBody<T> MapAll() {
+    public IConfigureBody<T> AllFields() {
         foreach (var property in typeof(T).GetAllProperties()) {
             if (_excludedParameters.Any(x => x.Equals(property.Name, StringComparison.CurrentCultureIgnoreCase))) {
                 continue;
@@ -121,15 +121,9 @@ internal sealed class ConfigureBody<T> : IConfigureBody<T> {
     }
 
     private void AddField(string fieldName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
-        if (listOfValues == null) {
-            var property = typeof(T).GetProperty(fieldName);
-            if (property?.PropertyType == typeof(bool)) {
-                listOfValues = new List<string> { bool.TrueString, bool.FalseString };
-            }
-        }
+        listOfValues ??= typeof(T).GetListOfValues(fieldName);
 
         _link.AddInputItem(fieldName, type, defaultValue, listOfValues);
-
     }
 
     public Resource EndBody() {

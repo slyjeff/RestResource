@@ -59,7 +59,7 @@ public static class GetExtensions {
         var link = new Link(name.ToCamelCase(), href, templated: templated);
         resource.Links.Add(link);
         var configureQuery = new ConfigureQuery<T>(resource, link);
-        configureQuery.MapAll();
+        configureQuery.AllParameters();
         return resource;
     }
 }

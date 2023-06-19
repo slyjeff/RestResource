@@ -46,7 +46,7 @@ public static class PostExtensions {
         var link = new Link(name.ToCamelCase(), href, verb: "POST", templated: templated);
         resource.Links.Add(link);
         var configBody = new ConfigureBody<T>(resource, link);
-        configBody.MapAll();
+        configBody.AllFields();
         return resource;
     }
 }

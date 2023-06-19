@@ -130,7 +130,7 @@ public class GetTests {
         //act
         var resource = new Resource()
             .Query("search", "/api/user")
-            .Parameter("position", listOfValues: new ListOfValues<PositionEnum>())
+                .Parameter("position", listOfValues: new ListOfValues<PositionEnum>())
             .EndQuery();
 
         //assert
@@ -243,11 +243,28 @@ public class GetTests {
     }
 
     [TestMethod]
+    public void QueryMappingMustAutomaticallyPopulateListOfValuesForEnumerations() {
+        //act
+        var resource = new Resource()
+            .Query<User>("search", "/api/user")
+                .Parameter(x => x.Position)
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputItem("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), queryParameter.ListOfValues[0]);
+        Assert.AreEqual(UserPosition.Admin.ToString(), queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
     public void QueryMappingMustSupportMapAll() {
         //act
         var resource = new Resource()
             .Query<User>("search", "/api/user")
-                .MapAll()
+                .AllParameters()
             .EndQuery();
 
         //assert
@@ -266,7 +283,7 @@ public class GetTests {
         var resource = new Resource()
             .Query<User>("search", "/api/user")
                 .Exclude(x => x.FirstName)
-                .MapAll()
+                .AllParameters()
             .EndQuery();
 
         //assert

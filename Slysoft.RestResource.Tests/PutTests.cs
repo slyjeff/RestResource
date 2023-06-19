@@ -190,11 +190,28 @@ public class PutTests {
     }
 
     [TestMethod]
+    public void PutMappingMustAutomaticallyPopulateListOfValuesForEnumerations() {
+        //act
+        var resource = new Resource()
+            .Put<User>("updateUser", "/api/user")
+                .Field(x => x.Position)
+            .EndBody();
+
+        //assert
+        var link = resource.GetLink("updateUser");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputItem("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), queryParameter.ListOfValues[0]);
+        Assert.AreEqual(UserPosition.Admin.ToString(), queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
     public void PutMappingMustSupportMapAll() {
         //act
         var resource = new Resource()
             .Put<User>("updateUser", "/api/user")
-                .MapAll()
+                .AllFields()
             .EndBody();
 
         //assert
@@ -213,7 +230,7 @@ public class PutTests {
         var resource = new Resource()
             .Put<User>("updateUser", "/api/user")
                 .Exclude(x => x.FirstName)
-                .MapAll()
+                .AllFields()
             .EndBody();
 
         //assert

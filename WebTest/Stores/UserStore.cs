@@ -13,11 +13,30 @@ public static class UserStore {
         new() { Id = 6, FirstName = "Mary", LastName = "Goodwin", Username = "mgoodwin", Roles = { UserRole.Basic, UserRole.Admin } },
     };
 
+    public static bool Add(User user) {
+        if (Users.Any(x => x.Username.Equals(user.Username, StringComparison.CurrentCultureIgnoreCase))) {
+            return false;
+        }
+
+        user.Id = Users.Max(x => x.Id) + 1;
+        Users.Add(user);
+        return true;
+    }
+
     public static IEnumerable<User> GetAll() {
-        return Users;
+        return Users.OrderBy(x => x.Username);
     }
 
     public static User? Get(int id) {
         return Users.FirstOrDefault(x => x.Id == id);
+    }
+
+    public static void Delete(int id) {
+        var userToDelete = Get(id);
+        if (userToDelete == null) {
+            return;
+        }
+
+        Users.Remove(userToDelete);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using System.Xml;
 using Slysoft.RestResource.Extensions;
 using Slysoft.RestResource.Utils;
 
@@ -57,7 +56,7 @@ public interface IConfigureQuery<T> {
     /// Automatically maps all parameters in T- individual fields can be overridden or excluded
     /// </summary>
     /// <returns>The configuration class so more values can be configured</returns>
-    public IConfigureQuery<T> MapAll();
+    public IConfigureQuery<T> AllParameters();
     
     /// <summary>
     /// Do not include this property when mapping all (no, all does not mean all)
@@ -94,7 +93,7 @@ internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
         return this;
     }
 
-    public IConfigureQuery<T> MapAll() {
+    public IConfigureQuery<T> AllParameters() {
         foreach (var property in typeof(T).GetAllProperties()) {
             if (_excludedParameters.Any(x => x.Equals(property.Name, StringComparison.CurrentCultureIgnoreCase))) {
                 continue;
@@ -122,15 +121,8 @@ internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
     }
 
     private void AddParameter(string parameterName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
-        if (listOfValues == null) {
-            var property = typeof(T).GetProperty(parameterName);
-            if (property?.PropertyType == typeof(bool)) {
-                listOfValues = new List<string> { bool.TrueString, bool.FalseString };
-            }
-        }
-
+        listOfValues ??= typeof(T).GetListOfValues(parameterName);
         _link.AddInputItem(parameterName, type, defaultValue, listOfValues);
-
     }
 
     public Resource EndQuery() {

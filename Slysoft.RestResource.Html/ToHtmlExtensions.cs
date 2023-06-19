@@ -410,7 +410,7 @@ td:last-child {
                     htmlWriter.Write(link.Href);
                     htmlWriter.RenderEndTag(); //a
                     break;
-                case "POST" or "PUT": {
+                case "POST" or "PUT" or "PATCH": {
                     htmlWriter.AddAttribute("action", link.Href);
                     htmlWriter.AddAttribute("method", "POST");
                     htmlWriter.RenderBeginTag(HtmlTextWriterTag.Form);
@@ -430,11 +430,19 @@ td:last-child {
                         htmlWriter.RenderEndTag(); //br
                     }
 
-                    if (link.Verb == "PUT") {
-                        htmlWriter.AddAttribute(HtmlTextWriterAttribute.Name, "_isPut");
-                        htmlWriter.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-                        htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
-                        htmlWriter.RenderEndTag(); //input
+                    switch (link.Verb) {
+                        case "PUT":
+                            htmlWriter.AddAttribute(HtmlTextWriterAttribute.Name, "_isPut");
+                            htmlWriter.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
+                            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
+                            htmlWriter.RenderEndTag(); //input
+                            break;
+                        case "PATCH":
+                            htmlWriter.AddAttribute(HtmlTextWriterAttribute.Name, "_isPatch");
+                            htmlWriter.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
+                            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
+                            htmlWriter.RenderEndTag(); //input
+                            break;
                     }
 
                     htmlWriter.AddAttribute(HtmlTextWriterAttribute.Type, "submit");

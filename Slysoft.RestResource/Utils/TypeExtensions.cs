@@ -12,4 +12,22 @@ internal static class TypeExtensions {
 
         return properties;
     }
+
+    public static IList<string>? GetListOfValues(this Type type, string propertyName) {
+        var property = type.GetProperty(propertyName);
+        if (property == null) {
+            return null;
+        }
+
+
+        if (property.PropertyType == typeof(bool)) {
+            return new List<string> { bool.TrueString, bool.FalseString };
+        }
+
+        if (property.PropertyType.IsEnum) {
+            return Enum.GetNames(property.PropertyType);
+        }
+
+        return null;
+    }
 }
