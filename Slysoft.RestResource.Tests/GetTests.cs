@@ -37,6 +37,18 @@ public class GetTests {
     }
 
     [TestMethod]
+    public void GetMustAllowForSettingATimeout() {
+        //act
+        var resource = new Resource()
+            .Get("getUser", "/api/user/{id}", timeout: 60);
+
+        //assert
+        var link = resource.GetLink("getUser");
+        Assert.IsNotNull(link);
+        Assert.AreEqual(link.Timeout, 60);
+    }
+
+    [TestMethod]
     public void QueryMustAddLink() {
         //arrange
         const string uri = "/api/user";
@@ -65,6 +77,19 @@ public class GetTests {
         var link = resource.GetLink("searchUserByType");
         Assert.IsNotNull(link);
         Assert.IsTrue(link.Templated);
+    }
+
+    [TestMethod]
+    public void QueryMustAllowForSettingTimeout() {
+        //act
+        var resource = new Resource()
+            .Query("searchUserByType", "/api/user/{type}", timeout: 60)
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("searchUserByType");
+        Assert.IsNotNull(link);
+        Assert.AreEqual(60, link.Timeout);
     }
 
     [TestMethod]

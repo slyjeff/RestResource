@@ -82,6 +82,29 @@ public class ToHalJsonLinkTests {
     }
 
     [TestMethod]
+    public void GetMustIncludeTimeoutInJson() {
+        //arrange
+        var href = GenerateRandom.String();
+        var resource = new Resource()
+            .Get("getLink", href, timeout: 60);
+
+        //act
+        var json = resource.ToHalJson();
+
+        //assert
+        var expected = new {
+            _links = new {
+                getLink = new {
+                    href = href,
+                    timeout = 60
+                }
+            }
+        };
+        var expectedJson = JsonConvert.SerializeObject(expected, Formatting.Indented);
+        Assert.AreEqual(expectedJson, json);
+    }
+
+    [TestMethod]
     public void QueryMustIncludeParametersInJson() {
         //arrange
         var href = GenerateRandom.String();

@@ -106,6 +106,10 @@ public static class ToHalJsonExtensions {
             linkObject["verb"] = link.Verb;
         }
 
+        if (link.Timeout != 0) {
+            linkObject["timeout"] = link.Timeout;
+        }
+
         if (link.InputItems.Any()) {
             linkObject.AddInputItems(link);
         }

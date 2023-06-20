@@ -1,5 +1,6 @@
 ﻿using Slysoft.RestResource.MappingConfiguration;
 using Slysoft.RestResource.Utils;
+using System.Threading;
 
 namespace Slysoft.RestResource.Extensions; 
 
@@ -11,9 +12,10 @@ public static class GetExtensions {
     /// <param name="name">Name of the element- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
     /// <returns>The resource so further calls can be chained</returns>
-    public static Resource Get(this Resource resource, string name, string href, bool templated = false) {
-        resource.Links.Add(new Link(name.ToCamelCase(), href, templated: templated));
+    public static Resource Get(this Resource resource, string name, string href, bool templated = false, int timeout = 0) {
+        resource.Links.Add(new Link(name.ToCamelCase(), href, templated: templated, timeout: timeout));
         return resource;
     }
 
@@ -24,9 +26,10 @@ public static class GetExtensions {
     /// <param name="name">Name of the link- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
     /// <returns>A configuration class that will allow configuration of query parameters</returns>
-    public static IConfigureQuery Query(this Resource resource, string name, string href, bool templated = false) {
-        var link = new Link(name.ToCamelCase(), href, templated: templated);
+    public static IConfigureQuery Query(this Resource resource, string name, string href, bool templated = false, int timeout = 0) {
+        var link = new Link(name.ToCamelCase(), href, templated: templated, timeout: timeout);
         resource.Links.Add(link);
         return new ConfigureQuery(resource, link);
     }
@@ -39,9 +42,10 @@ public static class GetExtensions {
     /// <param name="name">Name of the link- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
     /// <returns>A configuration class that will allow configuration of query parameters</returns>
-    public static IConfigureQuery<T> Query<T>(this Resource resource, string name, string href, bool templated = false) {
-        var link = new Link(name.ToCamelCase(), href, templated: templated);
+    public static IConfigureQuery<T> Query<T>(this Resource resource, string name, string href, bool templated = false, int timeout = 0) {
+        var link = new Link(name.ToCamelCase(), href, templated: templated, timeout: timeout);
         resource.Links.Add(link);
         return new ConfigureQuery<T>(resource, link);
     }
@@ -54,9 +58,10 @@ public static class GetExtensions {
     /// <param name="name">Name of the link- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
     /// <returns>The resource so further calls can be chained</returns>
-    public static Resource QueryWithAllParameters<T>(this Resource resource, string name, string href, bool templated = false) {
-        var link = new Link(name.ToCamelCase(), href, templated: templated);
+    public static Resource QueryWithAllParameters<T>(this Resource resource, string name, string href, bool templated = false, int timeout = 0) {
+        var link = new Link(name.ToCamelCase(), href, templated: templated, timeout: timeout);
         resource.Links.Add(link);
         var configureQuery = new ConfigureQuery<T>(resource, link);
         configureQuery.AllParameters();

@@ -65,6 +65,24 @@ public class ToHalJsonGetLinkTest {
     }
 
     [TestMethod]
+    public void GetMustIncludeTimeoutInXml() {
+        //arrange
+        var message = GenerateRandom.String();
+        var href = GenerateRandom.String();
+
+        var resource = new Resource()
+            .Data("message", message)
+            .Get("getLink", href, timeout: 60);
+
+        //act
+        var xml = resource.ToHalXml();
+
+        //assert
+        var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\" timeout=\"60\" /></resource>";
+        Assert.AreEqual(expectedXml, xml);
+    }
+
+    [TestMethod]
     public void QueryMustIncludeParametersInXml() {
         //arrange
         var message = GenerateRandom.String();

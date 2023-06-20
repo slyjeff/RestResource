@@ -103,6 +103,10 @@ public static class ToHalXmlExtensions {
         if (link.Verb != "GET") {
             xmlWriter.WriteAttributeString("verb", link.Verb);
         }
+        
+        if (link.Timeout != 0) {
+            xmlWriter.WriteAttributeString("timeout", link.Timeout.ToString());
+        }
 
         foreach (var inputItem in link.InputItems) {
             xmlWriter.WriteStartElement(link.GetInputItemName());

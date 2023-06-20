@@ -38,6 +38,18 @@ public class PatchTests {
     }
 
     [TestMethod]
+    public void PatchMustAllowForTimeout() {
+        //act
+        var resource = new Resource()
+            .Get("updateUser", "/api/user/{userType}", timeout: 60);
+
+        //assert
+        var link = resource.GetLink("updateUser");
+        Assert.IsNotNull(link);
+        Assert.AreEqual(60, link.Timeout);
+    }
+
+    [TestMethod]
     public void PatchMustAllowConfigurationOfField() {
         //act
         var resource = new Resource()

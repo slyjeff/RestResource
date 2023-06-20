@@ -11,11 +11,13 @@ public sealed class Link {
     /// <param name="href">Location of the link</param>
     /// <param name="verb">HTTP verb of the link- defaults to "GET"</param>
     /// <param name="templated">Whether or not the URI is templated</param>
-    public Link(string name, string href, string verb = "GET", bool templated = false) {
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
+    public Link(string name, string href, string verb = "GET", bool templated = false, int timeout = 0) {
         Name = name;
         Href = href;
         Verb = verb;
         Templated = templated;
+        Timeout = timeout;
     }
 
     /// <summary>
@@ -42,4 +44,9 @@ public sealed class Link {
     /// List of of input items that contain information for interacting with the link (ex: form fields, query parameters)
     /// </summary>
     public IList<InputItem> InputItems { get; } = new List<InputItem>();
+
+    /// <summary>
+    /// A suggested timeout in seconds that the client should use when calling this link
+    /// </summary>
+    public int Timeout { get; }
 }

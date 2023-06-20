@@ -38,6 +38,18 @@ public class PostTests {
     }
 
     [TestMethod]
+    public void PostMustAllowForSettingTimeout() {
+        //act
+        var resource = new Resource()
+            .Get("createUser", "/api/user/{userType}", timeout: 60);
+
+        //assert
+        var link = resource.GetLink("createUser");
+        Assert.IsNotNull(link);
+        Assert.AreEqual(60, link.Timeout);
+    }
+
+    [TestMethod]
     public void PostMustAllowConfigurationOfField() {
         //act
         var resource = new Resource()

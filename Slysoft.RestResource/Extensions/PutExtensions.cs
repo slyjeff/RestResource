@@ -11,8 +11,9 @@ public static class PutExtensions {
     /// <param name="name">Name of the link- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
     /// <returns>A configuration class that will allow configuration of fields</returns>
-    public static IConfigureBody Put(this Resource resource, string name, string href, bool templated = false) {
+    public static IConfigureBody Put(this Resource resource, string name, string href, bool templated = false, int timeout = 0) {
         var link = new Link(name.ToCamelCase(), href, verb: "PUT", templated: templated);
         resource.Links.Add(link);
         return new ConfigureBody(resource, link);
@@ -26,8 +27,9 @@ public static class PutExtensions {
     /// <param name="name">Name of the link- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
     /// <returns>A configuration class that will allow configuration of body fields</returns>
-    public static IConfigureBody<T> Put<T>(this Resource resource, string name, string href, bool templated = false) {
+    public static IConfigureBody<T> Put<T>(this Resource resource, string name, string href, bool templated = false, int timeout = 0) {
         var link = new Link(name.ToCamelCase(), href, verb: "PUT", templated: templated);
         resource.Links.Add(link);
         return new ConfigureBody<T>(resource, link);
@@ -41,8 +43,9 @@ public static class PutExtensions {
     /// <param name="name">Name of the link- will be converted to camelcase</param>
     /// <param name="href">HREF of the link</param>
     /// <param name="templated">Whether or not the URI is templated</param>
+    /// <param name="timeout">A suggested timeout in seconds that the client should use when calling this link</param>
     /// <returns>The resource so further calls can be chained</returns>
-    public static Resource PutWithAllFields<T>(this Resource resource, string name, string href, bool templated = false) {
+    public static Resource PutWithAllFields<T>(this Resource resource, string name, string href, bool templated = false, int timeout = 0) {
         var link = new Link(name.ToCamelCase(), href, verb: "PUT", templated: templated);
         resource.Links.Add(link);
         var configBody = new ConfigureBody<T>(resource, link);
