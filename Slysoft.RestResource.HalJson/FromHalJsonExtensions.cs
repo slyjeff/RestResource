@@ -5,7 +5,7 @@ namespace Slysoft.RestResource.HalJson;
 
 public static class FromHalJsonExtensions {
     /// <summary>
-    /// Populate a resource from a json string in slysoft.hal+json or hal+json format
+    /// Populate a resource from a JSON string in slysoft.hal+json or hal+json format
     /// </summary>
     /// <param name="resource">The resource to populate</param>
     /// <param name="json">JSON in  slysoft.hal+json format or hal+json format</param>
@@ -39,7 +39,7 @@ public static class FromHalJsonExtensions {
     }
 
     private static void GetData(this Resource resource, JObject o) {
-        PopulateFromJObject(resource.Data, o);
+        resource.Data.PopulateFromJObject(o);
     }
 
     private static void PopulateFromJObject(this IDictionary<string, object?> dictionary, JObject o) {
