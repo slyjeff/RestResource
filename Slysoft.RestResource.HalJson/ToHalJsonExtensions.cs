@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Slysoft.RestResource;
 using Slysoft.RestResource.Extensions;
 
