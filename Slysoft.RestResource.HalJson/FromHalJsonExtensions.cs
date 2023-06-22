@@ -92,12 +92,12 @@ public static class FromHalJsonExtensions {
             return;
         }
 
-        foreach (var link in links) {
-            if (link.Key == "self") {
+        foreach (var linkObject in links) {
+            if (linkObject.Key == "self") {
                 continue;
             }
 
-            if (link.Value is not JObject linkData) {
+            if (linkObject.Value is not JObject linkData) {
                 continue;
             }
 
@@ -112,7 +112,34 @@ public static class FromHalJsonExtensions {
                 timeout =  Convert.ToInt32(timeoutValue.Value);
             }
 
-            resource.Links.Add(new Link(link.Key, href.ToString(), templated: templated, timeout: timeout));
+            var link = new Link(linkObject.Key, href.ToString(), templated: templated, timeout: timeout);
+
+            if (linkData["parameters"] is JObject parameters) {
+                foreach (var parameter in parameters) {
+                    var inputItem = new InputItem(parameter.Key);
+                    link.InputItems.Add(inputItem);
+
+                    if (parameter.Value is not JObject parameterObject) {
+                        continue;
+                    }
+
+                    if (parameterObject["defaultValue"] is JValue defaultValue) {
+                        inputItem.DefaultValue = defaultValue.ToString();
+                    }
+
+                    if (parameterObject["type"] is JValue typeValue) {
+                        inputItem.Type = typeValue.ToString();
+                    }
+
+                    if (parameterObject["listOfValues"] is JArray listOfValues) {
+                        foreach (var value in listOfValues) {
+                            inputItem.ListOfValues.Add(value.ToString());
+                        }
+                    }
+                }
+            }
+
+            resource.Links.Add(link);
         }
     }
 }

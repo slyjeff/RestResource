@@ -29,7 +29,7 @@ public sealed class FromHalJsonLinkTests {
     }
 
     [TestMethod]
-    public void GetMustBeAbleToReadTemplatingFromResource() {
+    public void MustBeAbleToReadTemplatingFromResource() {
         //arrange
         var resource = new Resource()
             .Get("getUser", "/api/user/{id}", templated: true);
@@ -46,7 +46,7 @@ public sealed class FromHalJsonLinkTests {
     }
 
     [TestMethod]
-    public void GetMustBeAbleToReadTimeoutFromResource() {
+    public void MustBeAbleToReadTimeoutFromResource() {
         //arrange
         var resource = new Resource()
             .Get("getUser", "/api/user/{id}", timeout: 60);
@@ -60,5 +60,90 @@ public sealed class FromHalJsonLinkTests {
         var link = deserializedResource.GetLink("getUser");
         Assert.IsNotNull(link);
         Assert.AreEqual(link.Timeout, 60);
+    }
+
+    [TestMethod]
+    public void MustBeAbleReadQueryParametersFromResource() {
+        //arrange
+        var resource = new Resource()
+            .Query("search", "/api/user")
+                .Parameter("lastName")
+                .Parameter("firstName")
+            .EndQuery();
+
+        var json = resource.ToHalJson();
+
+        //act
+        var deserializedResource = new Resource().FromHalJson(json);
+
+        //assert
+        var link = deserializedResource.GetLink("search");
+        Assert.IsNotNull(link);
+        Assert.IsNotNull(link.GetInputItem("lastName"));
+        Assert.IsNotNull(link.GetInputItem("firstName"));
+    }
+
+    [TestMethod]
+    public void MustBeAbleReadDefaultValueFromResource() {
+        //arrange
+        var resource = new Resource()
+            .Query("search", "/api/user")
+                .Parameter("position", defaultValue: "admin")
+            .EndQuery();
+
+        var json = resource.ToHalJson();
+
+        //act
+        var deserializedResource = new Resource().FromHalJson(json);
+
+        //assert
+        var link = deserializedResource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputItem("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("admin", queryParameter.DefaultValue);
+    }
+
+    [TestMethod]
+    public void MustBeAbleReadListOfValuesFromResource() {
+        //arrange
+        var resource = new Resource()
+            .Query("search", "/api/user")
+                .Parameter("position", listOfValues: new[] { "Standard", "Admin" })
+            .EndQuery();
+
+        var json = resource.ToHalJson();
+
+        //act
+        var deserializedResource = new Resource().FromHalJson(json);
+
+        //assert
+        var link = deserializedResource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputItem("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
+        Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
+    public void MustBeAbleReadTypeFromResource() {
+        //arrange
+        var resource = new Resource()
+            .Query("search", "/api/user")
+                .Parameter("yearsEmployed", type: "number")
+            .EndQuery();
+
+        var json = resource.ToHalJson();
+
+        //act
+        var deserializedResource = new Resource().FromHalJson(json);
+
+        //assert
+        var link = deserializedResource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetInputItem("yearsEmployed");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("number", queryParameter.Type);
     }
 }
