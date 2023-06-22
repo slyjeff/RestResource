@@ -8,23 +8,7 @@ using TestUtils;
 namespace Slysoft.RestResource.HalJson.Tests;
 
 [TestClass]
-public sealed class FromHalJsonTests {
-    [TestMethod]
-    public void MustBeAbleToReadUriFromResource() {
-        //arrange
-        var uri = GenerateRandom.String();
-        var resource = new Resource()
-            .Uri(uri);
-
-        var json = resource.ToHalJson();
-        
-        //act
-        var deserializedResource = new Resource().FromHalJson(json);
-
-        //assert
-        Assert.AreEqual(uri, deserializedResource.Uri);
-    }
-
+public sealed class FromHalJsonDataTests {
     [TestMethod]
     public void MustBeAbleToReadDataFromResource() {
         //arrange

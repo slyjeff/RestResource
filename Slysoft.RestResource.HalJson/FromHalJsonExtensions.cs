@@ -17,6 +17,8 @@ public static class FromHalJsonExtensions {
 
         resource.GetData(o);
 
+        resource.GetLinks(o);
+
         return resource;
     }
 
@@ -83,5 +85,34 @@ public static class FromHalJsonExtensions {
         }
 
         return list;
+    }
+
+    private static void GetLinks(this Resource resource, JObject o) {
+        if (o["_links"] is not JObject links) {
+            return;
+        }
+
+        foreach (var link in links) {
+            if (link.Key == "self") {
+                continue;
+            }
+
+            if (link.Value is not JObject linkData) {
+                continue;
+            }
+
+            if (linkData["href"] is not JValue href) {
+                continue;
+            }
+
+            var templated = linkData["templated"] != null;
+
+            var timeout = 0;
+            if (linkData["timeout"] is JValue timeoutValue) {
+                timeout =  Convert.ToInt32(timeoutValue.Value);
+            }
+
+            resource.Links.Add(new Link(link.Key, href.ToString(), templated: templated, timeout: timeout));
+        }
     }
 }
