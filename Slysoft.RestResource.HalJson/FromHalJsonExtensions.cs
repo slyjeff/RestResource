@@ -105,6 +105,11 @@ public static class FromHalJsonExtensions {
                 continue;
             }
 
+            var verb = "GET";
+            if (linkData["verb"] is JValue verbValue) {
+                verb = verbValue.ToString();
+            }
+
             var templated = linkData["templated"] != null;
 
             var timeout = 0;
@@ -112,26 +117,32 @@ public static class FromHalJsonExtensions {
                 timeout =  Convert.ToInt32(timeoutValue.Value);
             }
 
-            var link = new Link(linkObject.Key, href.ToString(), templated: templated, timeout: timeout);
+            var link = new Link(linkObject.Key, href.ToString(),  verb: verb, templated: templated, timeout: timeout);
 
-            if (linkData["parameters"] is JObject parameters) {
-                foreach (var parameter in parameters) {
-                    var inputItem = new InputItem(parameter.Key);
+            var inputItems = linkData["parameters"] as JObject;
+            if (inputItems == null) {
+                inputItems = linkData["fields"] as JObject;
+            }
+
+
+            if (inputItems != null) {
+                foreach (var inputItemKeyValue in inputItems) {
+                    var inputItem = new InputItem(inputItemKeyValue.Key);
                     link.InputItems.Add(inputItem);
 
-                    if (parameter.Value is not JObject parameterObject) {
+                    if (inputItemKeyValue.Value is not JObject inputItemValue) {
                         continue;
                     }
 
-                    if (parameterObject["defaultValue"] is JValue defaultValue) {
+                    if (inputItemValue["defaultValue"] is JValue defaultValue) {
                         inputItem.DefaultValue = defaultValue.ToString();
                     }
 
-                    if (parameterObject["type"] is JValue typeValue) {
+                    if (inputItemValue["type"] is JValue typeValue) {
                         inputItem.Type = typeValue.ToString();
                     }
 
-                    if (parameterObject["listOfValues"] is JArray listOfValues) {
+                    if (inputItemValue["listOfValues"] is JArray listOfValues) {
                         foreach (var value in listOfValues) {
                             inputItem.ListOfValues.Add(value.ToString());
                         }

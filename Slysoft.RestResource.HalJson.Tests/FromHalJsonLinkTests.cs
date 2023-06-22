@@ -146,4 +146,49 @@ public sealed class FromHalJsonLinkTests {
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("number", queryParameter.Type);
     }
+
+    [TestMethod]
+    public void MustBeAbleToReadNonGetLinkFromResource() {
+        //arrange
+        const string uri = "/api/user";
+
+        var resource = new Resource()
+            .Post("CreateUser", uri)
+            .EndBody();
+
+        var json = resource.ToHalJson();
+
+        //act
+        var deserializedResource = new Resource().FromHalJson(json);
+
+        //assert
+        var link = deserializedResource.GetLink("createUser");
+        Assert.IsNotNull(link);
+        Assert.AreEqual("createUser", link.Name);
+        Assert.AreEqual(uri, link.Href);
+        Assert.IsFalse(link.Templated);
+        Assert.AreEqual("POST", link.Verb);
+    }
+
+
+    [TestMethod]
+    public void MustBeAbleReadFieldsFromResource() {
+        //arrange
+        var resource = new Resource()
+            .Post("createUser", "/api/user")
+                .Field("lastName")
+                .Field("firstName")
+            .EndBody();
+
+        var json = resource.ToHalJson();
+
+        //act
+        var deserializedResource = new Resource().FromHalJson(json);
+
+        //assert
+        var link = deserializedResource.GetLink("createUser");
+        Assert.IsNotNull(link);
+        Assert.IsNotNull(link.GetInputItem("lastName"));
+        Assert.IsNotNull(link.GetInputItem("firstName"));
+    }
 }
