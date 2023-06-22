@@ -17,6 +17,8 @@ public static class FromHalXmlExtensions {
 
         resource.GetData(xElement);
 
+        resource.GetLinks(xElement);
+
         return resource;
     }
 
@@ -29,11 +31,11 @@ public static class FromHalXmlExtensions {
         resource.Uri = hrefElement.Value;
     }
 
-    private static void GetData(this Resource resource, XElement xElement) {
+    private static void GetData(this Resource resource, XContainer xElement) {
         PopulateFromXElement(resource.Data, xElement);
     }
 
-    private static void PopulateFromXElement(this IDictionary<string, object?> dictionary, XElement xElement) {
+    private static void PopulateFromXElement(this IDictionary<string, object?> dictionary, XContainer xElement) {
         foreach (var element in xElement.Elements()) {
             if (element.Name.LocalName is "link" or "resource") {
                 continue;
@@ -75,4 +77,64 @@ public static class FromHalXmlExtensions {
 
         return list;
     }
+
+    private static void GetLinks(this Resource resource, XContainer xElements) {
+        foreach (var element in xElements.Elements()) {
+            if (element.Name.LocalName != "link") {
+                continue;
+            }
+
+            var name = element.Attribute("rel")?.Value;
+            if (name == null) {
+                continue;
+            }
+
+            var href = element.Attribute("href")?.Value;
+            if (href == null) {
+                continue;
+            }
+
+            var verb = element.Attribute("verb")?.Value ?? "GET";
+
+            bool.TryParse(element.Attribute("templated")?.Value ?? "false", out var templated);
+
+            int.TryParse(element.Attribute("timeout")?.Value ?? "0", out var timeout);
+            
+            var link = new Link(name, href, verb: verb, templated: templated, timeout: timeout);
+
+            foreach (var inputItemElement in element.Elements()) {
+                if (inputItemElement.Name.LocalName is not ("parameter" or "field")) {
+                    continue;
+                }
+
+                var inputElementName = inputItemElement.Attribute("name")?.Value;
+                if (inputElementName == null) {
+                    continue;
+                }
+
+                var inputItem = new InputItem(inputElementName);
+                link.InputItems.Add(inputItem);
+
+                foreach (var inputItemDataElement in inputItemElement.Elements()) {
+                    if (inputItemDataElement.Name.LocalName == "defaultValue") {
+                        inputItem.DefaultValue = inputItemDataElement.Value;
+                        continue;
+                    }
+
+                    if (inputItemDataElement.Name.LocalName == "type") {
+                        inputItem.Type = inputItemDataElement.Value;
+                    }
+
+                    if (inputItemDataElement.Name.LocalName == "listOfValues") {
+                        foreach (var value in inputItemDataElement.Elements()) {
+                            inputItem.ListOfValues.Add(value.Value);
+                        }
+                    }
+                }
+            }
+
+            resource.Links.Add(link);
+        }
+    }
+
 }
