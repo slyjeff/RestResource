@@ -11,13 +11,12 @@ public static class ToHalXmlExtensions {
     /// <param name="resource">Resource that contains the data to represent as xml</param>
     /// <returns>XML text in a HAL format (with slysoft extensions)</returns>
     public static string ToHalXml(this Resource resource) {
-        using (var stringWriter = new StringWriter()) {
-            using (var xmlWriter = XmlWriter.Create(stringWriter)) {
-                xmlWriter.WriteResource(resource, "self");
-            }
-
-            return stringWriter.ToString();
+        using var stringWriter = new StringWriter();
+        using (var xmlWriter = XmlWriter.Create(stringWriter)) {
+            xmlWriter.WriteResource(resource, "self");
         }
+
+        return stringWriter.ToString();
     }
 
     private static void WriteResource(this XmlWriter xmlWriter, Resource resource, string name) {

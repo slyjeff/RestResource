@@ -1,5 +1,4 @@
-﻿using Slysoft.RestResource.Extensions;
-using System.Collections;
+﻿using System.Collections;
 using System.Xml.Linq;
 
 namespace Slysoft.RestResource.HalXml;
@@ -159,10 +158,13 @@ public static class FromHalXmlExtensions {
                 continue;
             }
 
-            if (!resourceLists.ContainsKey(name)) {
+            if (name != null && !resourceLists.ContainsKey(name)) {
                 resourceLists[name] = new List<Resource>();
             }
-            resourceLists[name].Add(new Resource().FromHalXml(element));
+
+            if (name != null) {
+                resourceLists[name].Add(new Resource().FromHalXml(element));
+            }
         }
 
         foreach (var resourceList in resourceLists) {

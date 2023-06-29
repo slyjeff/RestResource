@@ -4,6 +4,7 @@ using Slysoft.RestResource.Extensions;
 using SlySoft.RestResource.HalJson;
 using TestUtils;
 // ReSharper disable RedundantAnonymousTypePropertyName
+#pragma warning disable IDE0037
 
 namespace Slysoft.RestResource.HalJson.Tests; 
 

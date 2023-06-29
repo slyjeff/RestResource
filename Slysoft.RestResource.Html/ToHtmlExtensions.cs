@@ -12,32 +12,31 @@ public static class ToHtmlExtensions {
     /// <param name="resource">Resource that contains the data to represent as HTML</param>
     /// <returns>HTML text</returns>
     public static string ToHtml(this Resource resource) {
-        using (var stringWriter = new StringWriter()) {
-            using (var htmlWriter = new HtmlTextWriter(stringWriter)) {
-                htmlWriter.RenderBeginTag(HtmlTextWriterTag.Html);
+        using var stringWriter = new StringWriter();
+        using (var htmlWriter = new HtmlTextWriter(stringWriter)) {
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Html);
 
-                WriteStyles(htmlWriter);
+            WriteStyles(htmlWriter);
 
-                htmlWriter.RenderBeginTag(HtmlTextWriterTag.Body);
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Body);
 
-                htmlWriter.AddAttribute(HtmlTextWriterAttribute.Class, "container");
-                htmlWriter.RenderBeginTag(HtmlTextWriterTag.Div);
+            htmlWriter.AddAttribute(HtmlTextWriterAttribute.Class, "container");
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Div);
 
-                var scripts = new List<string>();
+            var scripts = new List<string>();
 
-                WriteResourceAsHtml(htmlWriter, resource, scripts);
+            WriteResourceAsHtml(htmlWriter, resource, scripts);
 
-                WriteScripts(htmlWriter, scripts);
+            WriteScripts(htmlWriter, scripts);
 
-                htmlWriter.RenderEndTag(); //div
-                htmlWriter.RenderEndTag(); //body
-                htmlWriter.RenderEndTag(); //html
+            htmlWriter.RenderEndTag(); //div
+            htmlWriter.RenderEndTag(); //body
+            htmlWriter.RenderEndTag(); //html
 
-                htmlWriter.Close();
-            }
-
-            return stringWriter.ToString();
+            htmlWriter.Close();
         }
+
+        return stringWriter.ToString();
     }
 
     private const string Css =

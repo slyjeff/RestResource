@@ -128,11 +128,7 @@ public static class FromHalJsonExtensions {
 
         var link = new Link(linkObject.Key, href.ToString(), verb: verb, templated: templated, timeout: timeout);
 
-        var inputItems = linkData["parameters"] as JObject;
-        if (inputItems == null) {
-            inputItems = linkData["fields"] as JObject;
-        }
-
+        var inputItems = linkData["parameters"] as JObject ?? linkData["fields"] as JObject;
 
         if (inputItems != null) {
             foreach (var inputItem in inputItems) {

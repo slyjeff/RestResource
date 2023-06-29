@@ -76,20 +76,18 @@ internal class TransformUrlEncodedFormsToJsonMiddleware {
     }
 
     private async Task WriteJsonToBody(HttpContext context, JObject json) {
-        using (var newBodyStream = new MemoryStream()) {
-            var request = context.Request;
-            request.Body = newBodyStream;
+        using var newBodyStream = new MemoryStream();
+        var request = context.Request;
+        request.Body = newBodyStream;
 
-            using (var streamWriter = new StreamWriter(newBodyStream)) {
-                await streamWriter.WriteAsync(json.ToString());
-                await streamWriter.FlushAsync();
-                newBodyStream.Seek(0, SeekOrigin.Begin);
+        await using var streamWriter = new StreamWriter(newBodyStream);
+        await streamWriter.WriteAsync(json.ToString());
+        await streamWriter.FlushAsync();
+        newBodyStream.Seek(0, SeekOrigin.Begin);
 
-                request.ContentType = JsonFormat;
+        request.ContentType = JsonFormat;
 
-                //we have to keep this stream open, so keep going- this will eventually get closed after the request is fully processed
-                await _next(context);
-            }
-        }
+        //we have to keep this stream open, so keep going- this will eventually get closed after the request is fully processed
+        await _next(context);
     }
 }
