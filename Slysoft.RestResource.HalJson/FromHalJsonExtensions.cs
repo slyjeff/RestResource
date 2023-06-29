@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using Newtonsoft.Json.Linq;
 
-namespace Slysoft.RestResource.HalJson; 
+namespace Slysoft.RestResource.HalJson;
 
 public static class FromHalJsonExtensions {
     /// <summary>
@@ -11,13 +11,17 @@ public static class FromHalJsonExtensions {
     /// <param name="json">JSON in  slysoft.hal+json format or hal+json format</param>
     /// <returns>The resource for ease of reference</returns>
     public static Resource FromHalJson(this Resource resource, string json) {
-        var o = JObject.Parse(json);
-        
+        return resource.FromHalJson(JObject.Parse(json));
+    }
+
+    private static Resource FromHalJson(this Resource resource, JObject o) {
         resource.GetUri(o);
 
         resource.GetData(o);
 
         resource.GetLinks(o);
+
+        resource.GetEmbedded(o);
 
         return resource;
     }
@@ -93,64 +97,96 @@ public static class FromHalJsonExtensions {
         }
 
         foreach (var linkObject in links) {
-            if (linkObject.Key == "self") {
+            resource.GetLink(linkObject);
+        }
+    }
+
+    private static void GetLink(this Resource resource, KeyValuePair<string, JToken?> linkObject) {
+        if (linkObject.Key == "self") {
+            return;
+        }
+
+        if (linkObject.Value is not JObject linkData) {
+            return;
+        }
+
+        if (linkData["href"] is not JValue href) {
+            return;
+        }
+
+        var verb = "GET";
+        if (linkData["verb"] is JValue verbValue) {
+            verb = verbValue.ToString();
+        }
+
+        var templated = linkData["templated"] != null;
+
+        var timeout = 0;
+        if (linkData["timeout"] is JValue timeoutValue) {
+            timeout = Convert.ToInt32(timeoutValue.Value);
+        }
+
+        var link = new Link(linkObject.Key, href.ToString(), verb: verb, templated: templated, timeout: timeout);
+
+        var inputItems = linkData["parameters"] as JObject;
+        if (inputItems == null) {
+            inputItems = linkData["fields"] as JObject;
+        }
+
+
+        if (inputItems != null) {
+            foreach (var inputItem in inputItems) {
+                link.GetInputItem(inputItem);
+            }
+        }
+
+        resource.Links.Add(link);
+    }
+
+    private static void GetInputItem(this Link link, KeyValuePair<string, JToken?> inputItemKeyValue) {
+        var inputItem = new InputItem(inputItemKeyValue.Key);
+        link.InputItems.Add(inputItem);
+
+        if (inputItemKeyValue.Value is not JObject inputItemValue) {
+            return;
+        }
+
+        if (inputItemValue["defaultValue"] is JValue defaultValue) {
+            inputItem.DefaultValue = defaultValue.ToString();
+        }
+
+        if (inputItemValue["type"] is JValue typeValue) {
+            inputItem.Type = typeValue.ToString();
+        }
+
+        if (inputItemValue["listOfValues"] is JArray listOfValues) {
+            foreach (var value in listOfValues) {
+                inputItem.ListOfValues.Add(value.ToString());
+            }
+        }
+    }
+
+
+    private static void GetEmbedded(this Resource resource, JObject o) {
+        if (o["_embedded"] is not JObject embeddedObjects) {
+            return;
+        }
+
+        foreach (var embedded in embeddedObjects) {
+            if (embedded.Value == null) {
                 continue;
             }
 
-            if (linkObject.Value is not JObject linkData) {
-                continue;
+
+            switch (embedded.Value) {
+                case JObject jObject:
+                    resource.EmbeddedResources[embedded.Key] = new Resource().FromHalJson(jObject.ToString());
+                    break;
+                case JArray jArray:
+                    IList<Resource> embeddedList = jArray.OfType<JObject>().Select(item => new Resource().FromHalJson(item)).ToList();
+                    resource.EmbeddedResources[embedded.Key] = embeddedList;
+                    break;
             }
-
-            if (linkData["href"] is not JValue href) {
-                continue;
-            }
-
-            var verb = "GET";
-            if (linkData["verb"] is JValue verbValue) {
-                verb = verbValue.ToString();
-            }
-
-            var templated = linkData["templated"] != null;
-
-            var timeout = 0;
-            if (linkData["timeout"] is JValue timeoutValue) {
-                timeout =  Convert.ToInt32(timeoutValue.Value);
-            }
-
-            var link = new Link(linkObject.Key, href.ToString(),  verb: verb, templated: templated, timeout: timeout);
-
-            var inputItems = linkData["parameters"] as JObject;
-            if (inputItems == null) {
-                inputItems = linkData["fields"] as JObject;
-            }
-
-
-            if (inputItems != null) {
-                foreach (var inputItemKeyValue in inputItems) {
-                    var inputItem = new InputItem(inputItemKeyValue.Key);
-                    link.InputItems.Add(inputItem);
-
-                    if (inputItemKeyValue.Value is not JObject inputItemValue) {
-                        continue;
-                    }
-
-                    if (inputItemValue["defaultValue"] is JValue defaultValue) {
-                        inputItem.DefaultValue = defaultValue.ToString();
-                    }
-
-                    if (inputItemValue["type"] is JValue typeValue) {
-                        inputItem.Type = typeValue.ToString();
-                    }
-
-                    if (inputItemValue["listOfValues"] is JArray listOfValues) {
-                        foreach (var value in listOfValues) {
-                            inputItem.ListOfValues.Add(value.ToString());
-                        }
-                    }
-                }
-            }
-
-            resource.Links.Add(link);
         }
     }
 }
