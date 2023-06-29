@@ -1,4 +1,6 @@
-﻿namespace Slysoft.RestResource.Extensions;
+﻿using System.Reflection;
+
+namespace Slysoft.RestResource.Extensions;
 
 public static class AccessorExtensions {
     /// <summary>
@@ -11,8 +13,41 @@ public static class AccessorExtensions {
     public static T? GetData<T>(this Resource resource, string name) {
         foreach (var data in resource.Data) {
             if (data.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
-                return (T?)data.Value;
+                var type = typeof(T);
+                var value = data.Value;
+                if (value == null) {
+                    return default;
+                }
+
+                if (value.GetType() == type) {
+                    return (T?)value;
+                }
+
+
+                return (T?)ParseValue(value.ToString(), type);
             }
+        }
+
+        return default;
+    }
+
+    private static object? ParseValue(string value, Type type) {
+        if (type == typeof(string)) {
+            return value;
+        }
+
+        if (type.IsEnum) {
+            return Enum.Parse(type, value);
+        }
+
+        var underlyingType = Nullable.GetUnderlyingType(type);
+        if (underlyingType != null) {
+            return string.IsNullOrEmpty(value) ? null : ParseValue(value, underlyingType);
+        }
+
+        var parseMethod = type.GetMethod("Parse", BindingFlags.Static | BindingFlags.Public, null, new[] { typeof(string) }, null);
+        if (parseMethod != null) {
+            return parseMethod.Invoke(null, new object[] { value });
         }
 
         return default;

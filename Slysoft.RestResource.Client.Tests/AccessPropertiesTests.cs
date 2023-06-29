@@ -14,7 +14,7 @@ public sealed class AccessPropertiesTests {
     }
 
     [TestMethod]
-    public void MustBeAbleToAccessString() {
+    public void MustBeAbleToAccessAString() {
         //arrange
         var source = new SimpleResource();
         var resource = new Resource()
@@ -27,5 +27,63 @@ public sealed class AccessPropertiesTests {
 
         //assert
         Assert.AreEqual(source.Message, destination.Message);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAnInt() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .Data("number", source.Number.ToString());
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.Number, destination.Number);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAnEnum() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .Data("option", source.Option.ToString());
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.Option, destination.Option);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAnNullable() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .Data("isOptional", source.IsOptional.ToString());
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.IsOptional, destination.IsOptional);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToAccessFormattedValue() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .MapDataFrom(source)
+            .Map(x => x.Date, "yyyy-MM-dd hh:mm:ss tt")
+            .EndMap();
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.Date.ToString(), destination.Date.ToString());
     }
 }
