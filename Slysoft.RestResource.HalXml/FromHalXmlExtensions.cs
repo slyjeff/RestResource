@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using Slysoft.RestResource.Extensions;
+using System.Collections;
 using System.Xml.Linq;
 
-namespace Slysoft.RestResource.HalXml; 
+namespace Slysoft.RestResource.HalXml;
 
 public static class FromHalXmlExtensions {
     /// <summary>
@@ -11,13 +12,17 @@ public static class FromHalXmlExtensions {
     /// <param name="xml">XML in slysoft.hal+xml format or hal+lmx format</param>
     /// <returns>The resource for ease of reference</returns>
     public static Resource FromHalXml(this Resource resource, string xml) {
-        var xElement = XElement.Parse(xml);
+        return resource.FromHalXml(XElement.Parse(xml));
+    }
 
+    private static Resource FromHalXml(this Resource resource, XElement xElement) {
         resource.GetUri(xElement);
 
         resource.GetData(xElement);
 
         resource.GetLinks(xElement);
+
+        resource.GetEmbedded(xElement);
 
         return resource;
     }
@@ -65,7 +70,7 @@ public static class FromHalXmlExtensions {
         }
 
         if (!firstValue.Elements().Any()) {
-            return xElements.Select(x => (object ? )x.Value).ToList();
+            return xElements.Select(x => (object?)x.Value).ToList();
         }
 
         var list = new List<IDictionary<string, object?>>();
@@ -99,42 +104,73 @@ public static class FromHalXmlExtensions {
             bool.TryParse(element.Attribute("templated")?.Value ?? "false", out var templated);
 
             int.TryParse(element.Attribute("timeout")?.Value ?? "0", out var timeout);
-            
+
             var link = new Link(name, href, verb: verb, templated: templated, timeout: timeout);
 
             foreach (var inputItemElement in element.Elements()) {
-                if (inputItemElement.Name.LocalName is not ("parameter" or "field")) {
-                    continue;
-                }
-
-                var inputElementName = inputItemElement.Attribute("name")?.Value;
-                if (inputElementName == null) {
-                    continue;
-                }
-
-                var inputItem = new InputItem(inputElementName);
-                link.InputItems.Add(inputItem);
-
-                foreach (var inputItemDataElement in inputItemElement.Elements()) {
-                    if (inputItemDataElement.Name.LocalName == "defaultValue") {
-                        inputItem.DefaultValue = inputItemDataElement.Value;
-                        continue;
-                    }
-
-                    if (inputItemDataElement.Name.LocalName == "type") {
-                        inputItem.Type = inputItemDataElement.Value;
-                    }
-
-                    if (inputItemDataElement.Name.LocalName == "listOfValues") {
-                        foreach (var value in inputItemDataElement.Elements()) {
-                            inputItem.ListOfValues.Add(value.Value);
-                        }
-                    }
-                }
+                link.GetInputItem(inputItemElement);
             }
 
             resource.Links.Add(link);
         }
     }
 
+    private static void GetInputItem(this Link link, XElement? inputItemElement) {
+        if (inputItemElement?.Name.LocalName is not ("parameter" or "field")) {
+            return;
+        }
+
+        var inputElementName = inputItemElement.Attribute("name")?.Value;
+        if (inputElementName == null) {
+            return;
+        }
+
+        var inputItem = new InputItem(inputElementName);
+        link.InputItems.Add(inputItem);
+
+        foreach (var inputItemDataElement in inputItemElement.Elements()) {
+            switch (inputItemDataElement.Name.LocalName) {
+                case "defaultValue":
+                    inputItem.DefaultValue = inputItemDataElement.Value;
+                    break;
+                case "type":
+                    inputItem.Type = inputItemDataElement.Value;
+                    break;
+                case "listOfValues": {
+                    foreach (var value in inputItemDataElement.Elements()) {
+                        inputItem.ListOfValues.Add(value.Value);
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void GetEmbedded(this Resource resource, XContainer xElements) {
+        var resourceLists = new Dictionary<string, IList<Resource>>();
+        foreach (var element in xElements.Elements()) {
+            if (element.Name.LocalName != "resource") {
+                continue;
+            }
+
+            var name = element.Attribute("rel")?.Value;
+            if (string.IsNullOrEmpty(name)) {
+                continue;
+            }
+
+            if (!resourceLists.ContainsKey(name)) {
+                resourceLists[name] = new List<Resource>();
+            }
+            resourceLists[name].Add(new Resource().FromHalXml(element));
+        }
+
+        foreach (var resourceList in resourceLists) {
+            if (resourceList.Value.Count == 1) {
+                resource.EmbeddedResources[resourceList.Key] = resourceList.Value.First();
+                continue;
+            }
+            resource.EmbeddedResources[resourceList.Key] = resourceList.Value;
+        }
+    }
 }
