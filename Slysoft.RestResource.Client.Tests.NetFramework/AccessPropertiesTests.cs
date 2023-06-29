@@ -2,7 +2,7 @@
 using Slysoft.RestResource.Client.Tests.Common;
 using Slysoft.RestResource.Extensions;
 
-namespace Slysoft.RestResource.Client.Tests;
+namespace Slysoft.RestResource.Client.Tests.NetFramework;
 
 [TestClass]
 public sealed class AccessPropertiesTests {

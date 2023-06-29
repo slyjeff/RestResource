@@ -40,14 +40,13 @@ public class ResourceAccessorFactory : IResourceAccessorFactory {
         lock (CreatedTypes) {
             if (!CreatedTypes.ContainsKey(typeToCreate)) {
                 var factory = new TypedResourceGenerator<T>();
-
                 CreatedTypes[typeToCreate] = factory.GeneratedType();
             }
 
             accessorType = CreatedTypes[typeToCreate];
         }
 
-        if (Activator.CreateInstance(accessorType) is not T accessor) {
+        if (Activator.CreateInstance(accessorType, resource) is not T accessor) {
             throw new CreateAccessorException($"Create Instance for type {accessorType.Name} returned a null.");
         }
 

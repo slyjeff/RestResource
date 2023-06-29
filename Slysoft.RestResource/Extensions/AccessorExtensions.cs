@@ -2,6 +2,23 @@
 
 public static class AccessorExtensions {
     /// <summary>
+    /// Get data from the resource, converting it to the specified generic type
+    /// </summary>
+    /// <typeparam name="T">The data will be converted to this type, if possible</typeparam>
+    /// <param name="resource">Resource containing the data</param>
+    /// <param name="name">Case insensitive name of the data</param>
+    /// <returns>The data, converted to the specified type</returns>
+    public static T? GetData<T>(this Resource resource, string name) {
+        foreach (var data in resource.Data) {
+            if (data.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
+                return (T?)data.Value;
+            }
+        }
+
+        return default;
+    }
+
+    /// <summary>
     /// Get a single embedded resource by name
     /// </summary>
     /// <param name="resource">Resource to search</param>
