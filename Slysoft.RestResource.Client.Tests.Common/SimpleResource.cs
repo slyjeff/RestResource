@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TestUtils;
 
 namespace Slysoft.RestResource.Client.Tests.Common;
@@ -11,6 +12,8 @@ public interface ISimpleResource {
     OptionEnum Option { get; }
     bool? IsOptional { get; }
     DateTime Date { get;  }
+    IList<string> Strings { get; }
+    IList<int> Numbers { get; }
 }
 
 public sealed class SimpleResource : ISimpleResource {
@@ -19,4 +22,6 @@ public sealed class SimpleResource : ISimpleResource {
     public OptionEnum Option { get; set; } = OptionEnum.Option2;
     public bool? IsOptional { get; set; } = true;
     public DateTime Date { get; set; } = DateTime.Now;
+    public IList<string> Strings { get; } = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
+    public IList<int> Numbers { get; } = new List<int> { GenerateRandom.Int(), GenerateRandom.Int(), GenerateRandom.Int() };
 }

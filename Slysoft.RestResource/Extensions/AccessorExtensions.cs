@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 
 namespace Slysoft.RestResource.Extensions;
 
@@ -23,12 +24,28 @@ public static class AccessorExtensions {
                     return (T?)value;
                 }
 
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>)) {
+                    return (T?)ParseList((IEnumerable)value, type);
+                }
 
                 return (T?)ParseValue(value.ToString(), type);
             }
         }
 
         return default;
+    }
+
+    private static object? ParseList(IEnumerable enumerable, Type type) {
+        var genericArgumentType = type.GetGenericArguments()[0];
+        var listType = typeof(List<>);
+        var genericListType = listType.MakeGenericType(genericArgumentType);
+        var instance = Activator.CreateInstance(genericListType);
+        if (instance is IList list) {
+            foreach (var item in enumerable) {
+                list.Add(ParseValue(item.ToString(), genericArgumentType));
+            }
+        }
+        return instance;
     }
 
     private static object? ParseValue(string value, Type type) {

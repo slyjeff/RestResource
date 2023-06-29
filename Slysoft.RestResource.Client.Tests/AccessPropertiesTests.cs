@@ -86,4 +86,40 @@ public sealed class AccessPropertiesTests {
         //assert
         Assert.AreEqual(source.Date.ToString(), destination.Date.ToString());
     }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAListOfStrings() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .MapDataFrom(source)
+                .Map(x => x.Strings)
+            .EndMap();
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.Strings[0], destination.Strings[0]);
+        Assert.AreEqual(source.Strings[1], destination.Strings[1]);
+        Assert.AreEqual(source.Strings[2], destination.Strings[2]);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAListONumbers() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .MapDataFrom(source)
+                .Map(x => x.Numbers)
+            .EndMap();
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.Numbers[0], destination.Numbers[0]);
+        Assert.AreEqual(source.Numbers[1], destination.Numbers[1]);
+        Assert.AreEqual(source.Numbers[2], destination.Numbers[2]);
+    }
 }
