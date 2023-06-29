@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using System.Runtime.Versioning;
-
-namespace Slysoft.RestResource.Extensions;
+﻿namespace Slysoft.RestResource.Extensions;
 
 public static class AccessorExtensions {
     /// <summary>
