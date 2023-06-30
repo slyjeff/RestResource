@@ -66,7 +66,7 @@ public static class AccessorExtensions {
         var instance = Activator.CreateInstance(genericListType);
         if (instance is IList list) {
             foreach (var item in enumerable) {
-                list.Add(ParseValue(item.ToString(), genericArgumentType));
+                list.Add(ParseValue(item, genericArgumentType));
             }
         }
         return instance;
@@ -78,9 +78,8 @@ public static class AccessorExtensions {
             foreach (var dictionaryItem in dictionary) {
                 if (dictionaryItem.Key.Equals(property.Name, StringComparison.CurrentCultureIgnoreCase)) {
                     property.SetValue(newObject, ParseValue(dictionaryItem.Value, property.PropertyType));
+                    break;
                 }
-
-                continue;
             }
         }
         return newObject;

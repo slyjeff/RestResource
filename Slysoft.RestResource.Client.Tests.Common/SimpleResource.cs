@@ -15,6 +15,7 @@ public interface ISimpleResource {
     IList<string> Strings { get; }
     IList<int> Numbers { get; }
     ChildResource Child { get; }
+    IList<ChildResource> Children { get; }
 }
 
 public sealed class SimpleResource : ISimpleResource {
@@ -26,6 +27,7 @@ public sealed class SimpleResource : ISimpleResource {
     public IList<string> Strings { get; } = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
     public IList<int> Numbers { get; } = new List<int> { GenerateRandom.Int(), GenerateRandom.Int(), GenerateRandom.Int() };
     public ChildResource Child { get; } = new();
+    public IList<ChildResource> Children { get; } = new List<ChildResource> { new(), new(), new() };
 }
 
 

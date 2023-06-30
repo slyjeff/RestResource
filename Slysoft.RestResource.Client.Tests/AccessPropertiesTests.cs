@@ -139,4 +139,25 @@ public sealed class AccessPropertiesTests {
         Assert.AreEqual(source.Child.ChildMessage, destination.Child.ChildMessage);
         Assert.AreEqual(source.Child.ChildNumber, destination.Child.ChildNumber);
     }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAListOfObjects() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .MapDataFrom(source)
+            .Map(x => x.Children)
+            .EndMap();
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.Children[0].ChildMessage, destination.Children[0].ChildMessage);
+        Assert.AreEqual(source.Children[0].ChildNumber, destination.Children[0].ChildNumber);
+        Assert.AreEqual(source.Children[1].ChildMessage, destination.Children[1].ChildMessage);
+        Assert.AreEqual(source.Children[1].ChildNumber, destination.Children[1].ChildNumber);
+        Assert.AreEqual(source.Children[2].ChildMessage, destination.Children[2].ChildMessage);
+        Assert.AreEqual(source.Children[2].ChildNumber, destination.Children[2].ChildNumber);
+    }
 }
