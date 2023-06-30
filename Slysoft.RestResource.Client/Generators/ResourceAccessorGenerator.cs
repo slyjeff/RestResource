@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using Slysoft.RestResource.Client.Accessors;
 using Slysoft.RestResource.Client.Utils;
 
-namespace Slysoft.RestResource.Client; 
+namespace Slysoft.RestResource.Client.Generators;
 
-internal abstract class TypedResourceGenerator {
+internal abstract class ResourceAccessorGenerator {
     private static ModuleBuilder? _moduleBuilder;
 
     protected static ModuleBuilder ModuleBuilder {
@@ -14,7 +15,7 @@ internal abstract class TypedResourceGenerator {
                 return _moduleBuilder;
             }
 
-            var assemblyName = new AssemblyName { Name = "ResourceAccessor" };
+            var assemblyName = new AssemblyName { Name = Assembly.GetAssembly(typeof(ResourceAccessorGenerator)).FullName };
             _moduleBuilder = AssemblyBuilder
                 .DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run)
                 .DefineDynamicModule(assemblyName.Name);
@@ -24,12 +25,16 @@ internal abstract class TypedResourceGenerator {
     }
 }
 
-internal sealed class TypedResourceGenerator<T> : TypedResourceGenerator where T : class {
+internal sealed class ResourceAccessorGenerator<T> : ResourceAccessorGenerator where T : class {
     private readonly TypeBuilder _typeBuilder;
 
-    public TypedResourceGenerator() {
+    public ResourceAccessorGenerator() {
         try {
             var interfaceType = typeof(T);
+
+            if (!interfaceType.IsInterface) {
+                throw new CreateAccessorException($"Resource Accessor must be based on an interface. {typeof(T).Name} is not an interface");
+            }
 
 #if NET6_0_OR_GREATER
             var typeName = string.Concat(interfaceType.Name.AsSpan(1), "ResourceAccessor");
@@ -38,7 +43,7 @@ internal sealed class TypedResourceGenerator<T> : TypedResourceGenerator where T
 #endif
             _typeBuilder = ModuleBuilder.DefineType(typeName, TypeAttributes.Public, typeof(ResourceAccessor), new[] { interfaceType });
         } catch (Exception e) {
-            throw new CreateAccessorException($"Error defining type based in on interface {typeof(T)}", e);
+            throw new CreateAccessorException($"Error defining type based in on interface {typeof(T).Name}", e);
         }
     }
 
@@ -53,7 +58,7 @@ internal sealed class TypedResourceGenerator<T> : TypedResourceGenerator where T
         } catch (CreateAccessorException) {
             throw;
         } catch (Exception e) {
-            throw new CreateAccessorException($"Error generating accessor based in on interface {typeof(T)}", e);
+            throw new CreateAccessorException($"Error generating accessor based in on interface {typeof(T)}.Name", e);
         }
     }
 
@@ -64,12 +69,12 @@ internal sealed class TypedResourceGenerator<T> : TypedResourceGenerator where T
         var codeGenerator = constructorBuilder.GetILGenerator();
 
         if (_typeBuilder.BaseType == null) {
-            throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {typeof(T)}");
+            throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {typeof(T).Name}");
         }
 
         var baseCtor = _typeBuilder.BaseType.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, constructorArgs, null);
         if (baseCtor == null) {
-            throw new CreateAccessorException($"Base Constructor not found when generating accessor based in on interface {typeof(T)}");
+            throw new CreateAccessorException($"Base Constructor not found when generating accessor based in on interface {typeof(T).Name}");
         }
 
         codeGenerator.Emit(OpCodes.Ldarg_0);        //push 'this' onto the stack
@@ -88,12 +93,12 @@ internal sealed class TypedResourceGenerator<T> : TypedResourceGenerator where T
         var methodBuilder = _typeBuilder.DefineMethod("get_" + property.Name, MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.Standard | CallingConventions.HasThis, property.PropertyType, Type.EmptyTypes);
 
         if (_typeBuilder.BaseType == null) {
-            throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {typeof(T)}");
+            throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {typeof(T).Name}");
         }
 
-        var getDataMethod = _typeBuilder.BaseType.GetMethod("GetData", BindingFlags.Instance | BindingFlags.NonPublic, null, new [] { typeof(string)}, null);
+        var getDataMethod = _typeBuilder.BaseType.GetMethod("GetData", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
         if (getDataMethod == null) {
-            throw new CreateAccessorException($"Could not find 'GetData' method when generating based in on interface {typeof(T)}");
+            throw new CreateAccessorException($"Could not find 'GetData' method when generating based in on interface {typeof(T).Name}");
         }
 
         var typedGetDataMethod = getDataMethod.MakeGenericMethod(property.PropertyType);

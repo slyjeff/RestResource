@@ -6,13 +6,6 @@ namespace Slysoft.RestResource.Client.Tests.NetFramework;
 
 [TestClass]
 public sealed class AccessPropertiesTests {
-    private IResourceAccessorFactory _factory = null!;
-
-    [TestInitialize]
-    public void SetUp() {
-        _factory = new ResourceAccessorFactory();
-    }
-
     [TestMethod]
     public void MustBeAbleToAccessAString() {
         //arrange
@@ -23,7 +16,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Message, destination.Message);
@@ -37,7 +30,7 @@ public sealed class AccessPropertiesTests {
             .Data("number", source.Number.ToString());
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Number, destination.Number);
@@ -51,7 +44,7 @@ public sealed class AccessPropertiesTests {
             .Data("option", source.Option.ToString());
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Option, destination.Option);
@@ -65,7 +58,7 @@ public sealed class AccessPropertiesTests {
             .Data("isOptional", source.IsOptional.ToString());
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.IsOptional, destination.IsOptional);
@@ -81,7 +74,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Date.ToString(), destination.Date.ToString());
@@ -97,7 +90,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Strings[0], destination.Strings[0]);
@@ -115,7 +108,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Numbers[0], destination.Numbers[0]);
@@ -133,7 +126,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Child.ChildMessage, destination.Child.ChildMessage);
@@ -150,7 +143,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
 
         //assert
         Assert.AreEqual(source.Children[0].ChildMessage, destination.Children[0].ChildMessage);
@@ -159,5 +152,43 @@ public sealed class AccessPropertiesTests {
         Assert.AreEqual(source.Children[1].ChildNumber, destination.Children[1].ChildNumber);
         Assert.AreEqual(source.Children[2].ChildMessage, destination.Children[2].ChildMessage);
         Assert.AreEqual(source.Children[2].ChildNumber, destination.Children[2].ChildNumber);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAnInterface() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .MapDataFrom(source)
+            .Map(x => x.ChildInterface)
+            .EndMap();
+
+        //act
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.ChildInterface.ChildMessage, destination.ChildInterface.ChildMessage);
+        Assert.AreEqual(source.ChildInterface.ChildNumber, destination.ChildInterface.ChildNumber);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAListOfInterfaces() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .MapDataFrom(source)
+            .Map(x => x.ChildInterfaces)
+            .EndMap();
+
+        //act
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.ChildInterfaces[0].ChildMessage, destination.ChildInterfaces[0].ChildMessage);
+        Assert.AreEqual(source.ChildInterfaces[0].ChildNumber, destination.ChildInterfaces[0].ChildNumber);
+        Assert.AreEqual(source.ChildInterfaces[1].ChildMessage, destination.ChildInterfaces[1].ChildMessage);
+        Assert.AreEqual(source.ChildInterfaces[1].ChildNumber, destination.ChildInterfaces[1].ChildNumber);
+        Assert.AreEqual(source.ChildInterfaces[2].ChildMessage, destination.ChildInterfaces[2].ChildMessage);
+        Assert.AreEqual(source.ChildInterfaces[2].ChildNumber, destination.ChildInterfaces[2].ChildNumber);
     }
 }

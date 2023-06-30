@@ -1,18 +1,22 @@
 ﻿using System.Collections.Generic;
-using Slysoft.RestResource.Extensions;
+using Slysoft.RestResource.Client.Extensions;
 
-namespace Slysoft.RestResource.Client; 
+namespace Slysoft.RestResource.Client.Accessors;
 
-public abstract class ResourceAccessor  {
+public abstract class ResourceAccessor
+{
     private readonly Resource _resource;
     private readonly IDictionary<string, object?> _cachedData = new Dictionary<string, object?>();
 
-    protected ResourceAccessor(Resource resource) {
+    protected ResourceAccessor(Resource resource)
+    {
         _resource = resource;
     }
 
-    protected T? GetData<T>(string name) {
-        if (_cachedData.TryGetValue(name, out var value)) {
+    protected T? GetData<T>(string name)
+    {
+        if (_cachedData.TryGetValue(name, out var value))
+        {
             return (T?)value;
         }
 
