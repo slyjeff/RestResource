@@ -122,4 +122,21 @@ public sealed class AccessPropertiesTests {
         Assert.AreEqual(source.Numbers[1], destination.Numbers[1]);
         Assert.AreEqual(source.Numbers[2], destination.Numbers[2]);
     }
+
+    [TestMethod]
+    public void MustBeAbleToAccessAnObject() {
+        //arrange
+        var source = new SimpleResource();
+        var resource = new Resource()
+            .MapDataFrom(source)
+                .Map(x => x.Child)
+            .EndMap();
+
+        //act
+        var destination = _factory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.Child.ChildMessage, destination.Child.ChildMessage);
+        Assert.AreEqual(source.Child.ChildNumber, destination.Child.ChildNumber);
+    }
 }

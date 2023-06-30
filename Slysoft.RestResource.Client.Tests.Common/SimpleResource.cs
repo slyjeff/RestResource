@@ -14,6 +14,7 @@ public interface ISimpleResource {
     DateTime Date { get;  }
     IList<string> Strings { get; }
     IList<int> Numbers { get; }
+    ChildResource Child { get; }
 }
 
 public sealed class SimpleResource : ISimpleResource {
@@ -24,4 +25,11 @@ public sealed class SimpleResource : ISimpleResource {
     public DateTime Date { get; set; } = DateTime.Now;
     public IList<string> Strings { get; } = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
     public IList<int> Numbers { get; } = new List<int> { GenerateRandom.Int(), GenerateRandom.Int(), GenerateRandom.Int() };
+    public ChildResource Child { get; } = new();
+}
+
+
+public sealed class ChildResource {
+    public string ChildMessage { get; set; } = GenerateRandom.String();
+    public int ChildNumber { get; set; } = GenerateRandom.Int();
 }
