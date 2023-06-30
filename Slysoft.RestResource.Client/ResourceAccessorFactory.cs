@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Xml.Linq;
 using Slysoft.RestResource.Client.Generators;
 
 namespace Slysoft.RestResource.Client;
@@ -37,5 +39,20 @@ public static class ResourceAccessorFactory {
         }
 
         return accessor;
+    }
+
+    private static MethodInfo? _genericCreateAccessorMethod;
+
+    internal static object CreateAccessor(Type interfaceType, Resource resource) {
+        if (_genericCreateAccessorMethod == null) {
+            var createAccessorMethod = typeof(ResourceAccessorFactory).GetMethod("CreateAccessor", BindingFlags.Public | BindingFlags.Static);
+            if (createAccessorMethod == null) {
+                throw new CreateAccessorException("Method 'CreateAccessor' not found in ResourceAccessorFactory.");
+            }
+
+            _genericCreateAccessorMethod = createAccessorMethod.MakeGenericMethod(interfaceType);
+        }
+
+        return _genericCreateAccessorMethod.Invoke(null, new object[] { resource });
     }
 }

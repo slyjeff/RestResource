@@ -45,16 +45,9 @@ public static class AccessorExtensions {
 
                 var interfaceType = typeof(T).GetGenericArguments()[0];
 
-                var createAccessorMethod = typeof(ResourceAccessorFactory).GetMethod("CreateAccessor", BindingFlags.Public | BindingFlags.Static);
-                if (createAccessorMethod == null) {
-                    throw new CreateAccessorException("Method 'CreateAccessor' not found in ResourceAccessorFactory.");
-                }
-
-                var genericCreateAccessorMethod = createAccessorMethod.MakeGenericMethod(interfaceType);
-
                 var list = CreateListOfType(interfaceType);
                 foreach (var resourceItem in resourceList) {
-                    list.Add(genericCreateAccessorMethod.Invoke(null, new object[] { resourceItem }));
+                    list.Add(ResourceAccessorFactory.CreateAccessor(interfaceType, resourceItem));
                 }
 
                 return list;
