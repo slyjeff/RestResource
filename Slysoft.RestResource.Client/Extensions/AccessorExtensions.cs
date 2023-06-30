@@ -7,13 +7,17 @@ namespace Slysoft.RestResource.Client.Extensions;
 
 public static class AccessorExtensions {
     /// <summary>
-    /// Get data from the resource, converting it to the specified generic type
+    /// Get data or embedded resources from the resource, converting it to the specified generic type
     /// </summary>
     /// <typeparam name="T">The data will be converted to this type, if possible</typeparam>
     /// <param name="resource">Resource containing the data</param>
     /// <param name="name">Case insensitive name of the data</param>
     /// <returns>The data, converted to the specified type</returns>
     public static T? GetData<T>(this Resource resource, string name) {
+        var data = resource.EmbeddedResources.GetEmbeddedAccessor<T>(name);
+        if (data != null) {
+            return (T?)data;
+        }
         return resource.Data.GetData<T>(name);
     }
 
@@ -26,6 +30,54 @@ public static class AccessorExtensions {
 
         return default;
     }
+
+    private static object? GetEmbeddedAccessor<T>(this IDictionary<string, object> dictionary, string name) {
+        foreach (var data in dictionary) {
+            if (!data.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
+                continue;
+            }
+            
+            if (data.Value is IList<Resource> resourceList) {
+                var type = typeof(T);
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(IList<>)) {
+                    throw new CreateAccessorException($"Specified property {name} must be an IList<>.");
+                }
+
+                var interfaceType = typeof(T).GetGenericArguments()[0];
+
+                var createAccessorMethod = typeof(ResourceAccessorFactory).GetMethod("CreateAccessor", BindingFlags.Public | BindingFlags.Static);
+                if (createAccessorMethod == null) {
+                    throw new CreateAccessorException("Method 'CreateAccessor' not found in ResourceAccessorFactory.");
+                }
+
+                var genericCreateAccessorMethod = createAccessorMethod.MakeGenericMethod(interfaceType);
+
+                var list = CreateListOfType(interfaceType);
+                foreach (var resourceItem in resourceList) {
+                    list.Add(genericCreateAccessorMethod.Invoke(null, new object[] { resourceItem }));
+                }
+
+                return list;
+            }
+
+            if (data.Value is Resource resource) {
+                return ResourceAccessorFactory.CreateAccessor<T>(resource);
+            }
+        }
+
+        return null;
+    }
+
+    private static IList CreateListOfType(Type type) {
+        var listType = typeof(List<>);
+        var genericListType = listType.MakeGenericType(type);
+        if (Activator.CreateInstance(genericListType) is not IList list) {
+            throw new CreateAccessorException($"Error creating list of type {type.Name}");
+        }
+
+        return list;
+    }
+
 
     private static object? ParseValue(object? value, Type type) {
         if (value == null) {
@@ -69,18 +121,14 @@ public static class AccessorExtensions {
         return default;
     }
 
-    private static object? ParseList(IEnumerable enumerable, Type type) {
+    private static object ParseList(IEnumerable enumerable, Type type) {
         var genericArgumentType = type.GetGenericArguments()[0];
-        var listType = typeof(List<>);
-        var genericListType = listType.MakeGenericType(genericArgumentType);
-        var instance = Activator.CreateInstance(genericListType);
-        if (instance is IList list) {
-            foreach (var item in enumerable) {
-                list.Add(ParseValue(item, genericArgumentType));
-            }
+        var list = CreateListOfType(genericArgumentType);
+        foreach (var item in enumerable) {
+            list.Add(ParseValue(item, genericArgumentType));
         }
 
-        return instance;
+        return list;
     }
 
     private static object? ParseObject(IDictionary<string, object?> dictionary, Type type) {

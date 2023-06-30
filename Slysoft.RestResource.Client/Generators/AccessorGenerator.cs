@@ -17,9 +17,9 @@ internal abstract class AccessorGenerator {
 
         try {
 #if NET6_0_OR_GREATER
-            var typeName = string.Concat(interfaceType.Name.AsSpan(1), "DictionaryAccessor");
+            var typeName = string.Concat(interfaceType.Name.AsSpan(1), accessorType.Name);
 #else 
-            var typeName = string.Concat(interfaceType.Name.Substring(1), "ResourceAccessor");
+            var typeName = string.Concat(interfaceType.Name.Substring(1), accessorType.Name);
 #endif
             TypeBuilder = ModuleBuilder.DefineType(typeName, TypeAttributes.Public, accessorType, new[] { interfaceType });
         } catch (Exception e) {

@@ -18,7 +18,7 @@ public static class ResourceAccessorFactory {
     /// <typeparam name="T">Interface to implement when creating the access class</typeparam>
     /// <param name="resource">Resource that will be accessed</param>
     /// <returns>An object that implements T interface to access properties of the passed in resource</returns>
-    public static T CreateAccessor<T>(Resource resource) where T : class {
+    public static T CreateAccessor<T>(Resource resource) {
         var typeToCreate = typeof(T);
 
         Type accessorType;

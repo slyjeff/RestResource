@@ -5,7 +5,7 @@ using Slysoft.RestResource.Client.Accessors;
 
 namespace Slysoft.RestResource.Client.Generators;
 
-internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator where T : class {
+internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
     public ResourceAccessorGenerator() : base(typeof(T), typeof(ResourceAccessor)) {
     }
 

@@ -191,4 +191,47 @@ public sealed class AccessPropertiesTests {
         Assert.AreEqual(source.ChildInterfaces[2].ChildMessage, destination.ChildInterfaces[2].ChildMessage);
         Assert.AreEqual(source.ChildInterfaces[2].ChildNumber, destination.ChildInterfaces[2].ChildNumber);
     }
+
+    [TestMethod]
+    public void MustBeAbleToReadAnEmbeddedResource() {
+        //arrange
+        var source = new ChildResource();
+        var embeddedResource = new Resource()
+            .MapDataFrom(source)
+                .Map(x => x.ChildMessage)
+            .EndMap();
+
+        var resource = new Resource()
+            .Embedded("childInterface", embeddedResource);
+
+        //act
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source.ChildMessage, destination.ChildInterface.ChildMessage);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToReadAListOfEmbeddedResources() {
+        //arrange
+        var source1 = new ChildResource();
+        var source2 = new ChildResource();
+        var source3 = new ChildResource();
+        var embeddedResources = new List<Resource> {
+            new Resource().MapDataFrom(source1).Map(x => x.ChildMessage).EndMap(),
+            new Resource().MapDataFrom(source2).Map(x => x.ChildMessage).EndMap(),
+            new Resource().MapDataFrom(source3).Map(x => x.ChildMessage).EndMap()
+        };
+
+        var resource = new Resource()
+            .Embedded("childInterfaces", embeddedResources);
+
+        //act
+        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+
+        //assert
+        Assert.AreEqual(source1.ChildMessage, destination.ChildInterfaces[0].ChildMessage);
+        Assert.AreEqual(source2.ChildMessage, destination.ChildInterfaces[1].ChildMessage);
+        Assert.AreEqual(source3.ChildMessage, destination.ChildInterfaces[2].ChildMessage);
+    }
 }
