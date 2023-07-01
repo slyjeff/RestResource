@@ -15,4 +15,15 @@ internal static class TypeExtensions {
 
         return properties;
     }
+
+    public static IEnumerable<MethodInfo> GetAllMethods(this Type type) {
+        var methods = type.GetMethods().ToList();
+        foreach (var interfaceType in type.GetInterfaces()) {
+            var methodsFromInterface = interfaceType.GetAllMethods();
+            methods.AddRange(methodsFromInterface);
+        }
+
+        return methods;
+    }
+
 }

@@ -5,16 +5,9 @@ using System.Reflection;
 
 namespace Slysoft.RestResource.Client.Extensions;
 
-public static class AccessorExtensions {
-    /// <summary>
-    /// Get data or embedded resources from the resource, converting it to the specified generic type
-    /// </summary>
-    /// <typeparam name="T">The data will be converted to this type, if possible</typeparam>
-    /// <param name="resource">Resource containing the data</param>
-    /// <param name="name">Case insensitive name of the data</param>
-    /// <returns>The data, converted to the specified type</returns>
-    public static T? GetData<T>(this Resource resource, string name) {
-        var data = resource.EmbeddedResources.GetEmbeddedAccessor<T>(name);
+internal static class AccessorExtensions {
+    internal static T? GetData<T>(this Resource resource, string name, IRestClient restClient) {
+        var data = resource.EmbeddedResources.GetEmbeddedAccessor<T>(name, restClient);
         if (data != null) {
             return (T?)data;
         }
@@ -31,7 +24,7 @@ public static class AccessorExtensions {
         return default;
     }
 
-    private static object? GetEmbeddedAccessor<T>(this IDictionary<string, object> dictionary, string name) {
+    private static object? GetEmbeddedAccessor<T>(this IDictionary<string, object> dictionary, string name, IRestClient restClient) {
         foreach (var data in dictionary) {
             if (!data.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 continue;
@@ -47,14 +40,14 @@ public static class AccessorExtensions {
 
                 var list = CreateListOfType(interfaceType);
                 foreach (var resourceItem in resourceList) {
-                    list.Add(ResourceAccessorFactory.CreateAccessor(interfaceType, resourceItem));
+                    list.Add(ResourceAccessorFactory.CreateAccessor(interfaceType, resourceItem, restClient));
                 }
 
                 return list;
             }
 
             if (data.Value is Resource resource) {
-                return ResourceAccessorFactory.CreateAccessor<T>(resource);
+                return ResourceAccessorFactory.CreateAccessor<T>(resource, restClient);
             }
         }
 
@@ -98,7 +91,7 @@ public static class AccessorExtensions {
         }
 
         if (type.IsEnum) {
-            return Enum.Parse(type, value.ToString());
+            return Enum.Parse(type, value.ToString() ?? string.Empty);
         }
 
         var underlyingType = Nullable.GetUnderlyingType(type);

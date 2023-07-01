@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
 using Slysoft.RestResource.Client.Generators;
 
 namespace Slysoft.RestResource.Client;
@@ -19,8 +18,9 @@ public static class ResourceAccessorFactory {
     /// </summary>
     /// <typeparam name="T">Interface to implement when creating the access class</typeparam>
     /// <param name="resource">Resource that will be accessed</param>
+    /// <param name="restClient">RestClient so that links can be called</param>
     /// <returns>An object that implements T interface to access properties of the passed in resource</returns>
-    public static T CreateAccessor<T>(Resource resource) {
+    public static T CreateAccessor<T>(Resource resource, IRestClient restClient) {
         var typeToCreate = typeof(T);
 
         Type accessorType;
@@ -34,7 +34,7 @@ public static class ResourceAccessorFactory {
             accessorType = CreatedTypes[typeToCreate];
         }
 
-        if (Activator.CreateInstance(accessorType, resource) is not T accessor) {
+        if (Activator.CreateInstance(accessorType, resource, restClient) is not T accessor) {
             throw new CreateAccessorException($"Create Instance for type {accessorType.Name} returned a null.");
         }
 
@@ -43,7 +43,7 @@ public static class ResourceAccessorFactory {
 
     private static MethodInfo? _genericCreateAccessorMethod;
 
-    internal static object CreateAccessor(Type interfaceType, Resource resource) {
+    internal static object CreateAccessor(Type interfaceType, Resource resource, IRestClient restClient) {
         if (_genericCreateAccessorMethod == null) {
             var createAccessorMethod = typeof(ResourceAccessorFactory).GetMethod("CreateAccessor", BindingFlags.Public | BindingFlags.Static);
             if (createAccessorMethod == null) {
@@ -53,6 +53,6 @@ public static class ResourceAccessorFactory {
             _genericCreateAccessorMethod = createAccessorMethod.MakeGenericMethod(interfaceType);
         }
 
-        return _genericCreateAccessorMethod.Invoke(null, new object[] { resource });
+        return _genericCreateAccessorMethod.Invoke(null, new object[] { resource, restClient });
     }
 }

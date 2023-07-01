@@ -20,3 +20,25 @@ public sealed class CreateAccessorException : RestResourceClientException {
     internal CreateAccessorException(string message, Exception innerException) : base(message, innerException) {
     }
 }
+
+/// <summary>
+/// An error thrown when a REST call fails
+/// </summary>
+public sealed class RestCallException : RestResourceClientException {
+    internal RestCallException(string message) : base(message) {
+    }
+
+    internal RestCallException(string message, Exception innerException) : base(message, innerException) {
+    }
+}
+
+/// <summary>
+/// An error thrown when calling a link fails
+/// </summary>
+public sealed class CallLinkException : RestResourceClientException {
+    internal CallLinkException(string message) : base(message) {
+    }
+
+    internal CallLinkException(string message, Exception innerException) : base(message, innerException) {
+    }
+}

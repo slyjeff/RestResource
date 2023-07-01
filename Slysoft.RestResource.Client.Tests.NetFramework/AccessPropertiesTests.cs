@@ -2,11 +2,16 @@
 using Slysoft.RestResource.Client.Tests.Common;
 using Slysoft.RestResource.Extensions;
 using System.Collections.Generic;
+using Moq;
 
 namespace Slysoft.RestResource.Client.Tests.NetFramework;
 
 [TestClass]
 public sealed class AccessPropertiesTests {
+    private static ISimpleResource CreateAccessor(Resource resource) {
+        return ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource, new Mock<IRestClient>().Object);
+    }
+
     [TestMethod]
     public void MustBeAbleToAccessAString() {
         //arrange
@@ -17,7 +22,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Message, destination.Message);
@@ -31,7 +36,7 @@ public sealed class AccessPropertiesTests {
             .Data("number", source.Number.ToString());
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Number, destination.Number);
@@ -45,7 +50,7 @@ public sealed class AccessPropertiesTests {
             .Data("option", source.Option.ToString());
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Option, destination.Option);
@@ -59,7 +64,7 @@ public sealed class AccessPropertiesTests {
             .Data("isOptional", source.IsOptional.ToString());
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.IsOptional, destination.IsOptional);
@@ -75,7 +80,7 @@ public sealed class AccessPropertiesTests {
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Date.ToString(), destination.Date.ToString());
@@ -87,11 +92,11 @@ public sealed class AccessPropertiesTests {
         var source = new SimpleResource();
         var resource = new Resource()
             .MapDataFrom(source)
-            .Map(x => x.Strings)
+                .Map(x => x.Strings)
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Strings[0], destination.Strings[0]);
@@ -105,11 +110,11 @@ public sealed class AccessPropertiesTests {
         var source = new SimpleResource();
         var resource = new Resource()
             .MapDataFrom(source)
-            .Map(x => x.Numbers)
+                .Map(x => x.Numbers)
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Numbers[0], destination.Numbers[0]);
@@ -123,28 +128,28 @@ public sealed class AccessPropertiesTests {
         var source = new SimpleResource();
         var resource = new Resource()
             .MapDataFrom(source)
-            .Map(x => x.Child)
+                .Map(x => x.Child)
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Child.ChildMessage, destination.Child.ChildMessage);
         Assert.AreEqual(source.Child.ChildNumber, destination.Child.ChildNumber);
     }
-    
+
     [TestMethod]
     public void MustBeAbleToAccessAListOfObjects() {
         //arrange
         var source = new SimpleResource();
         var resource = new Resource()
             .MapDataFrom(source)
-                .Map(x => x.Children)
+            .Map(x => x.Children)
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.Children[0].ChildMessage, destination.Children[0].ChildMessage);
@@ -161,11 +166,11 @@ public sealed class AccessPropertiesTests {
         var source = new SimpleResource();
         var resource = new Resource()
             .MapDataFrom(source)
-            .Map(x => x.ChildInterface)
+                .Map(x => x.ChildInterface)
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.ChildInterface.ChildMessage, destination.ChildInterface.ChildMessage);
@@ -178,11 +183,11 @@ public sealed class AccessPropertiesTests {
         var source = new SimpleResource();
         var resource = new Resource()
             .MapDataFrom(source)
-            .Map(x => x.ChildInterfaces)
+                .Map(x => x.ChildInterfaces)
             .EndMap();
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.ChildInterfaces[0].ChildMessage, destination.ChildInterfaces[0].ChildMessage);
@@ -199,14 +204,14 @@ public sealed class AccessPropertiesTests {
         var source = new ChildResource();
         var embeddedResource = new Resource()
             .MapDataFrom(source)
-            .Map(x => x.ChildMessage)
+                .Map(x => x.ChildMessage)
             .EndMap();
 
         var resource = new Resource()
             .Embedded("childInterface", embeddedResource);
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source.ChildMessage, destination.ChildInterface.ChildMessage);
@@ -228,7 +233,7 @@ public sealed class AccessPropertiesTests {
             .Embedded("childInterfaces", embeddedResources);
 
         //act
-        var destination = ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource);
+        var destination = CreateAccessor(resource);
 
         //assert
         Assert.AreEqual(source1.ChildMessage, destination.ChildInterfaces[0].ChildMessage);
