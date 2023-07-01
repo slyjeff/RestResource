@@ -7,7 +7,7 @@ using Moq;
 namespace Slysoft.RestResource.Client.Tests.NetFramework;
 
 [TestClass]
-public sealed class AccessPropertiesTests {
+public sealed class PropertyTests {
     private static ISimpleResource CreateAccessor(Resource resource) {
         return ResourceAccessorFactory.CreateAccessor<ISimpleResource>(resource, new Mock<IRestClient>().Object);
     }

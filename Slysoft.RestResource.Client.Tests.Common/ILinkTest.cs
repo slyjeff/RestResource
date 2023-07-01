@@ -1,15 +1,20 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Slysoft.RestResource.Client.Tests.Common; 
 
 public interface ILinkTest {
-    IUser GetAllUsers();
+    IUserList GetAllUsers();
 }
 
 public interface ILinkTestAsync {
-    Task<IUser> GetAllUsers();
+    Task<IUserList> GetAllUsers();
+}
+
+public interface IUserList {
+    IList<IUser> Users { get; }
 }
 
 public interface IUser {
-    public string Name { get; set; }
+    public string Name { get; }
 }

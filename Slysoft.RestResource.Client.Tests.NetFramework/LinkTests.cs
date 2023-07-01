@@ -2,10 +2,11 @@
 using Moq;
 using Slysoft.RestResource.Client.Tests.Common;
 using Slysoft.RestResource.Extensions;
+using System.Collections.Generic;
 using Slysoft.RestResource.Client.Tests.Common.Extensions;
 using TestUtils;
 
-namespace Slysoft.RestResource.Client.Tests;
+namespace Slysoft.RestResource.Client.Tests.NetFramework;
 
 [TestClass]
 public sealed class LinkTests {
@@ -16,7 +17,7 @@ public sealed class LinkTests {
         _mockRestClient = new Mock<IRestClient>();
     }
 
-   
+
     [TestMethod]
     public void GetWithoutParametersMustMakeCall() {
         //arrange

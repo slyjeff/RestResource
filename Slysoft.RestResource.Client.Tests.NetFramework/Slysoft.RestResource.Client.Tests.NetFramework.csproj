@@ -65,7 +65,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccessPropertiesTests.cs" />
+    <Compile Include="PropertyTests.cs" />
+    <Compile Include="LinkTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +84,10 @@
     <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj">
       <Project>{620F2ABE-F2E7-4837-B35D-072C1B9FB777}</Project>
       <Name>Slysoft.RestResource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestUtils\TestUtils.csproj">
+      <Project>{5BBA0026-2BD9-47B1-9B3C-1E5C762D2A8D}</Project>
+      <Name>TestUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
