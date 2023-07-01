@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Accessors;
 using Slysoft.RestResource.Client.Utils;
 
@@ -70,11 +71,15 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
             throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {typeof(T).Name}");
         }
 
-        var callRestLinkMethod = TypeBuilder.BaseType.GetMethod("CallRestLink", BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(string), typeof(IDictionary<string, object?>) }, null);
+        var isAsync = method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>);
+        var methodName = isAsync ? "CallRestLinkAsync" : "CallRestLink";
+        var callRestLinkMethod = TypeBuilder.BaseType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(string), typeof(IDictionary<string, object?>) }, null);
         if (callRestLinkMethod == null) {
-            throw new CreateAccessorException($"'CallRestLink' not found when generating accessor based in on interface {typeof(T).Name}");
+            throw new CreateAccessorException($"'{methodName}' not found when generating accessor based in on interface {typeof(T).Name}");
         }
-        var typedCallRestLinkMethod = callRestLinkMethod.MakeGenericMethod(method.ReturnType);
+
+        var returnType = isAsync ? method.ReturnType.GenericTypeArguments[0] : method.ReturnType;
+        var typedCallRestLinkMethod = callRestLinkMethod.MakeGenericMethod(returnType);
 
         codeGenerator.Emit(OpCodes.Ldarg_0);                            //push 'this' onto the stack
         codeGenerator.Emit(OpCodes.Ldstr, method.Name);                 //push the name of the link onto the stack

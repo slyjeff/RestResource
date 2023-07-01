@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Extensions;
 using Slysoft.RestResource.Extensions;
 
@@ -34,6 +35,19 @@ public abstract class ResourceAccessor {
 
         try {
             return RestClient.Call<T>(link.Href);
+        } catch (Exception e) {
+            throw new CallLinkException($"Error calling link {name}.", e);
+        }
+    }
+
+    public async Task<T> CallRestLinkAsync<T>(string name, IDictionary<string, object?> parameters) {
+        var link = Resource.GetLink(name);
+        if (link == null) {
+            throw new CallLinkException($"Link {name} not found in resource.");
+        }
+
+        try {
+            return await RestClient.CallAsync<T>(link.Href);
         } catch (Exception e) {
             throw new CallLinkException($"Error calling link {name}.", e);
         }

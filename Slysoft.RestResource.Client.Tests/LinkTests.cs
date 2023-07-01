@@ -17,6 +17,9 @@ public sealed class LinkTests {
     private void VerifyCall<T>(string url, string? verb = null, string? body = null, int timeout = 0) {
         _mockRestClient.Verify(x => x.Call<T>(It.Is<string>(a => a == url), It.Is<string?>(b => b == verb), It.Is<string?>(c => c == body), It.Is<int>(d => d == timeout)), Times.Once);
     }
+    private void VerifyAsyncCall<T>(string url, string? verb = null, string? body = null, int timeout = 0) {
+        _mockRestClient.Verify(x => x.CallAsync<T>(It.Is<string>(a => a == url), It.Is<string?>(b => b == verb), It.Is<string?>(c => c == body), It.Is<int>(d => d == timeout)), Times.Once);
+    }
 
     [TestMethod]
     public void GetWithoutParametersMustMakeCall() {
@@ -31,5 +34,20 @@ public sealed class LinkTests {
 
         //assert
         VerifyCall<IUser>("/user");
+    }
+
+    [TestMethod]
+    public void MustSupportAsyncCalls() {
+        //arrange
+        var linkTestResource = new Resource()
+            .Get("getAllUsers", "/user");
+
+        var linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTestAsync>(linkTestResource, _mockRestClient.Object);
+
+        //act
+        linkTest.GetAllUsers().Wait();
+
+        //assert
+        VerifyAsyncCall<IUser>("/user");
     }
 }
