@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Extensions;
+using Slysoft.RestResource.Client.ResourceDeserializers;
 
 namespace Slysoft.RestResource.Client;
 
@@ -12,6 +13,11 @@ namespace Slysoft.RestResource.Client;
 /// Injectable into ResourceAccessors so they can call links
 /// </summary>
 public interface IRestClient {
+    /// <summary>
+    /// Deserializers that can convert a HttpResponseMessage to a Resource- slysoft.json+hal and slysoft.xml+hal are already registered, but can be removed
+    /// </summary>
+    IList<IResourceDeserializer> ResourceDeserializers { get; }
+
     /// <summary>
     /// Make a synchronous web service call, returning the result as the type specified
     /// </summary>
@@ -51,6 +57,14 @@ public sealed class RestClient : IRestClient {
     }
 
     /// <summary>
+    /// Deserializers that can convert a HttpResponseMessage to a Resource- slysoft.json+hal and slysoft.xml+hal are already registered, but can be removed
+    /// </summary>
+    public IList<IResourceDeserializer> ResourceDeserializers { get; } = new List<IResourceDeserializer> {
+        new HalJsonDeserializer(),
+        new XmlDeserializer(),
+    };
+
+    /// <summary>
     /// Make a synchronous web service call
     /// </summary>
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
@@ -65,7 +79,7 @@ public sealed class RestClient : IRestClient {
             return (T)(object)response.GetContent();
         }
 
-        var resource = response.ToResource();
+        var resource = ConvertResponseToResource(response);
         if (typeof(T) == typeof(Resource)) {
             return (T)(object)resource;
         }
@@ -88,12 +102,22 @@ public sealed class RestClient : IRestClient {
             return (T)(object)await response.Content.ReadAsStringAsync();
         }
 
-        var resource = await response.ToResourceAsync();
+        var resource = ConvertResponseToResource(response);
         if (typeof(T) == typeof(Resource)) {
             return (T)(object)resource;
         }
 
         return ResourceAccessorFactory.CreateAccessor<T>(resource, this);
+    }
+
+    internal Resource ConvertResponseToResource(HttpResponseMessage response) {
+        foreach (var deserializer in ResourceDeserializers) {
+            if (deserializer.CanDeserialize(response)) {
+                return deserializer.Deserialize(response);
+            }
+        }
+
+        throw new RestCallException($"content type {response.GetContentType()} not supported by registered deserializers");
     }
 
     private HttpResponseMessage Call(string url, string? verb = null, string? body = null, int timeout = 0) {
