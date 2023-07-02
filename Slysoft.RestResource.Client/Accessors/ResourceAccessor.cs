@@ -81,12 +81,16 @@ public abstract class ResourceAccessor {
         return new CallableLink(url, body);
     }
 
-    private static IDictionary<string, object?> GetInputElements(IList<InputItem> inputItems, IDictionary<string, object?> parameters) {
+    private static IDictionary<string, object?> GetInputElements(IEnumerable<InputItem> inputItems, IDictionary<string, object?> parameters) {
         var dictionary = new Dictionary<string, object?>();
         foreach (var inputItem in inputItems) {
             var value = parameters.GetValue(inputItem.Name);
             if (value == null) {
-                continue;
+                if (inputItem.DefaultValue == null) {
+                    continue;
+                }
+
+                value = inputItem.DefaultValue;
             }
 
             dictionary[inputItem.Name] = value;

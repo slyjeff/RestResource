@@ -7,6 +7,7 @@ public interface ILinkTest {
     IUserList GetAllUsers();
     IUserList GetAllUsersTemplated(int id1, int id2);
     IUserList GetAllUsersTemplated(object ids);
+    IUserList SearchUsers();
     IUserList SearchUsers(string lastName, string firstName);
     IUserList SearchUsers(object searchParameters);
 }
@@ -15,6 +16,7 @@ public interface ILinkTestAsync {
     Task<IUserList> GetAllUsers();
     Task<IUserList> GetAllUsersTemplated(int id1, int id2);
     Task<IUserList> GetAllUsersTemplated(object ids);
+    Task<IUserList> SearchUsers();
     Task<IUserList> SearchUsers(string lastName, string firstName);
     Task<IUserList> SearchUsers(object searchParameters);
 }

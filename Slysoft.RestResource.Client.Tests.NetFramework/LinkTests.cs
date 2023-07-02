@@ -4,7 +4,6 @@ using Slysoft.RestResource.Client.Tests.Common;
 using Slysoft.RestResource.Extensions;
 using Slysoft.RestResource.Client.Tests.Common.Extensions;
 using TestUtils;
-using System.Collections.Generic;
 
 namespace Slysoft.RestResource.Client.Tests.NetFramework;
 
@@ -13,6 +12,8 @@ public sealed class LinkTests {
     private Mock<IRestClient> _mockRestClient = null!;
     private ILinkTest _linkTest = null!;
     private ILinkTestAsync _linkTestAsync = null!;
+    private readonly string _defaultValue = GenerateRandom.String();
+
 
     [TestInitialize]
     public void SetUp() {
@@ -21,7 +22,7 @@ public sealed class LinkTests {
             .Get("getAllUsers", "/user")
             .Get("getAllUsersTemplated", "/user/{id1}/{id2}", templated: true)
             .Query("searchUsers", "/user")
-                .Parameter("lastName")
+                .Parameter("lastName", defaultValue: _defaultValue)
                 .Parameter("firstName")
             .EndQuery();
 
@@ -123,5 +124,29 @@ public sealed class LinkTests {
 
         //assert
         _mockRestClient.VerifyCall<IUserList>($"/user?lastName={lastName}&firstName={firstName}");
+    }
+
+    [TestMethod]
+    public void MustProvideQueryParametersFromObject() {
+        //arrange
+        var lastName = GenerateRandom.String();
+        var firstName = GenerateRandom.String();
+
+        //act
+        var parameters = new { lastName, firstName };
+        _linkTest.SearchUsers(parameters);
+
+        //assert
+        _mockRestClient.VerifyCall<IUserList>($"/user?lastName={lastName}&firstName={firstName}");
+    }
+
+    [TestMethod]
+    public void MustUserDefaultValuesForQueryParametersIfNotSupplied() {
+        //arrange
+        //act
+        _linkTest.SearchUsers();
+
+        //assert
+        _mockRestClient.VerifyCall<IUserList>($"/user?lastName={_defaultValue}");
     }
 }
