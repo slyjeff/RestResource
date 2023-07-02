@@ -2,7 +2,6 @@
 using Moq;
 using Slysoft.RestResource.Client.Tests.Common;
 using Slysoft.RestResource.Extensions;
-using System.Collections.Generic;
 using Slysoft.RestResource.Client.Tests.Common.Extensions;
 using TestUtils;
 
@@ -54,11 +53,7 @@ public sealed class LinkTests {
         var user1Name = GenerateRandom.String();
         var user2Name = GenerateRandom.String();
 
-        var userResourceList = new List<Resource> {
-            new Resource().Data("name", user1Name),
-            new Resource().Data("name", user2Name),
-        };
-        var userListResource = new Resource().Embedded("users", userResourceList);
+        var userListResource = TestData.CreateUserListResource(user1Name, user2Name);
         var userListAccessor = ResourceAccessorFactory.CreateAccessor<IUserList>(userListResource, _mockRestClient.Object);
         _mockRestClient.SetupCall<IUserList>("/user").Returns(userListAccessor);
 
@@ -79,11 +74,8 @@ public sealed class LinkTests {
         //arrange
         var user1Name = GenerateRandom.String();
         var user2Name = GenerateRandom.String();
-        var userResourceList = new List<Resource> {
-            new Resource().Data("name", user1Name),
-            new Resource().Data("name", user2Name),
-        };
-        var userListResource = new Resource().Embedded("users", userResourceList);
+        var userListResource = TestData.CreateUserListResource(user1Name, user2Name);
+
         var userListAccessor = ResourceAccessorFactory.CreateAccessor<IUserList>(userListResource, _mockRestClient.Object);
         _mockRestClient.SetupCallAsync<IUserList>("/user").Returns(userListAccessor);
 
