@@ -5,6 +5,8 @@ namespace Slysoft.RestResource.Client.Tests.Common;
 
 public interface ILinkTest {
     IUserList GetAllUsers();
+    IUserList GetAllUsersTemplated(int id1, int id2);
+    IUserList GetAllUsersTemplated(object ids);
 }
 
 public interface ILinkTestAsync {

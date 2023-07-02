@@ -10,23 +10,24 @@ namespace Slysoft.RestResource.Client.Tests.NetFramework;
 [TestClass]
 public sealed class LinkTests {
     private Mock<IRestClient> _mockRestClient = null!;
+    private ILinkTest _linkTest;
+    private ILinkTestAsync _linkTestAsync;
 
     [TestInitialize]
     public void SetUp() {
         _mockRestClient = new Mock<IRestClient>();
-    }
+        var linkTestResource = new Resource()
+            .Get("getAllUsers", "/user")
+            .Get("getAllUsersTemplated", "/user/{id1}/{id2}", templated: true);
 
+        _linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTest>(linkTestResource, _mockRestClient.Object);
+        _linkTestAsync = ResourceAccessorFactory.CreateAccessor<ILinkTestAsync>(linkTestResource, _mockRestClient.Object);
+    }
 
     [TestMethod]
     public void GetWithoutParametersMustMakeCall() {
-        //arrange
-        var linkTestResource = new Resource()
-            .Get("getAllUsers", "/user");
-
-        var linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTest>(linkTestResource, _mockRestClient.Object);
-
         //act
-        linkTest.GetAllUsers();
+        _linkTest.GetAllUsers();
 
         //assert
         _mockRestClient.VerifyCall<IUserList>("/user");
@@ -34,14 +35,8 @@ public sealed class LinkTests {
 
     [TestMethod]
     public void MustSupportAsyncCalls() {
-        //arrange
-        var linkTestResource = new Resource()
-            .Get("getAllUsers", "/user");
-
-        var linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTestAsync>(linkTestResource, _mockRestClient.Object);
-
         //act
-        linkTest.GetAllUsers().Wait();
+        _linkTestAsync.GetAllUsers().Wait();
 
         //assert
         _mockRestClient.VerifyAsyncCall<IUserList>("/user");
@@ -57,11 +52,8 @@ public sealed class LinkTests {
         var userListAccessor = ResourceAccessorFactory.CreateAccessor<IUserList>(userListResource, _mockRestClient.Object);
         _mockRestClient.SetupCall<IUserList>("/user").Returns(userListAccessor);
 
-        var linkTestResource = new Resource().Get("getAllUsers", "/user");
-        var linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTest>(linkTestResource, _mockRestClient.Object);
-
         //act
-        var userList = linkTest.GetAllUsers();
+        var userList = _linkTest.GetAllUsers();
 
         //assert
         Assert.AreEqual(2, userList.Users.Count);
@@ -79,16 +71,39 @@ public sealed class LinkTests {
         var userListAccessor = ResourceAccessorFactory.CreateAccessor<IUserList>(userListResource, _mockRestClient.Object);
         _mockRestClient.SetupCallAsync<IUserList>("/user").Returns(userListAccessor);
 
-        var linkTestResource = new Resource().Get("getAllUsers", "/user");
-        var linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTestAsync>(linkTestResource, _mockRestClient.Object);
-
-
         //act
-        var userList = linkTest.GetAllUsers().Result;
+        var userList = _linkTestAsync.GetAllUsers().Result;
 
         //assert
         Assert.AreEqual(2, userList.Users.Count);
         Assert.AreEqual(user1Name, userList.Users[0].Name);
         Assert.AreEqual(user2Name, userList.Users[1].Name);
+    }
+
+    [TestMethod]
+    public void MustBeAbleFillInTemplatedUrlsFromParameters() {
+        //arrange
+        var id1 = GenerateRandom.Int();
+        var id2 = GenerateRandom.Int();
+
+        //act
+        _linkTest.GetAllUsersTemplated(id1, id2);
+
+        //assert
+        _mockRestClient.VerifyCall<IUserList>($"/user/{id1}/{id2}");
+    }
+
+    [TestMethod]
+    public void MustBeAbleFillInTemplatedUrlsFromAnObject() {
+        //arrange
+        var id1 = GenerateRandom.Int();
+        var id2 = GenerateRandom.Int();
+
+        //act
+        var ids = new { id1, id2 };
+        _linkTest.GetAllUsersTemplated(ids);
+
+        //assert
+        _mockRestClient.VerifyCall<IUserList>($"/user/{id1}/{id2}");
     }
 }

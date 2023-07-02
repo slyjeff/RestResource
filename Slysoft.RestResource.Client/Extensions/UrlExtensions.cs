@@ -1,4 +1,6 @@
-﻿namespace Slysoft.RestResource.Client.Extensions; 
+﻿using System.Collections.Generic;
+
+namespace Slysoft.RestResource.Client.Extensions; 
 
 internal static class UrlExtensions {
     public static string AppendUrl(this string baseUrl, string url) {
@@ -21,5 +23,34 @@ internal static class UrlExtensions {
 #endif
 
         return $"{baseUrl}/{url}";
+    }
+
+    public static string ResolveTemplatedUrl(this string url, IDictionary<string, object?> parameters) {
+        var templatedParameters = url.GetTemplatedParameters();
+        foreach (var templatedParameter in templatedParameters) {
+            var value = parameters.GetValue(templatedParameter);
+            if (value != null) {
+                url = url.Replace($"{{{templatedParameter}}}", value.ToString());
+            }
+        }
+
+        return url;
+    }
+
+    private static IEnumerable<string> GetTemplatedParameters(this string url) {
+        var parameters = new List<string>();
+        var parameterStartIndex = url.IndexOf('{');
+        while (parameterStartIndex >= 0) {
+            var parameterEndIndex = url.IndexOf('}', parameterStartIndex);
+            if (parameterEndIndex < 0) {
+                return parameters;
+            }
+
+            parameters.Add(url.Substring(parameterStartIndex + 1, parameterEndIndex - parameterStartIndex - 1));
+
+            parameterStartIndex = url.IndexOf('{', parameterStartIndex + 1);
+        }
+
+        return parameters;
     }
 }

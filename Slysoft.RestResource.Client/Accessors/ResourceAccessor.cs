@@ -28,28 +28,37 @@ public abstract class ResourceAccessor {
     }
 
     public T CallRestLink<T>(string name, IDictionary<string, object?> parameters) {
-        var link = Resource.GetLink(name);
-        if (link == null) {
-            throw new CallLinkException($"Link {name} not found in resource.");
-        }
+        var link = CreateLink(name, parameters);
 
         try {
-            return RestClient.Call<T>(link.Href);
+            return RestClient.Call<T>(link.Url);
         } catch (Exception e) {
             throw new CallLinkException($"Error calling link {name}.", e);
         }
     }
 
     public async Task<T> CallRestLinkAsync<T>(string name, IDictionary<string, object?> parameters) {
-        var link = Resource.GetLink(name);
-        if (link == null) {
-            throw new CallLinkException($"Link {name} not found in resource.");
-        }
+        var link = CreateLink(name, parameters);
 
         try {
-            return await RestClient.CallAsync<T>(link.Href);
+            return await RestClient.CallAsync<T>(link.Url);
         } catch (Exception e) {
             throw new CallLinkException($"Error calling link {name}.", e);
         }
+    }
+
+    private readonly struct CallableLink {
+        public CallableLink(string url) {
+            Url = url;
+        }
+        public readonly string Url;
+    }
+
+    private CallableLink CreateLink(string name, IDictionary<string, object?> parameters) {
+        var link = Resource.GetLink(name) ?? throw new CallLinkException($"Link {name} not found in resource.");
+
+        var url = link.Templated ? link.Href.ResolveTemplatedUrl(parameters) : link.Href;
+
+        return new CallableLink(url);
     }
 }
