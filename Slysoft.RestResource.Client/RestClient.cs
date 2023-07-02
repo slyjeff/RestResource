@@ -42,10 +42,10 @@ public interface IRestClient {
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
+    /// <param name="inputItems">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    T Call<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
+    T Call<T>(string url, string? verb = null, IDictionary<string, object?>? inputItems = null, int timeout = 0);
 
     /// <summary>
     /// Make an asynchronous web service call, returning the result as the type specified
@@ -53,10 +53,10 @@ public interface IRestClient {
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
+    /// <param name="inputItems">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
+    Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? inputItems = null, int timeout = 0);
 }
 
 /// <summary>
@@ -102,11 +102,11 @@ public sealed class RestClient : IRestClient {
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
+    /// <param name="inputItems">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    public T Call<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-        var response = Call(url, verb, body, timeout);
+    public T Call<T>(string url, string? verb = null, IDictionary<string, object?>? inputItems = null, int timeout = 0) {
+        var response = Call(url, verb, inputItems, timeout);
 
         if (!response.IsSuccessStatusCode) {
             throw new ResponseErrorCodeException(response);
@@ -130,11 +130,11 @@ public sealed class RestClient : IRestClient {
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
+    /// <param name="inputItems">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    public async Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-        var response = await CallAsync(url, verb, body, timeout);
+    public async Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? inputItems = null, int timeout = 0) {
+        var response = await CallAsync(url, verb, inputItems, timeout);
         if (!response.IsSuccessStatusCode) {
             throw new ResponseErrorCodeException(response);
         }
@@ -161,8 +161,8 @@ public sealed class RestClient : IRestClient {
         throw new RestCallException($"content type {response.GetContentType()} not supported by registered deserializers");
     }
 
-    private HttpResponseMessage Call(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-            var request = CreateRequest(url, verb, body);
+    private HttpResponseMessage Call(string url, string? verb = null, IDictionary<string, object?>? inputItems = null, int timeout = 0) {
+            var request = CreateRequest(url, verb, inputItems);
             var timeoutToken = CreateTimeoutToken(timeout);
 #if NET6_0_OR_GREATER
             return _httpClient.Send(request, timeoutToken);
@@ -171,24 +171,41 @@ public sealed class RestClient : IRestClient {
 #endif
     }
 
-    private async Task<HttpResponseMessage> CallAsync(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-        var request = CreateRequest(url, verb, body);
+    private async Task<HttpResponseMessage> CallAsync(string url, string? verb = null, IDictionary<string, object?>? inputItems = null, int timeout = 0) {
+        var request = CreateRequest(url, verb, inputItems);
         var timeoutToken = CreateTimeoutToken(timeout);
         return await _httpClient.SendAsync(request, timeoutToken);
     }
 
-    private HttpRequestMessage CreateRequest(string url, string? verb = null, IDictionary<string, object?>? body = null) {
+    private HttpRequestMessage CreateRequest(string url, string? verb = null, IDictionary<string, object?>? inputItems = null) {
         url = _baseUrl.AppendUrl(url);
         if (string.IsNullOrEmpty(verb)) {
             verb = "GET";
         }
 
         var request = new HttpRequestMessage(new HttpMethod(verb), url);
-        if (body != null && body.Any()) {
-            request.Content = CreateBody(body);
+        if (inputItems == null || !inputItems.Any()) {
+            return request;
         }
+        
+        request.Content = verb == "GET" 
+            ? CreateQueryParameters(inputItems) 
+            : CreateBody(inputItems);
 
         return request;
+    }
+
+    private static HttpContent CreateQueryParameters(IDictionary<string, object?> inputItems) {
+        var queryParameters = new Dictionary<string, string>();
+        foreach (var inputItem in inputItems) {
+            if (inputItem.Value == null) {
+                continue;
+            }
+
+            queryParameters[inputItem.Key] = inputItem.Value.ToString();
+        }
+
+        return new FormUrlEncodedContent(queryParameters);
     }
 
     private CancellationToken CreateTimeoutToken(int timeout) {

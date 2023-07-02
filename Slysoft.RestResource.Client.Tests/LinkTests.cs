@@ -18,7 +18,11 @@ public sealed class LinkTests {
         _mockRestClient = new Mock<IRestClient>();
         var linkTestResource = new Resource()
             .Get("getAllUsers", "/user")
-            .Get("getAllUsersTemplated", "/user/{id1}/{id2}", templated: true);
+            .Get("getAllUsersTemplated", "/user/{id1}/{id2}", templated: true)
+            .Query("searchUsers", "/user")
+                .Parameter("lastName")
+                .Parameter("firstName")
+            .EndQuery();
 
         _linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTest>(linkTestResource, _mockRestClient.Object);
         _linkTestAsync = ResourceAccessorFactory.CreateAccessor<ILinkTestAsync>(linkTestResource, _mockRestClient.Object);
@@ -105,5 +109,22 @@ public sealed class LinkTests {
 
         //assert
         _mockRestClient.VerifyCall<IUserList>($"/user/{id1}/{id2}");
+    }
+
+    [TestMethod]
+    public void MustProvideQueryParametersFromParameters() {
+        //arrange
+        var lastName = GenerateRandom.String();
+        var firstName = GenerateRandom.String();
+
+        //act
+        _linkTest.SearchUsers(lastName, firstName);
+
+        //assert
+        var expectedParameters = new Dictionary<string, object?>() {
+            { "lastName", lastName },
+            { "firstName", firstName }
+        };
+        _mockRestClient.VerifyCall<IUserList>("/user", inputItems: expectedParameters);
     }
 }

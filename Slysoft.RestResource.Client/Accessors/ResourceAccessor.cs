@@ -31,7 +31,7 @@ public abstract class ResourceAccessor {
         var link = CreateLink(name, parameters);
 
         try {
-            return RestClient.Call<T>(link.Url);
+            return RestClient.Call<T>(link.Url, inputItems: link.InputItems);
         } catch (ResponseErrorCodeException) {
             throw; //rethrow ResponseErrorCodeException because it contains information the caller may be interested in- the code and the message from the server
         } catch (Exception e) {
@@ -43,7 +43,7 @@ public abstract class ResourceAccessor {
         var link = CreateLink(name, parameters);
 
         try {
-            return await RestClient.CallAsync<T>(link.Url);
+            return await RestClient.CallAsync<T>(link.Url, inputItems: link.InputItems);
         } catch (ResponseErrorCodeException) {
             throw; //rethrow ResponseErrorCodeException because it contains information the caller may be interested in- the code and the message from the server
         } catch (Exception e) {
@@ -52,10 +52,12 @@ public abstract class ResourceAccessor {
     }
 
     private readonly struct CallableLink {
-        public CallableLink(string url) {
+        public CallableLink(string url, IDictionary<string, object?> inputItems) {
             Url = url;
+            InputItems = inputItems;
         }
         public readonly string Url;
+        public readonly IDictionary<string, object?> InputItems;
     }
 
     private CallableLink CreateLink(string name, IDictionary<string, object?> parameters) {
@@ -63,6 +65,16 @@ public abstract class ResourceAccessor {
 
         var url = link.Templated ? link.Href.ResolveTemplatedUrl(parameters) : link.Href;
 
-        return new CallableLink(url);
+        var inputItems = new Dictionary<string, object?>();
+        foreach (var inputItem in link.InputItems) {
+            var value = parameters.GetValue(inputItem.Name);
+            if (value == null) {
+                continue;
+            }
+
+            inputItems[inputItem.Name] = value;
+        }
+
+        return new CallableLink(url, inputItems);
     }
 }
