@@ -1,4 +1,6 @@
-﻿using System.Net.Mime;
+﻿using System.Diagnostics;
+using System.Net;
+using System.Net.Mime;
 using ClientTest;
 using Slysoft.RestResource.Client;
 
@@ -22,9 +24,29 @@ if (application == null) {
     Environment.Exit(0);
 }
 
+ITestsResource? tests = null;
 await Test.StartAsync("Get Link", async test => {
-    var tests = await application.GetTests();
+    tests = await application.GetTests();
     const string expectedDescription  = "Tests used by the ClientTest app.";
     test.AssertAreEqual(expectedDescription, tests.Description);
 });
 
+if (tests == null) {
+    Environment.Exit(0);
+}
+
+await Test.StartAsync("Response Error Code Exception", async test => {
+    try {
+        await tests.NotFound();
+        test.Error("ResponseErrorCodeException exception not thrown");
+    }
+    catch (ResponseErrorCodeException e) {
+        test.AssertAreEqual("Resource not found.", e.Message);
+        test.AssertAreEqual(HttpStatusCode.NotFound, e.StatusCode);
+    }
+});
+
+await Test.StartAsync("Get Non-Resource Text", async test => {
+    var text = await tests.Text();
+    test.AssertAreEqual("Non-Resource text.", text);
+});

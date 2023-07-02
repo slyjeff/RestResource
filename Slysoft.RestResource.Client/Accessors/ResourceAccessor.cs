@@ -32,6 +32,8 @@ public abstract class ResourceAccessor {
 
         try {
             return RestClient.Call<T>(link.Url);
+        } catch (ResponseErrorCodeException) {
+            throw; //rethrow ResponseErrorCodeException because it contains information the caller may be interested in- the code and the message from the server
         } catch (Exception e) {
             throw new CallLinkException($"Error calling link {name}.", e);
         }
@@ -42,6 +44,8 @@ public abstract class ResourceAccessor {
 
         try {
             return await RestClient.CallAsync<T>(link.Url);
+        } catch (ResponseErrorCodeException) {
+            throw; //rethrow ResponseErrorCodeException because it contains information the caller may be interested in- the code and the message from the server
         } catch (Exception e) {
             throw new CallLinkException($"Error calling link {name}.", e);
         }

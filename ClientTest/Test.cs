@@ -2,6 +2,7 @@
 
 internal interface ITest {
     void AssertAreEqual(object expected, object actual);
+    void Error(string error);
 }
 
 internal static class Test {
@@ -21,7 +22,6 @@ internal static class Test {
             Console.ForegroundColor = ConsoleColor.White;
         }
         Console.WriteLine();
-        Console.WriteLine();
     }
 
     internal static async Task StartAsync(string testName, Func<ITest, Task> action) {
@@ -39,7 +39,6 @@ internal static class Test {
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
         }
-        Console.WriteLine();
         Console.WriteLine();
     }
 

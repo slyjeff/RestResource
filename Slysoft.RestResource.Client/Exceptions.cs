@@ -48,7 +48,7 @@ public sealed class CallLinkException : RestResourceClientException {
 
 
 public sealed class ResponseErrorCodeException : RestResourceClientException {
-    public ResponseErrorCodeException(HttpResponseMessage response) : base(response.GetContent()) {
+    public ResponseErrorCodeException(HttpResponseMessage response) : base(response.GetContent().RemoveOuterQuotes()) {
         StatusCode = response.StatusCode;
     }
 

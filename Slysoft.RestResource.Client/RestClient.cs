@@ -113,7 +113,7 @@ public sealed class RestClient : IRestClient {
         }
 
         if (typeof(T) == typeof(string)) {
-            return (T)(object)response.GetContent();
+            return (T)(object)response.GetContent().RemoveOuterQuotes();
         }
 
         var resource = ConvertResponseToResource(response);
@@ -135,8 +135,12 @@ public sealed class RestClient : IRestClient {
     /// <returns>content of the service call</returns>
     public async Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
         var response = await CallAsync(url, verb, body, timeout);
+        if (!response.IsSuccessStatusCode) {
+            throw new ResponseErrorCodeException(response);
+        }
+
         if (typeof(T) == typeof(string)) {
-            return (T)(object)await response.Content.ReadAsStringAsync();
+            return (T)(object)(await response.Content.ReadAsStringAsync()).RemoveOuterQuotes();
         }
 
         var resource = ConvertResponseToResource(response);

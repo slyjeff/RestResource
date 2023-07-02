@@ -6,6 +6,8 @@ public interface IApplicationResource {
 }
 
 public interface ITestsResource {
-    public string Description { get; }
+    string Description { get; }
+    Task<string> NotFound();
+    Task<string> Text();
 }
 
