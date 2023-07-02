@@ -20,6 +20,6 @@ internal static class UrlExtensions {
         }
 #endif
 
-        return baseUrl + url;
+        return $"{baseUrl}/{url}";
     }
 }
