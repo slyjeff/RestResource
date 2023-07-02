@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
-using System.Net;
-using System.Net.Mime;
+﻿using System.Net;
 using ClientTest;
 using Slysoft.RestResource.Client;
+using TestUtils;
 
 var restClient = new RestClient("http://localhost:35093/");
 IApplicationResource? application = null;
@@ -49,4 +48,12 @@ await Test.StartAsync("Response Error Code Exception", async test => {
 await Test.StartAsync("Get Non-Resource Text", async test => {
     var text = await tests.Text();
     test.AssertAreEqual("Non-Resource text.", text);
+});
+
+await Test.StartAsync("Query Parameters", async test => {
+    var parameter1 = GenerateRandom.String();
+    var parameter2 = GenerateRandom.String();
+    var queryResult = await tests.Query(parameter1, parameter2);
+    test.AssertAreEqual(parameter1, queryResult.Parameter1);
+    test.AssertAreEqual(parameter2, queryResult.Parameter2);
 });

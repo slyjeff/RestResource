@@ -6,13 +6,22 @@ namespace Slysoft.RestResource.Client.Extensions;
 
 internal static class HttpResponseMessageExtensions {
     internal static string GetContent(this HttpResponseMessage response) {
+        string content;
+        try {
 #if NET6_0_OR_GREATER
         using var reader = new StreamReader(response.Content.ReadAsStream());
-        return reader.ReadToEnd();
+        content = reader.ReadToEnd();
 #else
-        using var reader = new StreamReader(response.Content.ReadAsStringAsync().Result);
-        return reader.ReadToEnd();
+            using var reader = new StreamReader(response.Content.ReadAsStringAsync().Result);
+            content = reader.ReadToEnd();
 #endif
+        } catch {
+            return $"HTTP Status Code: {response.StatusCode}";
+        }
+
+        return string.IsNullOrEmpty(content) 
+            ? $"HTTP Status Code: {response.StatusCode}" 
+            : content;
     }
 
     internal static string GetContentType(this HttpResponseMessage response) {

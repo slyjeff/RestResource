@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientTest", "ClientTest\Cl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RestResource", "RestResource", "{04C7DFAB-6782-48DF-B342-098335C12B5D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtils", "TestUtils\TestUtils.csproj", "{EA5653C9-C5BB-4B00-A0AC-A95C72FDFEB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA5653C9-C5BB-4B00-A0AC-A95C72FDFEB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA5653C9-C5BB-4B00-A0AC-A95C72FDFEB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA5653C9-C5BB-4B00-A0AC-A95C72FDFEB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA5653C9-C5BB-4B00-A0AC-A95C72FDFEB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

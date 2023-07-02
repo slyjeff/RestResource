@@ -18,7 +18,8 @@ internal static class Test {
             }
         } catch (Exception e) {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(e.Message);
+            var message = string.IsNullOrEmpty(e.Message) ? "Unknown Error" : e.Message;
+            Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.White;
         }
         Console.WriteLine();
@@ -36,7 +37,8 @@ internal static class Test {
             }
         } catch (Exception e) {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(e.Message);
+            var message = string.IsNullOrEmpty(e.Message) ? "Unknown Error" : e.Message;
+            Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.White;
         }
         Console.WriteLine();

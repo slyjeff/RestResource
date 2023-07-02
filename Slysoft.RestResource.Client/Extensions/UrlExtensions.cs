@@ -1,8 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Slysoft.RestResource.Client.Extensions; 
 
 internal static class UrlExtensions {
+    public static string AppendQueryParameters(this string url, IDictionary<string, object?>? inputItems) {
+        if (inputItems == null || !inputItems.Any()) {
+            return url;
+        }
+
+        var stringBuilder = new StringBuilder();
+        foreach (var item in inputItems) {
+            if (item.Value == null) {
+                continue;
+            }
+
+            stringBuilder.Append(stringBuilder.Length == 0 ? '?' : '&');
+            stringBuilder.Append(item.Key);
+            stringBuilder.Append('=');
+            stringBuilder.Append(item.Value.ToString());
+        }
+
+        return url + stringBuilder;
+    }
+
     public static string AppendUrl(this string baseUrl, string url) {
 #if NET6_0_OR_GREATER
         if (baseUrl.EndsWith('/')) {

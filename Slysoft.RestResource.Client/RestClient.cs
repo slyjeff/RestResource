@@ -183,29 +183,16 @@ public sealed class RestClient : IRestClient {
             verb = "GET";
         }
 
-        var request = new HttpRequestMessage(new HttpMethod(verb), url);
-        if (inputItems == null || !inputItems.Any()) {
-            return request;
+        if (verb == "GET") {
+            url = url.AppendQueryParameters(inputItems);
         }
-        
-        request.Content = verb == "GET" 
-            ? CreateQueryParameters(inputItems) 
-            : CreateBody(inputItems);
+
+        var request = new HttpRequestMessage(new HttpMethod(verb), url);
+        if (verb != "GET" && verb != "DELETE" && inputItems != null && inputItems.Any()) {
+            request.Content = CreateBody(inputItems);
+        }
 
         return request;
-    }
-
-    private static HttpContent CreateQueryParameters(IDictionary<string, object?> inputItems) {
-        var queryParameters = new Dictionary<string, string>();
-        foreach (var inputItem in inputItems) {
-            if (inputItem.Value == null) {
-                continue;
-            }
-
-            queryParameters[inputItem.Key] = inputItem.Value.ToString();
-        }
-
-        return new FormUrlEncodedContent(queryParameters);
     }
 
     private CancellationToken CreateTimeoutToken(int timeout) {

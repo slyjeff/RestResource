@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Slysoft.RestResource.Client\Slysoft.RestResource.Client.csproj" />
+    <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
   </ItemGroup>
 
 </Project>
