@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
+using Slysoft.RestResource.Client.Extensions;
 
 namespace Slysoft.RestResource.Client; 
 
@@ -41,4 +44,13 @@ public sealed class CallLinkException : RestResourceClientException {
 
     internal CallLinkException(string message, Exception innerException) : base(message, innerException) {
     }
+}
+
+
+public sealed class ResponseErrorCodeException : RestResourceClientException {
+    public ResponseErrorCodeException(HttpResponseMessage response) : base(response.GetContent()) {
+        StatusCode = response.StatusCode;
+    }
+
+    public HttpStatusCode StatusCode { get; }
 }

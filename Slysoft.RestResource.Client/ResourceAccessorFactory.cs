@@ -53,6 +53,9 @@ public static class ResourceAccessorFactory {
         }
 
         var genericCreateAccessorMethod = _createAccessorMethod.MakeGenericMethod(interfaceType);
+        if (genericCreateAccessorMethod == null) {
+            throw new CreateAccessorException($"'CreateAccessor' could not be called with generic type of '{interfaceType.Name}'.");
+        }
 
         return genericCreateAccessorMethod.Invoke(null, new object[] { resource, restClient });
     }

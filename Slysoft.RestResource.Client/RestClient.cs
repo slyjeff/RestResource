@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Slysoft.RestResource.Client.Extensions;
 using Slysoft.RestResource.Client.ResourceDeserializers;
 
+// ReSharper disable UnusedMemberInSuper.Global
+// ReSharper disable UnusedMember.Global
+
 namespace Slysoft.RestResource.Client;
+
+public delegate HttpContent CreateBodyDelegate(IDictionary<string, object?> body);
 
 /// <summary>
 /// Injectable into ResourceAccessors so they can call links
@@ -19,15 +26,20 @@ public interface IRestClient {
     IList<IResourceDeserializer> ResourceDeserializers { get; }
 
     /// <summary>
+    /// Method used to serialize content- defaults to converting to json
+    /// </summary>
+    CreateBodyDelegate CreateBody { get; set; }
+
+    /// <summary>
     /// Make a synchronous web service call, returning the result as the type specified
     /// </summary>
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Body of the call</param>
+    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    T Call<T>(string url, string? verb = null, string? body = null, int timeout = 0);
+    T Call<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
 
     /// <summary>
     /// Make an asynchronous web service call, returning the result as the type specified
@@ -35,10 +47,10 @@ public interface IRestClient {
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Body of the call</param>
+    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    Task<T> CallAsync<T>(string url, string? verb = null, string? body = null, int timeout = 0);
+    Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
 }
 
 /// <summary>
@@ -65,16 +77,29 @@ public sealed class RestClient : IRestClient {
     };
 
     /// <summary>
+    /// Method used to serialize content- defaults to converting to json
+    /// </summary>
+    public CreateBodyDelegate CreateBody { get; set; } = body => {
+        var content = JsonConvert.SerializeObject(body);
+        return new StringContent(content, Encoding.UTF8, "application/json");
+    };
+
+    /// <summary>
     /// Make a synchronous web service call
     /// </summary>
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Body of the call</param>
+    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    public T Call<T>(string url, string? verb = null, string? body = null, int timeout = 0) {
+    public T Call<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
         var response = Call(url, verb, body, timeout);
+
+        if (!response.IsSuccessStatusCode) {
+            throw new ResponseErrorCodeException(response);
+        }
+
         if (typeof(T) == typeof(string)) {
             return (T)(object)response.GetContent();
         }
@@ -93,10 +118,10 @@ public sealed class RestClient : IRestClient {
     /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
     /// <param name="url">URL of the call</param>
     /// <param name="verb">Verb of the call</param>
-    /// <param name="body">Body of the call</param>
+    /// <param name="body">Dictionary of object to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    public async Task<T> CallAsync<T>(string url, string? verb = null, string? body = null, int timeout = 0) {
+    public async Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
         var response = await CallAsync(url, verb, body, timeout);
         if (typeof(T) == typeof(string)) {
             return (T)(object)await response.Content.ReadAsStringAsync();
@@ -120,7 +145,7 @@ public sealed class RestClient : IRestClient {
         throw new RestCallException($"content type {response.GetContentType()} not supported by registered deserializers");
     }
 
-    private HttpResponseMessage Call(string url, string? verb = null, string? body = null, int timeout = 0) {
+    private HttpResponseMessage Call(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
         var originalTimeout = _httpClient.Timeout;
         try {
             if (timeout > 0) {
@@ -138,7 +163,7 @@ public sealed class RestClient : IRestClient {
         }
     }
 
-    private async Task<HttpResponseMessage> CallAsync(string url, string? verb = null, string? body = null, int timeout = 0) {
+    private async Task<HttpResponseMessage> CallAsync(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
         var originalTimeout = _httpClient.Timeout;
         try {
             if (timeout > 0) {
@@ -152,15 +177,15 @@ public sealed class RestClient : IRestClient {
         }
     }
 
-    private HttpRequestMessage CreateRequest(string url, string? verb = null, string? body = null) {
+    private HttpRequestMessage CreateRequest(string url, string? verb = null, IDictionary<string, object?>? body = null) {
         url = _baseUrl.AppendUrl(url);
         if (string.IsNullOrEmpty(verb)) {
             verb = "GET";
         }
 
         var request = new HttpRequestMessage(new HttpMethod(verb), url);
-        if (!string.IsNullOrEmpty(body)) {
-            request.Content = new StringContent(body, Encoding.UTF8, "application/json");
+        if (body != null && body.Any()) {
+            request.Content = CreateBody(body);
         }
 
         return request;
