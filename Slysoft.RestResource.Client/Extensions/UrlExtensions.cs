@@ -19,7 +19,7 @@ internal static class UrlExtensions {
             stringBuilder.Append(stringBuilder.Length == 0 ? '?' : '&');
             stringBuilder.Append(item.Key);
             stringBuilder.Append('=');
-            stringBuilder.Append(item.Value.ToString());
+            stringBuilder.Append(item.Value);
         }
 
         return url + stringBuilder;

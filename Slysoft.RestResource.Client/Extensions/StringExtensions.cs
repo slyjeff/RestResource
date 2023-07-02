@@ -16,4 +16,12 @@ internal static class StringExtensions {
 
         return s;
     }
+
+    internal static bool SupportsQueryParameters(this string verb) {
+        return verb is "GET" or "DELETE";
+    }
+
+    internal static bool SupportsBody(this string verb) {
+        return !verb.SupportsQueryParameters();
+    }
 }

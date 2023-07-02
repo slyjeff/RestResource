@@ -122,10 +122,6 @@ public sealed class LinkTests {
         _linkTest.SearchUsers(lastName, firstName);
 
         //assert
-        var expectedParameters = new Dictionary<string, object>() {
-            { "lastName", lastName },
-            { "firstName", firstName }
-        };
-        _mockRestClient.VerifyCall<IUserList>("/user", inputItems: expectedParameters);
+        _mockRestClient.VerifyCall<IUserList>($"/user?lastName={lastName}&firstName={firstName}");
     }
 }
