@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj" />
+    <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
   </ItemGroup>
 
 </Project>
