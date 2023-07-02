@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Slysoft.RestResource.Client.Extensions;
@@ -20,6 +21,11 @@ public delegate HttpContent CreateBodyDelegate(IDictionary<string, object?> body
 /// Injectable into ResourceAccessors so they can call links
 /// </summary>
 public interface IRestClient {
+    /// <summary>
+    /// Timeout (in seconds) to use if the server doesn't specify a timeout- defaults to 100 seconds;
+    /// </summary>
+    int DefaultTimeout { get; set; }
+
     /// <summary>
     /// Deserializers that can convert a HttpResponseMessage to a Resource- slysoft.json+hal and slysoft.xml+hal are already registered, but can be removed
     /// </summary>
@@ -63,10 +69,16 @@ public sealed class RestClient : IRestClient {
     public RestClient(string baseUrl) {
         _baseUrl = baseUrl;
         _httpClient = new HttpClient();
+        _httpClient.Timeout = Timeout.InfiniteTimeSpan;
         _httpClient.DefaultRequestHeaders
             .Accept
             .Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
+
+    /// <summary>
+    /// Timeout (in seconds) to use if the server doesn't specify a timeout- defaults to 100 seconds;
+    /// </summary>
+    public int DefaultTimeout { get; set; } = 100;
 
     /// <summary>
     /// Deserializers that can convert a HttpResponseMessage to a Resource- slysoft.json+hal and slysoft.xml+hal are already registered, but can be removed
@@ -146,35 +158,19 @@ public sealed class RestClient : IRestClient {
     }
 
     private HttpResponseMessage Call(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-        var originalTimeout = _httpClient.Timeout;
-        try {
-            if (timeout > 0) {
-                _httpClient.Timeout = new TimeSpan(0, 0, 0, timeout);
-            }
-
             var request = CreateRequest(url, verb, body);
+            var timeoutToken = CreateTimeoutToken(timeout);
 #if NET6_0_OR_GREATER
-            return _httpClient.Send(request);
+            return _httpClient.Send(request, timeoutToken);
 #else
-            return _httpClient.SendAsync(request).Result;
+            return _httpClient.SendAsync(request, timeoutToken).Result;
 #endif
-        } finally {
-            _httpClient.Timeout = originalTimeout;
-        }
     }
 
     private async Task<HttpResponseMessage> CallAsync(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-        var originalTimeout = _httpClient.Timeout;
-        try {
-            if (timeout > 0) {
-                _httpClient.Timeout = new TimeSpan(0, 0, 0, timeout);
-            }
-
-            var request = CreateRequest(url, verb, body);
-            return await _httpClient.SendAsync(request);
-        } finally {
-            _httpClient.Timeout = originalTimeout;
-        }
+        var request = CreateRequest(url, verb, body);
+        var timeoutToken = CreateTimeoutToken(timeout);
+        return await _httpClient.SendAsync(request, timeoutToken);
     }
 
     private HttpRequestMessage CreateRequest(string url, string? verb = null, IDictionary<string, object?>? body = null) {
@@ -189,5 +185,11 @@ public sealed class RestClient : IRestClient {
         }
 
         return request;
+    }
+
+    private CancellationToken CreateTimeoutToken(int timeout) {
+        var timeoutTokenSource = new CancellationTokenSource();
+        timeoutTokenSource.CancelAfter(TimeSpan.FromSeconds(timeout == 0 ? DefaultTimeout : timeout));
+        return timeoutTokenSource.Token;
     }
 }
