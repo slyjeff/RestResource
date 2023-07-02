@@ -41,18 +41,19 @@ public static class ResourceAccessorFactory {
         return accessor;
     }
 
-    private static MethodInfo? _genericCreateAccessorMethod;
+    private static MethodInfo? _createAccessorMethod;
 
     internal static object CreateAccessor(Type interfaceType, Resource resource, IRestClient restClient) {
-        if (_genericCreateAccessorMethod == null) {
-            var createAccessorMethod = typeof(ResourceAccessorFactory).GetMethod("CreateAccessor", BindingFlags.Public | BindingFlags.Static);
-            if (createAccessorMethod == null) {
-                throw new CreateAccessorException("Method 'CreateAccessor' not found in ResourceAccessorFactory.");
-            }
-
-            _genericCreateAccessorMethod = createAccessorMethod.MakeGenericMethod(interfaceType);
+        if (_createAccessorMethod == null) {
+            _createAccessorMethod = typeof(ResourceAccessorFactory).GetMethod("CreateAccessor", BindingFlags.Public | BindingFlags.Static);
         }
 
-        return _genericCreateAccessorMethod.Invoke(null, new object[] { resource, restClient });
+        if (_createAccessorMethod == null) {
+            throw new CreateAccessorException("Method 'CreateAccessor' not found in ResourceAccessorFactory.");
+        }
+
+        var genericCreateAccessorMethod = _createAccessorMethod.MakeGenericMethod(interfaceType);
+
+        return genericCreateAccessorMethod.Invoke(null, new object[] { resource, restClient });
     }
 }

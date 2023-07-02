@@ -53,7 +53,7 @@ internal static class AccessorExtensions {
 
         return null;
     }
-
+    
     private static IList CreateListOfType(Type type) {
         var listType = typeof(List<>);
         var genericListType = listType.MakeGenericType(type);
