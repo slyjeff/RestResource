@@ -29,6 +29,10 @@ public abstract class ResourceAccessor {
         return (T?)_cachedData[name];
     }
 
+    protected bool LinkCheck(string name) {
+        return Resource.GetLink(name) != null;
+    }
+
     public T CallRestLink<T>(string name, IDictionary<string, object?> parameters) {
         var link = CreateLink(name, parameters);
 

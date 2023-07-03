@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using Slysoft.RestResource.Client.Accessors;
+using Slysoft.RestResource.Client.Extensions;
 
 namespace Slysoft.RestResource.Client.Generators;
 
@@ -45,4 +46,11 @@ internal sealed class DictionaryAccessorGenerator : AccessorGenerator {
         codeGenerator.Emit(OpCodes.Call, baseCtor); //call the base constructor
         codeGenerator.Emit(OpCodes.Ret);            //return
     }
+
+    private void AddProperties() {
+        foreach (var property in InterfaceType.GetAllProperties()) {
+            AddProperty(property);
+        }
+    }
+
 }

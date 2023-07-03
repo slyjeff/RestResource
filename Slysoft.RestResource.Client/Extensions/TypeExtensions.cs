@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Slysoft.RestResource.Client.Utils; 
+namespace Slysoft.RestResource.Client.Extensions;
 
-internal static class TypeExtensions {
-    public static IEnumerable<PropertyInfo> GetAllProperties(this Type type) {
+internal static class TypeExtensions
+{
+    public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
+    {
         var properties = type.GetProperties().ToList();
-        foreach (var interfaceType in type.GetInterfaces()) {
+        foreach (var interfaceType in type.GetInterfaces())
+        {
             var propertiesFromInterface = interfaceType.GetAllProperties();
             properties.AddRange(propertiesFromInterface);
         }
@@ -16,9 +19,11 @@ internal static class TypeExtensions {
         return properties;
     }
 
-    public static IEnumerable<MethodInfo> GetAllMethods(this Type type) {
+    public static IEnumerable<MethodInfo> GetAllMethods(this Type type)
+    {
         var methods = type.GetMethods().ToList();
-        foreach (var interfaceType in type.GetInterfaces()) {
+        foreach (var interfaceType in type.GetInterfaces())
+        {
             var methodsFromInterface = interfaceType.GetAllMethods();
             methods.AddRange(methodsFromInterface);
         }

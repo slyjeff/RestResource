@@ -141,12 +141,25 @@ public sealed class LinkTests {
     }
 
     [TestMethod]
-    public void MustUserDefaultValuesForQueryParametersIfNotSupplied() {
+    public void MustUseDefaultValuesForQueryParametersIfNotSupplied() {
         //arrange
         //act
         _linkTest.SearchUsers();
 
         //assert
         _mockRestClient.VerifyCall<IUserList>($"/user?lastName={_defaultValue}");
+    }
+
+    [TestMethod]
+    public void MustBeAbleToCheckLinksByConvention() {
+        //assert
+        Assert.IsTrue(_linkTest.CanGetAllUsers);
+        Assert.IsFalse(_linkTest.CanLinkThatDoesNotExist);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToCheckLinksBySpecificName() {
+        //assert
+        Assert.IsTrue(_linkTest.LinkCheckGetTemplated);
     }
 }

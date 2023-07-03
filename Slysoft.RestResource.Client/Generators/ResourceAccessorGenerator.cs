@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Accessors;
-using Slysoft.RestResource.Client.Utils;
+using Slysoft.RestResource.Client.Extensions;
 
 namespace Slysoft.RestResource.Client.Generators;
 
@@ -49,6 +49,41 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
         codeGenerator.Emit(OpCodes.Ldarg_2);        //push restClient onto the stack
         codeGenerator.Emit(OpCodes.Call, baseCtor); //call the base constructor
         codeGenerator.Emit(OpCodes.Ret);            //return
+    }
+
+    private void AddProperties() {
+        foreach (var property in InterfaceType.GetAllProperties()) {
+            if (property.IsLinkCheck()) {
+                AddLinkCheck(property);
+                continue;
+            }
+            AddProperty(property);
+        }
+    }
+
+    private void AddLinkCheck(PropertyInfo property) {
+        var methodBuilder = TypeBuilder.DefineMethod("get_" + property.Name, MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.Standard | CallingConventions.HasThis, property.PropertyType, Type.EmptyTypes);
+
+        if (TypeBuilder.BaseType == null) {
+            throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {InterfaceType.Name}");
+        }
+
+        var linkCheckMethod = TypeBuilder.BaseType.GetMethod("LinkCheck", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
+        if (linkCheckMethod == null) {
+            throw new CreateAccessorException($"Could not find 'LinkCheck' method when generating based in on interface {InterfaceType.Name}");
+        }
+
+        var linkName = property.GetLinkCheckName();
+
+        var codeGenerator = methodBuilder.GetILGenerator();
+
+        codeGenerator.Emit(OpCodes.Ldarg_0);                       //push 'this' onto the stack
+        codeGenerator.Emit(OpCodes.Ldstr, linkName);               //push the name of the property onto the stack
+        codeGenerator.Emit(OpCodes.Callvirt, linkCheckMethod);     //call the the "GetData" method
+        codeGenerator.Emit(OpCodes.Ret);                           //return
+
+        var propertyBuilder = TypeBuilder.DefineProperty(property.Name, PropertyAttributes.None, property.PropertyType, null);
+        propertyBuilder.SetGetMethod(methodBuilder);
     }
 
     private void AddMethods() {

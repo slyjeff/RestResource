@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Slysoft.RestResource.Client.Utils;
 
-namespace Slysoft.RestResource.Client.Extensions; 
+namespace Slysoft.RestResource.Client.Extensions;
 
 internal static class ParameterExtensions {
     public static object? GetValue(this IDictionary<string, object?> parameters, string parameterName) {

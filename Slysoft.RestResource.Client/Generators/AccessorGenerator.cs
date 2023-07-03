@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection.Emit;
 using System.Reflection;
-using Slysoft.RestResource.Client.Utils;
 
 namespace Slysoft.RestResource.Client.Generators; 
 
@@ -45,13 +44,7 @@ internal abstract class AccessorGenerator {
     protected Type InterfaceType { get; }
     protected TypeBuilder TypeBuilder { get; }
 
-    protected void AddProperties() {
-        foreach (var property in InterfaceType.GetAllProperties()) {
-            AddProperty(property);
-        }
-    }
-
-    private void AddProperty(PropertyInfo property) {
+    protected void AddProperty(PropertyInfo property) {
         var methodBuilder = TypeBuilder.DefineMethod("get_" + property.Name, MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.Standard | CallingConventions.HasThis, property.PropertyType, Type.EmptyTypes);
 
         if (TypeBuilder.BaseType == null) {
