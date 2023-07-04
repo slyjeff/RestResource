@@ -15,7 +15,13 @@ using Slysoft.RestResource.Client.ResourceDeserializers;
 
 namespace Slysoft.RestResource.Client;
 
-public delegate HttpContent CreateBodyDelegate(IDictionary<string, object?> body);
+/// <summary>
+/// Provide custom serialization
+/// </summary>
+/// <param name="body">Body to serialized</param>
+/// <param name="verb">The verb of this call</param>
+/// <returns></returns>
+public delegate HttpContent CreateBodyDelegate(IDictionary<string, object?> body, string verb);
 
 /// <summary>
 /// Injectable into ResourceAccessors so they can call links
@@ -72,7 +78,7 @@ public sealed class RestClient : IRestClient {
         _httpClient.Timeout = Timeout.InfiniteTimeSpan;
         _httpClient.DefaultRequestHeaders
             .Accept
-            .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            .Add(new MediaTypeWithQualityHeaderValue("application/slysoft.hal+json"));
     }
 
     /// <summary>
@@ -91,9 +97,14 @@ public sealed class RestClient : IRestClient {
     /// <summary>
     /// Method used to serialize content- defaults to converting to json
     /// </summary>
-    public CreateBodyDelegate CreateBody { get; set; } = body => {
+    public CreateBodyDelegate CreateBody { get; set; } = (body, verb) => {
+        var contentType = verb == "PATCH" 
+            ? "application/merge-patch+json" 
+            : "application/json";
+        
         var content = JsonConvert.SerializeObject(body);
-        return new StringContent(content, Encoding.UTF8, "application/json");
+        
+        return new StringContent(content, Encoding.UTF8, contentType);
     };
 
     /// <summary>
@@ -179,13 +190,11 @@ public sealed class RestClient : IRestClient {
 
     private HttpRequestMessage CreateRequest(string url, string? verb = null, IDictionary<string, object?>? body = null) {
         url = _baseUrl.AppendUrl(url);
-        if (string.IsNullOrEmpty(verb)) {
-            verb = "GET";
-        }
+        verb ??= "GET";
 
         var request = new HttpRequestMessage(new HttpMethod(verb), url);
         if (body != null && body.Any()) {
-            request.Content = CreateBody(body);
+            request.Content = CreateBody(body, verb);
         }
 
         return request;
