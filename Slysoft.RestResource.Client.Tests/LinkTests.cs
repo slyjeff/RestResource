@@ -19,7 +19,6 @@ public sealed class LinkTests {
     private readonly string _defaultValue = GenerateRandom.String();
     private readonly IList<string> _listOfValues = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
 
-
     [TestInitialize]
     public void SetUp() {
         _mockRestClient = new Mock<IRestClient>();

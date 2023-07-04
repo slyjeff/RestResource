@@ -28,6 +28,12 @@ public delegate HttpContent CreateBodyDelegate(IDictionary<string, object?> body
 /// </summary>
 public interface IRestClient {
     /// <summary>
+    /// Set the content type that this client desires from the server
+    /// </summary>
+    /// <param name="contentTypes">Content type to set in the accept header</param>
+    void SetDefaultAcceptHeader(params string[] contentTypes);
+
+    /// <summary>
     /// Timeout (in seconds) to use if the server doesn't specify a timeout- defaults to 100 seconds;
     /// </summary>
     int DefaultTimeout { get; set; }
@@ -51,7 +57,7 @@ public interface IRestClient {
     /// <param name="body">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    T Call<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
+    T Call<T>(string? url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
 
     /// <summary>
     /// Make an asynchronous web service call, returning the result as the type specified
@@ -62,23 +68,46 @@ public interface IRestClient {
     /// <param name="body">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
+    Task<T> CallAsync<T>(string? url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0);
 }
 
 /// <summary>
 /// Uses HttpClient to make calls from RestCall objects
 /// </summary>
 public sealed class RestClient : IRestClient {
-    private readonly string _baseUrl;
     private readonly HttpClient _httpClient;
 
-    public RestClient(string baseUrl) {
-        _baseUrl = baseUrl;
-        _httpClient = new HttpClient();
+    /// <summary>
+    /// Create a RestClient
+    /// </summary>
+    /// <param name="baseAddress">the base URL of the application, used to resolve all URLS returned from the service</param>
+    public RestClient(string baseAddress) {
+        _httpClient = new HttpClient {
+            BaseAddress = new Uri(baseAddress),
+            Timeout = Timeout.InfiniteTimeSpan
+        };
+        SetDefaultAcceptHeader("application/slysoft.hal+json", "application/hal+json", "application/jso1n");
+    }
+
+    /// <summary>
+    /// Create a RestClient 
+    /// </summary>
+    /// <param name="httpClient">HttpClient to use for making network calls</param>
+    public RestClient(HttpClient httpClient) {
+        _httpClient = httpClient;
         _httpClient.Timeout = Timeout.InfiniteTimeSpan;
-        _httpClient.DefaultRequestHeaders
-            .Accept
-            .Add(new MediaTypeWithQualityHeaderValue("application/slysoft.hal+json"));
+        SetDefaultAcceptHeader("application/slysoft.hal+json", "application/hal+json", "application/jso1n");
+    }
+
+    /// <summary>
+    /// Set the content type that this client desires from the server
+    /// </summary>
+    /// <param name="contentTypes">Content type to set in the accept header</param>
+    public void SetDefaultAcceptHeader(params string[] contentTypes) {
+        var acceptHeader = _httpClient.DefaultRequestHeaders.Accept;
+        foreach (var contentType in contentTypes) {
+            acceptHeader.Add(new MediaTypeWithQualityHeaderValue(contentType));
+        }
     }
 
     /// <summary>
@@ -116,8 +145,8 @@ public sealed class RestClient : IRestClient {
     /// <param name="body">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    public T Call<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-        var response = Call(url, verb, body, timeout);
+    public T Call<T>(string? url = null, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
+        var response = Call(url ?? string.Empty, verb, body, timeout);
 
         if (!response.IsSuccessStatusCode) {
             throw new ResponseErrorCodeException(response);
@@ -144,8 +173,8 @@ public sealed class RestClient : IRestClient {
     /// <param name="body">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    public async Task<T> CallAsync<T>(string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
-        var response = await CallAsync(url, verb, body, timeout);
+    public async Task<T> CallAsync<T>(string? url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
+        var response = await CallAsync(url ?? string.Empty, verb, body, timeout);
         if (!response.IsSuccessStatusCode) {
             throw new ResponseErrorCodeException(response);
         }
@@ -189,9 +218,7 @@ public sealed class RestClient : IRestClient {
     }
 
     private HttpRequestMessage CreateRequest(string url, string? verb = null, IDictionary<string, object?>? body = null) {
-        url = _baseUrl.AppendUrl(url);
         verb ??= "GET";
-
         var request = new HttpRequestMessage(new HttpMethod(verb), url);
         if (body != null && body.Any()) {
             request.Content = CreateBody(body, verb);

@@ -7,7 +7,7 @@ var restClient = new RestClient("http://localhost:35093/");
 IApplicationResource? application = null;
 
 Test.Start("Get Application", test => {
-    application = restClient.Call<IApplicationResource>(string.Empty);
+    application = restClient.Call<IApplicationResource>();
     const string expectedInformation = "This is a test web service for demonstrating how to use Slysoft.RestResource and related libraries.";
     test.AssertAreEqual(expectedInformation, application.Information);
 });
