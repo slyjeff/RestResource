@@ -10,6 +10,7 @@ public interface ITestsResource {
     Task<string> NotFound();
     Task<string> Text();
     Task<IQueryResultResource> Query(string parameter1, string parameter2);
+    Task<IPostResultResource> Post(string parameter1, int parameter2);
 }
 
 public interface IQueryResultResource {
@@ -17,3 +18,7 @@ public interface IQueryResultResource {
     string Parameter2 { get; }
 }
 
+public interface IPostResultResource {
+    string Parameter1 { get; }
+    int Parameter2 { get; }
+}

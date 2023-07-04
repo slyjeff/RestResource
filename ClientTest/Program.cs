@@ -51,9 +51,27 @@ await Test.StartAsync("Get Non-Resource Text", async test => {
 });
 
 await Test.StartAsync("Query Parameters", async test => {
+    //arrange
     var parameter1 = GenerateRandom.String();
     var parameter2 = GenerateRandom.String();
+
+    //act
     var queryResult = await tests.Query(parameter1, parameter2);
+
+    //assert
     test.AssertAreEqual(parameter1, queryResult.Parameter1);
     test.AssertAreEqual(parameter2, queryResult.Parameter2);
+});
+
+await Test.StartAsync("Post", async test => {
+    //arrange
+    var parameter1 = GenerateRandom.String();
+    var parameter2 = GenerateRandom.Int();
+    
+    //act
+    var postResult = await tests.Post(parameter1, parameter2);
+    
+    //assert
+    test.AssertAreEqual(parameter1, postResult.Parameter1);
+    test.AssertAreEqual(parameter2, postResult.Parameter2);
 });
