@@ -45,13 +45,25 @@ internal abstract class AccessorGenerator {
     protected TypeBuilder TypeBuilder { get; }
 
     protected void AddProperty(PropertyInfo property) {
+        var propertyBuilder = TypeBuilder.DefineProperty(property.Name, PropertyAttributes.None, property.PropertyType, null);
+        
+        if (property.CanRead) {
+            propertyBuilder.SetGetMethod(CreateGetter(property));
+        }
+
+        if (property.CanWrite) {
+            propertyBuilder.SetGetMethod(CreateSetter(property));
+        }
+    }
+
+    private MethodBuilder CreateGetter(PropertyInfo property) {
         var methodBuilder = TypeBuilder.DefineMethod("get_" + property.Name, MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.Standard | CallingConventions.HasThis, property.PropertyType, Type.EmptyTypes);
 
         if (TypeBuilder.BaseType == null) {
             throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {InterfaceType.Name}");
         }
 
-        var getDataMethod = TypeBuilder.BaseType.GetMethod("GetData", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
+        var getDataMethod = TypeBuilder.BaseType.GetMethod("GetData", BindingFlags.Instance | BindingFlags.NonPublic);
         if (getDataMethod == null) {
             throw new CreateAccessorException($"Could not find 'GetData' method when generating based in on interface {InterfaceType.Name}");
         }
@@ -64,8 +76,32 @@ internal abstract class AccessorGenerator {
         codeGenerator.Emit(OpCodes.Ldstr, property.Name);          //push the name of the property onto the stack
         codeGenerator.Emit(OpCodes.Callvirt, typedGetDataMethod);  //call the the "GetData" method
         codeGenerator.Emit(OpCodes.Ret);                           //return
+        
+        return methodBuilder;
+    }
 
-        var propertyBuilder = TypeBuilder.DefineProperty(property.Name, PropertyAttributes.None, property.PropertyType, null);
-        propertyBuilder.SetGetMethod(methodBuilder);
+    private MethodBuilder CreateSetter(PropertyInfo property) {
+        var methodBuilder = TypeBuilder.DefineMethod("set_" + property.Name, MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.Standard | CallingConventions.HasThis, typeof(void), new[] { property.PropertyType });
+
+        if (TypeBuilder.BaseType == null) {
+            throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {InterfaceType.Name}");
+        }
+
+        var setDataMethod = TypeBuilder.BaseType.GetMethod("SetData", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (setDataMethod == null) {
+            throw new CreateAccessorException($"Could not find 'SetData' method when generating based in on interface {InterfaceType.Name}");
+        }
+
+        var typedSetDataMethod = setDataMethod.MakeGenericMethod(property.PropertyType);
+
+        var codeGenerator = methodBuilder.GetILGenerator();
+
+        codeGenerator.Emit(OpCodes.Ldarg_0);                       //push 'this' onto the stack
+        codeGenerator.Emit(OpCodes.Ldstr, property.Name);          //push the name of the property onto the stack
+        codeGenerator.Emit(OpCodes.Ldarg_1);                       //load the value of the parameter
+        codeGenerator.Emit(OpCodes.Callvirt, typedSetDataMethod);  //call the the "SetData" method
+        codeGenerator.Emit(OpCodes.Ret);                           //return
+
+        return methodBuilder;
     }
 }

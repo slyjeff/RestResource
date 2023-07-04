@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Extensions;
 using Slysoft.RestResource.Extensions;
@@ -14,8 +15,9 @@ public interface IResourceAccessor {
     Task<T> CallRestLinkAsync<T>(string name, IDictionary<string, object?> parameters);
 }
 
-public abstract class ResourceAccessor : IResourceAccessor {
+public abstract class ResourceAccessor : IResourceAccessor, INotifyPropertyChanged {
     private readonly IDictionary<string, object?> _cachedData = new Dictionary<string, object?>();
+    private readonly IDictionary<string, object?> _updateValues = new Dictionary<string, object?>();
 
     protected ResourceAccessor(Resource resource, IRestClient restClient) {
         Resource = resource;
@@ -26,13 +28,22 @@ public abstract class ResourceAccessor : IResourceAccessor {
     internal IRestClient RestClient { get; }
 
     protected T? GetData<T>(string name) {
-        if (_cachedData.TryGetValue(name, out var value)) {
+        if (_updateValues.TryGetValue(name, out var value)) {
+            return (T?)value;
+        }
+
+        if (_cachedData.TryGetValue(name, out value)) {
             return (T?)value;
         }
 
         _cachedData[name] = Resource.GetData<T>(name, RestClient);
 
         return (T?)_cachedData[name];
+    }
+
+    protected void SetData<T>(string name, T? value) {
+        _updateValues[name] = value;
+        OnPropertyChanged(name);
     }
 
     protected IParameterInfo GetParameterInfo(string linkName, string parameterName) {
@@ -117,5 +128,11 @@ public abstract class ResourceAccessor : IResourceAccessor {
             dictionary[linkParameter.Name] = value;
         }
         return dictionary;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

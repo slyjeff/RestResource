@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using TestUtils;
 
 namespace Slysoft.RestResource.Client.Tests.Common;
 
 public enum OptionEnum { Option1, Option2 };
 
-public interface ISimpleResource {
-    string Message { get; }
+public interface ISimpleResource : INotifyPropertyChanged {
+    string Message { get; set; }
     int Number { get; }
     OptionEnum Option { get; }
     bool? IsOptional { get; }
@@ -32,6 +33,8 @@ public sealed class SimpleResource : ISimpleResource {
     public IChildResource ChildInterface { get; } = new ChildResource();
     public IList<ChildResource> Children { get; } = new List<ChildResource> { new(), new(), new() };
     public IList<IChildResource> ChildInterfaces { get; } = new List<IChildResource> { new ChildResource(), new ChildResource(), new ChildResource() };
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }
 
 public interface IChildResource {
