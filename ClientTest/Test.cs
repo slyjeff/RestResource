@@ -1,7 +1,7 @@
 ﻿namespace ClientTest;
 
 internal interface ITest {
-    void AssertAreEqual(object expected, object actual);
+    void AssertAreEqual(object? expected, object? actual);
     void Error(string error);
 }
 
@@ -19,6 +19,9 @@ internal static class Test {
         } catch (Exception e) {
             Console.ForegroundColor = ConsoleColor.Red;
             var message = string.IsNullOrEmpty(e.Message) ? "Unknown Error" : e.Message;
+            if (e.InnerException != null) {
+                message += Environment.NewLine + "(" + e.InnerException.Message + ")";
+            }
             Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -38,6 +41,9 @@ internal static class Test {
         } catch (Exception e) {
             Console.ForegroundColor = ConsoleColor.Red;
             var message = string.IsNullOrEmpty(e.Message) ? "Unknown Error" : e.Message;
+            if (e.InnerException != null) {
+                message += Environment.NewLine + "(" + e.InnerException.Message + ")";
+            }
             Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -57,7 +63,10 @@ internal static class Test {
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public void AssertAreEqual(object expected, object actual) {
+        public void AssertAreEqual(object? expected, object? actual) {
+            expected ??= "[NULL]";
+            actual ??= "[NULL]";
+
             if (!expected.Equals(actual)) {
                 Error($"Expected and actual values do not match{Environment.NewLine}E: {expected}{Environment.NewLine}A: {actual}");
             }

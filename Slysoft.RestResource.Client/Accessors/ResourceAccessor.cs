@@ -8,7 +8,13 @@ using Slysoft.RestResource.Extensions;
 
 namespace Slysoft.RestResource.Client.Accessors;
 
-public abstract class ResourceAccessor {
+public interface IResourceAccessor {
+    Resource Resource { get; }
+    T CallRestLink<T>(string name, IDictionary<string, object?> parameters);
+    Task<T> CallRestLinkAsync<T>(string name, IDictionary<string, object?> parameters);
+}
+
+public abstract class ResourceAccessor : IResourceAccessor {
     private readonly IDictionary<string, object?> _cachedData = new Dictionary<string, object?>();
 
     protected ResourceAccessor(Resource resource, IRestClient restClient) {
@@ -16,7 +22,7 @@ public abstract class ResourceAccessor {
         RestClient = restClient;
     }
 
-    internal Resource Resource { get; }
+    public Resource Resource { get; }
     internal IRestClient RestClient { get; }
 
     protected T? GetData<T>(string name) {

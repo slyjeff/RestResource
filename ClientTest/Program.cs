@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using ClientTest;
+using Slysoft.RestResource;
 using Slysoft.RestResource.Client;
 using TestUtils;
 
@@ -38,8 +39,7 @@ await Test.StartAsync("Response Error Code Exception", async test => {
     try {
         await tests.NotFound();
         test.Error("ResponseErrorCodeException exception not thrown");
-    }
-    catch (ResponseErrorCodeException e) {
+    } catch (ResponseErrorCodeException e) {
         test.AssertAreEqual("Resource not found.", e.Message);
         test.AssertAreEqual(HttpStatusCode.NotFound, e.StatusCode);
     }
@@ -66,7 +66,7 @@ await Test.StartAsync("Query Parameters", async test => {
 await Test.StartAsync("Post", async test => {
     //arrange
     var parameter1 = GenerateRandom.String();
-    var parameter2 = GenerateRandom.Int();
+    var parameter2 = GenerateRandom.String();
     
     //act
     var postResult = await tests.Post(parameter1, parameter2);
@@ -74,4 +74,35 @@ await Test.StartAsync("Post", async test => {
     //assert
     test.AssertAreEqual(parameter1, postResult.Parameter1);
     test.AssertAreEqual(parameter2, postResult.Parameter2);
+});
+
+await Test.StartAsync("List", async test => {
+    //arrange
+    var list = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String( )};
+
+    //act
+    var listResult = await tests.List(list);
+
+    //assert
+    test.AssertAreEqual(list[0], listResult.List[0]);
+    test.AssertAreEqual(list[1], listResult.List[1]);
+    test.AssertAreEqual(list[2], listResult.List[2]);
+});
+
+await Test.StartAsync("Manually Call Post", async test => {
+    //arrange
+    var postLink = tests.Resource.Links.FirstOrDefault(link => link.Verb == "POST");
+    if (postLink == null) {
+        throw new Exception("No POST link found");
+    }
+
+    var fields = postLink.InputItems.ToDictionary<InputItem?, string, object?>(inputItem => inputItem.Name, _ => GenerateRandom.String());
+
+    //act
+    var postResult = await tests.CallRestLinkAsync<Resource>(postLink.Name, fields);
+
+    //assert
+    foreach (var field in fields) {
+        test.AssertAreEqual(field.Value, postResult.Data[field.Key]);
+    }
 });

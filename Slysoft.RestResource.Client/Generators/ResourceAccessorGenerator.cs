@@ -53,6 +53,10 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
 
     private void AddProperties() {
         foreach (var property in InterfaceType.GetAllProperties()) {
+            if (property.IsFromResourceAccessorInterface()) {
+                continue;
+            }
+
             if (property.IsLinkCheck()) {
                 AddLinkCheck(property);
                 continue;
@@ -123,6 +127,10 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
 
     private void AddMethods() {
         foreach (var method in InterfaceType.GetAllMethods()) {
+            if (method.IsFromResourceAccessorInterface()) {
+                continue;
+            }
+
             AddMethod(method);
         }
     }

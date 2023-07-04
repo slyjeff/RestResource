@@ -1,16 +1,19 @@
-﻿namespace ClientTest; 
+﻿using Slysoft.RestResource.Client.Accessors;
+
+namespace ClientTest; 
 
 public interface IApplicationResource {
     string Information { get; }
     Task<ITestsResource> GetTests();
 }
 
-public interface ITestsResource {
+public interface ITestsResource : IResourceAccessor {
     string Description { get; }
     Task<string> NotFound();
     Task<string> Text();
     Task<IQueryResultResource> Query(string parameter1, string parameter2);
-    Task<IPostResultResource> Post(string parameter1, int parameter2);
+    Task<IPostResultResource> Post(string parameter1, string parameter2);
+    Task<IListResultResource> List(IList<string> list);
 }
 
 public interface IQueryResultResource {
@@ -20,5 +23,9 @@ public interface IQueryResultResource {
 
 public interface IPostResultResource {
     string Parameter1 { get; }
-    int Parameter2 { get; }
+    string Parameter2 { get; }
+}
+
+public interface IListResultResource {
+    public IList<string> List { get; }
 }

@@ -19,6 +19,9 @@ public sealed class TestController  : ControllerBase {
             .Post("post", "test/post")
                 .Field("parameter1")
                 .Field("parameter2")
+            .EndBody()
+            .Put("list", "test/list")
+                .Field("list")
             .EndBody();
 
         return StatusCode(200, resource);
@@ -45,7 +48,7 @@ public sealed class TestController  : ControllerBase {
 
     public class PostBody {
         public string Parameter1 { get; set; } = string.Empty;
-        public int Parameter2 { get; set; }
+        public string Parameter2 { get; set; } = string.Empty;
     }
 
     [HttpPost("post")]
@@ -53,6 +56,18 @@ public sealed class TestController  : ControllerBase {
         var resource = new Resource()
             .Data("parameter1", body.Parameter1)
             .Data("parameter2", body.Parameter2);
+
+        return StatusCode(200, resource);
+    }
+
+    public class ListBody {
+        public IList<string> List { get; set; } = new List<string>();
+    }
+
+    [HttpPut("list")]
+    public IActionResult List([FromBody] ListBody body) {
+        var resource = new Resource()
+            .Data("list", body.List);
 
         return StatusCode(200, resource);
     }
