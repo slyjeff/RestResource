@@ -5,6 +5,10 @@ namespace Slysoft.RestResource.Client.Extensions;
 
 internal static class PropertyExtensions {
     public static bool IsLinkCheck(this PropertyInfo property) {
+        if (property.PropertyType != typeof(bool)) {
+            return false;
+        }
+
         var attribute = property.GetCustomAttribute<LinkCheckAttribute>();
         return attribute != null;
     }
@@ -22,5 +26,14 @@ internal static class PropertyExtensions {
         return property.Name.StartsWith("Can", StringComparison.CurrentCultureIgnoreCase)
             ? property.Name.Substring("Can".Length)
             : property.Name;
+    }
+
+    public static bool IsParameterInfo(this PropertyInfo property) {
+        if (property.PropertyType != typeof(IParameterInfo)) {
+            return false;
+        }
+
+        var attribute = property.GetCustomAttribute<ParameterInfoAttribute>();
+        return attribute != null;
     }
 }

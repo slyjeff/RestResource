@@ -12,7 +12,9 @@ public sealed class LinkTests {
     private Mock<IRestClient> _mockRestClient = null!;
     private ILinkTest _linkTest = null!;
     private ILinkTestAsync _linkTestAsync = null!;
+    private readonly string _type = GenerateRandom.String();
     private readonly string _defaultValue = GenerateRandom.String();
+    private readonly IList<string> _listOfValues = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
 
 
     [TestInitialize]
@@ -22,7 +24,7 @@ public sealed class LinkTests {
             .Get("getAllUsers", "/user")
             .Get("getAllUsersTemplated", "/user/{id1}/{id2}", templated: true)
             .Query("searchUsers", "/user")
-                .Parameter("lastName", defaultValue: _defaultValue)
+                .Parameter("lastName", type: _type, defaultValue: _defaultValue, listOfValues: _listOfValues)
                 .Parameter("firstName")
             .EndQuery();
 
@@ -161,5 +163,15 @@ public sealed class LinkTests {
     public void MustBeAbleToCheckLinksBySpecificName() {
         //assert
         Assert.IsTrue(_linkTest.LinkCheckGetTemplated);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToGetParameterInfo() {
+        //
+        Assert.AreEqual(_type, _linkTest.SearchLastNameInfo.Type);
+        Assert.AreEqual(_defaultValue, _linkTest.SearchLastNameInfo.DefaultValue);
+        Assert.AreEqual(_listOfValues[0], _linkTest.SearchLastNameInfo.ListOfValues[0]);
+        Assert.AreEqual(_listOfValues[1], _linkTest.SearchLastNameInfo.ListOfValues[1]);
+        Assert.AreEqual(_listOfValues[2], _linkTest.SearchLastNameInfo.ListOfValues[2]);
     }
 }

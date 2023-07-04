@@ -29,6 +29,13 @@ public abstract class ResourceAccessor {
         return (T?)_cachedData[name];
     }
 
+    protected IParameterInfo GetParameterInfo(string linkName, string parameterName) {
+        var link = Resource.GetLink(linkName);
+        return link == null 
+            ? new LinkParameterInfo() 
+            : new LinkParameterInfo(link.GetInputItem(parameterName));
+    }
+
     protected bool LinkCheck(string name) {
         return Resource.GetLink(name) != null;
     }

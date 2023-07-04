@@ -12,6 +12,9 @@ public interface ILinkTestCommon {
 
     [LinkCheck]
     bool CanLinkThatDoesNotExist { get; }
+
+    [ParameterInfo(nameof(ILinkTest.SearchUsers), "lastName")]
+    IParameterInfo SearchLastNameInfo { get; }
 }
 
 public interface ILinkTest : ILinkTestCommon {

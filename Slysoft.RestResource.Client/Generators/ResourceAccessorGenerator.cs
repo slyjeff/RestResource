@@ -57,6 +57,12 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
                 AddLinkCheck(property);
                 continue;
             }
+
+            if (property.IsParameterInfo()) {
+                AddParameterInfoAccessor(property);
+                continue;
+            }
+
             AddProperty(property);
         }
     }
@@ -79,8 +85,37 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
 
         codeGenerator.Emit(OpCodes.Ldarg_0);                       //push 'this' onto the stack
         codeGenerator.Emit(OpCodes.Ldstr, linkName);               //push the name of the property onto the stack
-        codeGenerator.Emit(OpCodes.Callvirt, linkCheckMethod);     //call the the "GetData" method
+        codeGenerator.Emit(OpCodes.Callvirt, linkCheckMethod);     //call the the "LinkCheck" method
         codeGenerator.Emit(OpCodes.Ret);                           //return
+
+        var propertyBuilder = TypeBuilder.DefineProperty(property.Name, PropertyAttributes.None, property.PropertyType, null);
+        propertyBuilder.SetGetMethod(methodBuilder);
+    }
+
+    private void AddParameterInfoAccessor(PropertyInfo property) {
+        var methodBuilder = TypeBuilder.DefineMethod("get_" + property.Name, MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.Standard | CallingConventions.HasThis, property.PropertyType, Type.EmptyTypes);
+
+        if (TypeBuilder.BaseType == null) {
+            throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {InterfaceType.Name}");
+        }
+
+        var getParameterInfoMethod = TypeBuilder.BaseType.GetMethod("GetParameterInfo", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(string), typeof(string) }, null);
+        if (getParameterInfoMethod == null) {
+            throw new CreateAccessorException($"Could not find 'GetParameterInfo' method when generating based in on interface {InterfaceType.Name}");
+        }
+
+        var parameterInfo = property.GetCustomAttribute<ParameterInfoAttribute>();
+        if (parameterInfo == null) {
+            throw new CreateAccessorException($"Could not find 'ParameterInfo' attribute when generating based in on interface {InterfaceType.Name}");
+        }
+
+        var codeGenerator = methodBuilder.GetILGenerator();
+
+        codeGenerator.Emit(OpCodes.Ldarg_0);                              //push 'this' onto the stack
+        codeGenerator.Emit(OpCodes.Ldstr, parameterInfo.LinkName);        //push the name of the link onto the stack
+        codeGenerator.Emit(OpCodes.Ldstr, parameterInfo.ParameterName);   //push the name of the parameter onto the stack
+        codeGenerator.Emit(OpCodes.Callvirt, getParameterInfoMethod);     //call the the "GetParameterInfo" method
+        codeGenerator.Emit(OpCodes.Ret);                                  //return
 
         var propertyBuilder = TypeBuilder.DefineProperty(property.Name, PropertyAttributes.None, property.PropertyType, null);
         propertyBuilder.SetGetMethod(methodBuilder);
