@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Extensions;
 using Slysoft.RestResource.Extensions;
@@ -44,7 +45,7 @@ public abstract class ResourceAccessor {
         var link = CreateLink(name, parameters);
 
         try {
-            return RestClient.Call<T>(link.Url, body: link.Body);
+            return RestClient.Call<T>(link.Url, verb: link.Verb, body: link.Body, timeout: link.Timeout);
         } catch (ResponseErrorCodeException) {
             throw; //rethrow ResponseErrorCodeException because it contains information the caller may be interested in- the code and the message from the server
         } catch (Exception e) {
@@ -56,7 +57,7 @@ public abstract class ResourceAccessor {
         var link = CreateLink(name, parameters);
 
         try {
-            return await RestClient.CallAsync<T>(link.Url, body: link.Body);
+            return await RestClient.CallAsync<T>(link.Url, verb: link.Verb, body: link.Body);
         } catch (ResponseErrorCodeException) {
             throw; //rethrow ResponseErrorCodeException because it contains information the caller may be interested in- the code and the message from the server
         } catch (Exception e) {
@@ -65,12 +66,16 @@ public abstract class ResourceAccessor {
     }
 
     private readonly struct CallableLink {
-        public CallableLink(string url, IDictionary<string, object?>? body = null) {
+        public CallableLink(string url, string verb, IDictionary<string, object?>? body = null, int timeout = 0) {
             Url = url;
+            Verb = verb;
             Body = body;
+            Timeout = timeout;
         }
         public readonly string Url;
+        public readonly string Verb;
         public readonly IDictionary<string, object?>? Body;
+        public readonly int Timeout;
     }
 
     private CallableLink CreateLink(string name, IDictionary<string, object?> parameters) {
@@ -85,11 +90,11 @@ public abstract class ResourceAccessor {
         }
 
         if (!link.Verb.SupportsBody()) {
-            return new CallableLink(url);
+            return new CallableLink(url, link.Verb, timeout: link.Timeout);
         }
 
         var body = GetInputElements(link.InputItems, parameters);
-        return new CallableLink(url, body);
+        return new CallableLink(url, link.Verb, body, timeout: link.Timeout);
     }
 
     private static IDictionary<string, object?> GetInputElements(IEnumerable<InputItem> inputItems, IDictionary<string, object?> parameters) {
