@@ -109,35 +109,35 @@ public static class ToHalJsonExtensions {
             linkObject["timeout"] = link.Timeout;
         }
 
-        if (link.InputItems.Any()) {
-            linkObject.AddInputItems(link);
+        if (link.Parameters.Any()) {
+            linkObject.AddLinkParameters(link);
         }
 
         links[link.Name] = linkObject;
     }
 
-    private static void AddInputItems(this JObject linkObject, Link link) {
-        var inputItems = new JObject();
-        foreach (var inputItem in link.InputItems) {
-            var inputItemObject = new JObject();
+    private static void AddLinkParameters(this JObject linkObject, Link link) {
+        var linkParameters = new JObject();
+        foreach (var linkParameter in link.Parameters) {
+            var linkParameterObject = new JObject();
 
-            if (!string.IsNullOrEmpty(inputItem.Type)) {
-                inputItemObject["type"] = inputItem.Type;
+            if (!string.IsNullOrEmpty(linkParameter.Type)) {
+                linkParameterObject["type"] = linkParameter.Type;
             }
 
-            if (!string.IsNullOrEmpty(inputItem.DefaultValue)) {
-                inputItemObject["defaultValue"] = inputItem.DefaultValue;
+            if (!string.IsNullOrEmpty(linkParameter.DefaultValue)) {
+                linkParameterObject["defaultValue"] = linkParameter.DefaultValue;
             }
 
-            if (inputItem.ListOfValues.Any()) {
-                inputItemObject["listOfValues"] = new JArray(inputItem.ListOfValues);
+            if (linkParameter.ListOfValues.Any()) {
+                linkParameterObject["listOfValues"] = new JArray(linkParameter.ListOfValues);
             }
 
-            inputItems[inputItem.Name] = inputItemObject;
+            linkParameters[linkParameter.Name] = linkParameterObject;
         }
 
-        var inputItemsName = link.GetInputItemName() + "s";
-        linkObject[inputItemsName] = inputItems;
+        var linkParameterName = link.GetParameterTypeName() + "s";
+        linkObject[linkParameterName] = linkParameters;
     }
 
     private static void AddEmbeddedResource(this JObject o, string name, object resourceObject) {

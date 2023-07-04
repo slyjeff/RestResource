@@ -106,38 +106,38 @@ public static class FromHalXmlExtensions {
 
             var link = new Link(name, href, verb: verb, templated: templated, timeout: timeout);
 
-            foreach (var inputItemElement in element.Elements()) {
-                link.GetInputItem(inputItemElement);
+            foreach (var linkParameter in element.Elements()) {
+                link.GetLinkParameter(linkParameter);
             }
 
             resource.Links.Add(link);
         }
     }
 
-    private static void GetInputItem(this Link link, XElement? inputItemElement) {
-        if (inputItemElement?.Name.LocalName is not ("parameter" or "field")) {
+    private static void GetLinkParameter(this Link link, XElement? linkParameterElement) {
+        if (linkParameterElement?.Name.LocalName is not ("parameter" or "field")) {
             return;
         }
 
-        var inputElementName = inputItemElement.Attribute("name")?.Value;
-        if (inputElementName == null) {
+        var linkParameterName = linkParameterElement.Attribute("name")?.Value;
+        if (linkParameterName == null) {
             return;
         }
 
-        var inputItem = new InputItem(inputElementName);
-        link.InputItems.Add(inputItem);
+        var linkParameter = new LinkParameter(linkParameterName);
+        link.Parameters.Add(linkParameter);
 
-        foreach (var inputItemDataElement in inputItemElement.Elements()) {
-            switch (inputItemDataElement.Name.LocalName) {
+        foreach (var linkParameterDataElement in linkParameterElement.Elements()) {
+            switch (linkParameterDataElement.Name.LocalName) {
                 case "defaultValue":
-                    inputItem.DefaultValue = inputItemDataElement.Value;
+                    linkParameter.DefaultValue = linkParameterDataElement.Value;
                     break;
                 case "type":
-                    inputItem.Type = inputItemDataElement.Value;
+                    linkParameter.Type = linkParameterDataElement.Value;
                     break;
                 case "listOfValues": {
-                    foreach (var value in inputItemDataElement.Elements()) {
-                        inputItem.ListOfValues.Add(value.Value);
+                    foreach (var value in linkParameterDataElement.Elements()) {
+                        linkParameter.ListOfValues.Add(value.Value);
                     }
 
                     break;

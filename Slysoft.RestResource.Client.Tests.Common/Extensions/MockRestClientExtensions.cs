@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Moq;
 
 namespace Slysoft.RestResource.Client.Tests.Common.Extensions; 
@@ -10,9 +9,9 @@ public static class MockRestClientExtensions {
         return new CallSetup<T>(mockRestMock, url, verb, body, timeout);
     }
 
-    public static CallAsyncSetup<T> SetupCallAsync<T>(this Mock<IRestClient> mockRestMock, string url, string? verb = null, IDictionary<string, object?>? inputItems = null, int timeout = 0) {
+    public static CallAsyncSetup<T> SetupCallAsync<T>(this Mock<IRestClient> mockRestMock, string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
         verb ??= "GET";
-        return new CallAsyncSetup<T>(mockRestMock, url, verb, inputItems, timeout);
+        return new CallAsyncSetup<T>(mockRestMock, url, verb, body, timeout);
     }
 
     public static void VerifyCall<T>(this Mock<IRestClient> mockRestMock, string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
@@ -33,7 +32,7 @@ public class CallSetup<T> {
     private readonly IDictionary<string, object?>? _body;
     private readonly int _timeout;
 
-    public CallSetup(Mock<IRestClient> mockRestClient, string url, string verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
+    public CallSetup(Mock<IRestClient> mockRestClient, string url, string verb, IDictionary<string, object?>? body = null, int timeout = 0) {
         _mockRestClient = mockRestClient;
         _url = url;
         _verb = verb;
@@ -53,7 +52,7 @@ public class CallAsyncSetup<T> {
     private readonly IDictionary<string, object?>? _body;
     private readonly int _timeout;
 
-    public CallAsyncSetup(Mock<IRestClient> mockRestClient, string url, string verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
+    public CallAsyncSetup(Mock<IRestClient> mockRestClient, string url, string verb, IDictionary<string, object?>? body = null, int timeout = 0) {
         _mockRestClient = mockRestClient;
         _url = url;
         _verb = verb;

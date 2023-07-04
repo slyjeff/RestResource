@@ -3,19 +3,19 @@
 namespace Slysoft.RestResource.Extensions; 
 
 internal static class InternalResourceExtensions {
-    public static void AddInputItem(this Link link, string name, string? type, string? defaultValue, IList<string>? listOfValues) {
-        var inputItem = new InputItem(name.ToCamelCase());
-        link.InputItems.Add(inputItem);
+    public static void AddParameter(this Link link, string name, string? type, string? defaultValue, IList<string>? listOfValues) {
+        var parameter = new LinkParameter(name.ToCamelCase());
+        link.Parameters.Add(parameter);
 
-        inputItem.Type = type;
-        inputItem.DefaultValue = defaultValue;
+        parameter.Type = type;
+        parameter.DefaultValue = defaultValue;
 
         if (listOfValues == null) {
             return;
         }
 
         foreach (var value in listOfValues) {
-            inputItem.ListOfValues.Add(value);
+            parameter.ListOfValues.Add(value);
         }
     }
 }

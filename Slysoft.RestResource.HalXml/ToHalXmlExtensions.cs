@@ -107,25 +107,25 @@ public static class ToHalXmlExtensions {
             xmlWriter.WriteAttributeString("timeout", link.Timeout.ToString());
         }
 
-        foreach (var inputItem in link.InputItems) {
-            xmlWriter.WriteStartElement(link.GetInputItemName());
-            xmlWriter.WriteAttributeString("name", inputItem.Name);
+        foreach (var linkParameter in link.Parameters) {
+            xmlWriter.WriteStartElement(link.GetParameterTypeName());
+            xmlWriter.WriteAttributeString("name", linkParameter.Name);
 
-            if (!string.IsNullOrEmpty(inputItem.Type)) {
+            if (!string.IsNullOrEmpty(linkParameter.Type)) {
                 xmlWriter.WriteStartElement("type");
-                xmlWriter.WriteValue(inputItem.Type!);
+                xmlWriter.WriteValue(linkParameter.Type!);
                 xmlWriter.WriteEndElement();
             }
 
-            if (!string.IsNullOrEmpty(inputItem.DefaultValue)) {
+            if (!string.IsNullOrEmpty(linkParameter.DefaultValue)) {
                 xmlWriter.WriteStartElement("defaultValue");
-                xmlWriter.WriteValue(inputItem.DefaultValue!);
+                xmlWriter.WriteValue(linkParameter.DefaultValue!);
                 xmlWriter.WriteEndElement();
             }
 
-            if (inputItem.ListOfValues.Any()) {
+            if (linkParameter.ListOfValues.Any()) {
                 xmlWriter.WriteStartElement("listOfValues");
-                foreach (var value in inputItem.ListOfValues) {
+                foreach (var value in linkParameter.ListOfValues) {
                     xmlWriter.WriteStartElement("value");
                     xmlWriter.WriteValue(value);
                     xmlWriter.WriteEndElement();

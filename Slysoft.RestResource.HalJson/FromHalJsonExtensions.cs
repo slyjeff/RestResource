@@ -128,36 +128,36 @@ public static class FromHalJsonExtensions {
 
         var link = new Link(linkObject.Key, href.ToString(), verb: verb, templated: templated, timeout: timeout);
 
-        var inputItems = linkData["parameters"] as JObject ?? linkData["fields"] as JObject;
+        var linkParameters = linkData["parameters"] as JObject ?? linkData["fields"] as JObject;
 
-        if (inputItems != null) {
-            foreach (var inputItem in inputItems) {
-                link.GetInputItem(inputItem);
+        if (linkParameters != null) {
+            foreach (var linkParameter in linkParameters) {
+                link.GetLinkParameter(linkParameter);
             }
         }
 
         resource.Links.Add(link);
     }
 
-    private static void GetInputItem(this Link link, KeyValuePair<string, JToken?> inputItemKeyValue) {
-        var inputItem = new InputItem(inputItemKeyValue.Key);
-        link.InputItems.Add(inputItem);
+    private static void GetLinkParameter(this Link link, KeyValuePair<string, JToken?> linkParameterKeyValuePair) {
+        var linkParameter = new LinkParameter(linkParameterKeyValuePair.Key);
+        link.Parameters.Add(linkParameter);
 
-        if (inputItemKeyValue.Value is not JObject inputItemValue) {
+        if (linkParameterKeyValuePair.Value is not JObject linkParameterValue) {
             return;
         }
 
-        if (inputItemValue["defaultValue"] is JValue defaultValue) {
-            inputItem.DefaultValue = defaultValue.ToString();
+        if (linkParameterValue["defaultValue"] is JValue defaultValue) {
+            linkParameter.DefaultValue = defaultValue.ToString();
         }
 
-        if (inputItemValue["type"] is JValue typeValue) {
-            inputItem.Type = typeValue.ToString();
+        if (linkParameterValue["type"] is JValue typeValue) {
+            linkParameter.Type = typeValue.ToString();
         }
 
-        if (inputItemValue["listOfValues"] is JArray listOfValues) {
+        if (linkParameterValue["listOfValues"] is JArray listOfValues) {
             foreach (var value in listOfValues) {
-                inputItem.ListOfValues.Add(value.ToString());
+                linkParameter.ListOfValues.Add(value.ToString());
             }
         }
     }

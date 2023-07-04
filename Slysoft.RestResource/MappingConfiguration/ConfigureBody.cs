@@ -32,7 +32,7 @@ internal sealed class ConfigureBody : IConfigureBody {
     }
 
     public IConfigureBody Field(string fieldName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
-        _link.AddInputItem(fieldName, type, defaultValue, listOfValues);
+        _link.AddParameter(fieldName, type, defaultValue, listOfValues);
         return this;
     }
 
@@ -112,9 +112,9 @@ internal sealed class ConfigureBody<T> : IConfigureBody<T> {
 
         _excludedParameters.Add(fieldName);
 
-        var parameter = _link.GetInputItem(fieldName);
-        if (parameter != null) {
-            _link.InputItems.Remove(parameter);
+        var linkParameter = _link.GetParameter(fieldName);
+        if (linkParameter != null) {
+            _link.Parameters.Remove(linkParameter);
         }
 
         return this;
@@ -123,7 +123,7 @@ internal sealed class ConfigureBody<T> : IConfigureBody<T> {
     private void AddField(string fieldName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
         listOfValues ??= typeof(T).GetListOfValues(fieldName);
 
-        _link.AddInputItem(fieldName, type, defaultValue, listOfValues);
+        _link.AddParameter(fieldName, type, defaultValue, listOfValues);
     }
 
     public Resource EndBody() {

@@ -5,13 +5,13 @@ using System.Text;
 namespace Slysoft.RestResource.Client.Extensions; 
 
 internal static class UrlExtensions {
-    public static string AppendQueryParameters(this string url, IDictionary<string, object?>? inputItems) {
-        if (inputItems == null || !inputItems.Any()) {
+    public static string AppendQueryParameters(this string url, IDictionary<string, object?>? parameters) {
+        if (parameters == null || !parameters.Any()) {
             return url;
         }
 
         var stringBuilder = new StringBuilder();
-        foreach (var item in inputItems) {
+        foreach (var item in parameters) {
             if (item.Value == null) {
                 continue;
             }

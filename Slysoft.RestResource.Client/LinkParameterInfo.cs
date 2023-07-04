@@ -24,14 +24,14 @@ public interface IParameterInfo {
 }
 
 internal sealed class LinkParameterInfo : IParameterInfo {
-    public LinkParameterInfo(InputItem? inputItem = null) {
-        if (inputItem == null) {
+    public LinkParameterInfo(LinkParameter? linkParameter = null) {
+        if (linkParameter == null) {
             return;
         }
 
-        Type = inputItem.Type;
-        DefaultValue = inputItem.DefaultValue;
-        ListOfValues = new ReadOnlyCollection<string>(inputItem.ListOfValues);
+        Type = linkParameter.Type;
+        DefaultValue = linkParameter.DefaultValue;
+        ListOfValues = new ReadOnlyCollection<string>(linkParameter.ListOfValues);
     }
 
     public string? Type { get; }

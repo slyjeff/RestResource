@@ -96,7 +96,7 @@ await Test.StartAsync("Manually Call Post", async test => {
         throw new Exception("No POST link found");
     }
 
-    var fields = postLink.InputItems.ToDictionary<InputItem?, string, object?>(inputItem => inputItem.Name, _ => GenerateRandom.String());
+    var fields = postLink.Parameters.ToDictionary<LinkParameter?, string, object?>(parameter => parameter.Name, _ => GenerateRandom.String());
 
     //act
     var postResult = await tests.CallRestLinkAsync<Resource>(postLink.Name, fields);

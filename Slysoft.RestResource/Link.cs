@@ -41,9 +41,9 @@ public sealed class Link {
     public bool Templated { get; }
 
     /// <summary>
-    /// List of of input items that contain information for interacting with the link (ex: form fields, query parameters)
+    /// List of of parameter this link expects (query parameters for the URL, form fields for the body)
     /// </summary>
-    public IList<InputItem> InputItems { get; } = new List<InputItem>();
+    public IList<LinkParameter> Parameters { get; } = new List<LinkParameter>();
 
     /// <summary>
     /// A suggested timeout in seconds that the client should use when calling this link

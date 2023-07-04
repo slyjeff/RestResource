@@ -39,7 +39,7 @@ public abstract class ResourceAccessor : IResourceAccessor {
         var link = Resource.GetLink(linkName);
         return link == null 
             ? new LinkParameterInfo() 
-            : new LinkParameterInfo(link.GetInputItem(parameterName));
+            : new LinkParameterInfo(link.GetParameter(parameterName));
     }
 
     protected bool LinkCheck(string name) {
@@ -88,33 +88,33 @@ public abstract class ResourceAccessor : IResourceAccessor {
 
         var url = link.Templated ? link.Href.ResolveTemplatedUrl(parameters) : link.Href;
 
-        var inputElements = GetInputElements(link.InputItems, parameters);
+        var linkParameters = GetLinkParameters(link.Parameters, parameters);
 
         if (link.Verb.SupportsQueryParameters()) {
-            url = url.AppendQueryParameters(inputElements);
+            url = url.AppendQueryParameters(linkParameters);
         }
 
         if (!link.Verb.SupportsBody()) {
             return new CallableLink(url, link.Verb, timeout: link.Timeout);
         }
 
-        var body = GetInputElements(link.InputItems, parameters);
+        var body = GetLinkParameters(link.Parameters, parameters);
         return new CallableLink(url, link.Verb, body, timeout: link.Timeout);
     }
 
-    private static IDictionary<string, object?> GetInputElements(IEnumerable<InputItem> inputItems, IDictionary<string, object?> parameters) {
+    private static IDictionary<string, object?> GetLinkParameters(IEnumerable<LinkParameter> linkParameters, IDictionary<string, object?> parameters) {
         var dictionary = new Dictionary<string, object?>();
-        foreach (var inputItem in inputItems) {
-            var value = parameters.GetValue(inputItem.Name);
+        foreach (var linkParameter in linkParameters) {
+            var value = parameters.GetValue(linkParameter.Name);
             if (value == null) {
-                if (inputItem.DefaultValue == null) {
+                if (linkParameter.DefaultValue == null) {
                     continue;
                 }
 
-                value = inputItem.DefaultValue;
+                value = linkParameter.DefaultValue;
             }
 
-            dictionary[inputItem.Name] = value;
+            dictionary[linkParameter.Name] = value;
         }
         return dictionary;
     }

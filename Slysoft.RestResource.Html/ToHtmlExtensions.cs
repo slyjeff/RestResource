@@ -338,7 +338,7 @@ td:last-child {
             var parameter = link.GetParameters().FirstOrDefault();
 
             switch (link.Verb) {
-                case "GET" when link.InputItems.Count > 0: {
+                case "GET" when link.Parameters.Count > 0: {
                     var href = link.Href;
 
                     htmlWriter.AddAttribute("action", href);
@@ -349,7 +349,7 @@ td:last-child {
                         WriteQueryParameter(htmlWriter, parameter, string.Empty);
                     }
 
-                    foreach (var queryParameter in link.InputItems) {
+                    foreach (var queryParameter in link.Parameters) {
                         WriteQueryParameter(htmlWriter, queryParameter.Name, queryParameter.DefaultValue);
                     }
 
@@ -414,7 +414,7 @@ td:last-child {
                     htmlWriter.AddAttribute("method", "POST");
                     htmlWriter.RenderBeginTag(HtmlTextWriterTag.Form);
 
-                    foreach (var formField in link.InputItems) {
+                    foreach (var formField in link.Parameters) {
                         htmlWriter.AddAttribute(HtmlTextWriterAttribute.Name, formField.Name);
                         htmlWriter.AddAttribute("placeholder", formField.Name);
 

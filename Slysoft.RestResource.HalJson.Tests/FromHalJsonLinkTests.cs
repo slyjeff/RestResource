@@ -79,8 +79,8 @@ public sealed class FromHalJsonLinkTests {
         //assert
         var link = deserializedResource.GetLink("search");
         Assert.IsNotNull(link);
-        Assert.IsNotNull(link.GetInputItem("lastName"));
-        Assert.IsNotNull(link.GetInputItem("firstName"));
+        Assert.IsNotNull(link.GetParameter("lastName"));
+        Assert.IsNotNull(link.GetParameter("firstName"));
     }
 
     [TestMethod]
@@ -99,7 +99,7 @@ public sealed class FromHalJsonLinkTests {
         //assert
         var link = deserializedResource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputItem("position");
+        var queryParameter = link.GetParameter("position");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("admin", queryParameter.DefaultValue);
     }
@@ -120,7 +120,7 @@ public sealed class FromHalJsonLinkTests {
         //assert
         var link = deserializedResource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputItem("position");
+        var queryParameter = link.GetParameter("position");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
         Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
@@ -142,7 +142,7 @@ public sealed class FromHalJsonLinkTests {
         //assert
         var link = deserializedResource.GetLink("search");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetInputItem("yearsEmployed");
+        var queryParameter = link.GetParameter("yearsEmployed");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual("number", queryParameter.Type);
     }
@@ -188,7 +188,7 @@ public sealed class FromHalJsonLinkTests {
         //assert
         var link = deserializedResource.GetLink("createUser");
         Assert.IsNotNull(link);
-        Assert.IsNotNull(link.GetInputItem("lastName"));
-        Assert.IsNotNull(link.GetInputItem("firstName"));
+        Assert.IsNotNull(link.GetParameter("lastName"));
+        Assert.IsNotNull(link.GetParameter("firstName"));
     }
 }

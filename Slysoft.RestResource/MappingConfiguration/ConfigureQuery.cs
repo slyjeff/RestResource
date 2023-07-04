@@ -32,7 +32,7 @@ internal sealed class ConfigureQuery : IConfigureQuery {
     }
 
     public IConfigureQuery Parameter(string parameterName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
-        _link.AddInputItem(parameterName, type, defaultValue, listOfValues);
+        _link.AddParameter(parameterName, type, defaultValue, listOfValues);
         return this;
     }
 
@@ -112,9 +112,9 @@ internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
 
         _excludedParameters.Add(parameterName);
 
-        var parameter = _link.GetInputItem(parameterName);
-        if (parameter != null) {
-            _link.InputItems.Remove(parameter);
+        var linkParameter = _link.GetParameter(parameterName);
+        if (linkParameter != null) {
+            _link.Parameters.Remove(linkParameter);
         }
 
         return this;
@@ -122,7 +122,7 @@ internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
 
     private void AddParameter(string parameterName, string? type = null, string? defaultValue = null, IList<string>? listOfValues = null) {
         listOfValues ??= typeof(T).GetListOfValues(parameterName);
-        _link.AddInputItem(parameterName, type, defaultValue, listOfValues);
+        _link.AddParameter(parameterName, type, defaultValue, listOfValues);
     }
 
     public Resource EndQuery() {

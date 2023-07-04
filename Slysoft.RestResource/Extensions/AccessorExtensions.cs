@@ -46,22 +46,22 @@ public static class AccessorExtensions {
     }
 
     /// <summary>
-    /// Find an input item in a link
+    /// Find a parameter in a link
     /// </summary>
     /// <param name="link">link to search</param>
-    /// <param name="inputItemName">Name of the input item to find= case insensitive</param>
-    /// <returns>Input item matching the name, if one exists</returns>
-    public static InputItem? GetInputItem(this Link link, string inputItemName) {
-        return link.InputItems.FirstOrDefault(x =>
-            x.Name.Equals(inputItemName, StringComparison.CurrentCultureIgnoreCase));
+    /// <param name="parameterName">Name of the parameter to find- case insensitive</param>
+    /// <returns>Parameter matching the name, if one exists</returns>
+    public static LinkParameter? GetParameter(this Link link, string parameterName) {
+        return link.Parameters.FirstOrDefault(x =>
+            x.Name.Equals(parameterName, StringComparison.CurrentCultureIgnoreCase));
     }
 
     /// <summary>
-    /// Get the type of input item this link supports (parameter, field)
+    /// Get the type of parameter this link supports (parameter, field)
     /// </summary>
-    /// <param name="link">link with the input item</param>
-    /// <returns>Type of input item this link supports (parameter, field)</returns>
-    public static string GetInputItemName(this Link link) {
+    /// <param name="link">link with the parameter</param>
+    /// <returns>Type of parameter this link supports (parameter, field)</returns>
+    public static string GetParameterTypeName(this Link link) {
         return link.Verb.Equals("GET", StringComparison.CurrentCultureIgnoreCase) ? "parameter" : "field";
     }
 
