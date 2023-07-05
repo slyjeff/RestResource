@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using System.Security.Cryptography.Xml;
 using System.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +30,7 @@ internal class TransformUrlEncodedFormsToJsonMiddleware {
     public async Task Invoke(HttpContext context) {
         if (!UrlEncodedForm.Equals(context.Request.ContentType, StringComparison.CurrentCultureIgnoreCase)) {
             await _next(context);
+            return;
         }
         await Transform(context);
     }
