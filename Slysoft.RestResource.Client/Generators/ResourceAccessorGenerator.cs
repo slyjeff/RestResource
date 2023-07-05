@@ -127,7 +127,7 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
 
     private void AddMethods() {
         foreach (var method in InterfaceType.GetAllMethods()) {
-            if (method.IsFromResourceAccessorInterface()) {
+            if (method.IsFromResourceAccessorInterfaces()) {
                 continue;
             }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using Slysoft.RestResource.Client.Accessors;
@@ -7,13 +8,14 @@ namespace Slysoft.RestResource.Client.Extensions;
 
 internal static class PropertyAndMethodExtensions {
     public static bool IsFromResourceAccessorInterface(this PropertyInfo property) {
-        //return false;
-        return property.Name == nameof(IResourceAccessor.Resource);
+        return property.Name is nameof(IResourceAccessor.Resource)
+            or nameof(IEditableResource.IsChanged);
     }
 
-    public static bool IsFromResourceAccessorInterface(this MethodInfo method) {
+    public static bool IsFromResourceAccessorInterfaces(this MethodInfo method) {
         return method.Name is nameof(IResourceAccessor.CallRestLink)
-                           or nameof(IResourceAccessor.CallRestLinkAsync);
+            or nameof(IResourceAccessor.CallRestLinkAsync)
+            or nameof(IEditableResource.RejectChanges);
     }
 
     public static bool IsFromProperty(this MethodInfo method) {

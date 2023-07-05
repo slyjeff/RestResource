@@ -65,6 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeTrackingTests.cs" />
     <Compile Include="PropertyTests.cs" />
     <Compile Include="LinkTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

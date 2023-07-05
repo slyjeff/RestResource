@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Extensions;
 using Slysoft.RestResource.Extensions;
@@ -9,13 +10,49 @@ using Slysoft.RestResource.Extensions;
 
 namespace Slysoft.RestResource.Client.Accessors;
 
+/// Inheriting from IResourceAccessor allows a resource accessor to report changes to properties, whether the resource has changes, and revert changes
+public interface IEditableResource : INotifyPropertyChanged {
+    /// <summary>
+    /// Whether changes have been made to any properties in the resource
+    /// </summary>
+    bool IsChanged { get; }
+
+    /// <summary>
+    /// Revert changes back to the original values received from the service call
+    /// </summary>
+    void RejectChanges();
+}
+
+
+/// <summary>
+/// Inheriting from IResourceAccessor allows a resource accessor to use the raw resource and execute calls- use in situations when you do not know the structure of the resource in advance
+/// </summary>
 public interface IResourceAccessor {
+    /// <summary>
+    /// Deserialized Resource received from a call
+    /// </summary>
     Resource Resource { get; }
+
+    /// <summary>
+    /// Make a REST call passing in a link name and parameters as a dictionary
+    /// </summary>
+    /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
+    /// <param name="name">Name of the link- must be a link that exists in the Resource</param>
+    /// <param name="parameters">Dictionary containing name/value pairs of the values to use when calling the link for the body/query parameters</param>
+    /// <returns>content of the service call</returns>
     T CallRestLink<T>(string name, IDictionary<string, object?> parameters);
+
+    /// <summary>
+    /// Make an asynchronous REST call passing in a link name and parameters as a dictionary
+    /// </summary>
+    /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
+    /// <param name="name">Name of the link- must be a link that exists in the Resource</param>
+    /// <param name="parameters">Dictionary containing name/value pairs of the values to use when calling the link for the body/query parameters</param>
+    /// <returns>content of the service call</returns>
     Task<T> CallRestLinkAsync<T>(string name, IDictionary<string, object?> parameters);
 }
 
-public abstract class ResourceAccessor : IResourceAccessor, INotifyPropertyChanged {
+public abstract class ResourceAccessor : IResourceAccessor, IEditableResource {
     private readonly IDictionary<string, object?> _cachedData = new Dictionary<string, object?>();
     private readonly IDictionary<string, object?> _updateValues = new Dictionary<string, object?>();
 
@@ -25,6 +62,20 @@ public abstract class ResourceAccessor : IResourceAccessor, INotifyPropertyChang
     }
 
     public Resource Resource { get; }
+    public bool IsChanged => _updateValues.Any();
+    public void RejectChanges() {
+        var propertiesToBeReverted = _updateValues.Keys.ToList();
+        _updateValues.Clear();
+        foreach (var revertedProperty in propertiesToBeReverted) {
+            OnPropertyChanged(revertedProperty);
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
     internal IRestClient RestClient { get; }
 
     protected T? GetData<T>(string name) {
@@ -32,7 +83,27 @@ public abstract class ResourceAccessor : IResourceAccessor, INotifyPropertyChang
             return (T?)value;
         }
 
-        if (_cachedData.TryGetValue(name, out value)) {
+        return GetOriginalData<T>(name);
+    }
+
+    protected void SetData<T>(string name, T? value) {
+        //if this is the original value, remove our Update Value
+        var originalValue = GetOriginalData<T>(name);
+        if (ValuesAreEqual(originalValue, value)) {
+            if (_updateValues.ContainsKey(name)) {
+                _updateValues.Remove(name);
+            }
+
+            OnPropertyChanged(name);
+            return;
+        }
+        
+        _updateValues[name] = value;
+        OnPropertyChanged(name);
+    }
+
+    private T? GetOriginalData<T>(string name) {
+        if (_cachedData.TryGetValue(name, out var value)) {
             return (T?)value;
         }
 
@@ -41,9 +112,12 @@ public abstract class ResourceAccessor : IResourceAccessor, INotifyPropertyChang
         return (T?)_cachedData[name];
     }
 
-    protected void SetData<T>(string name, T? value) {
-        _updateValues[name] = value;
-        OnPropertyChanged(name);
+    private static bool ValuesAreEqual<T>(T? v1, T? v2) {
+        if (v1 == null && v2 == null) {
+            return true;
+        }
+
+        return v1 != null && v1.Equals(v2);
     }
 
     protected IParameterInfo GetParameterInfo(string linkName, string parameterName) {
@@ -128,11 +202,5 @@ public abstract class ResourceAccessor : IResourceAccessor, INotifyPropertyChang
             dictionary[linkParameter.Name] = value;
         }
         return dictionary;
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged(string propertyName) {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
