@@ -10,7 +10,6 @@ builder.Services.AddControllers(options => {
     options.RespectBrowserAcceptHeader = true;
 });
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
