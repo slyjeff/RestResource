@@ -9,13 +9,13 @@ namespace Slysoft.RestResource.Client.Extensions;
 internal static class PropertyAndMethodExtensions {
     public static bool IsFromResourceAccessorInterface(this PropertyInfo property) {
         return property.Name is nameof(IResourceAccessor.Resource)
-            or nameof(IEditableResource.IsChanged);
+            or nameof(IEditableAccessor.IsChanged);
     }
 
     public static bool IsFromResourceAccessorInterfaces(this MethodInfo method) {
         return method.Name is nameof(IResourceAccessor.CallRestLink)
             or nameof(IResourceAccessor.CallRestLinkAsync)
-            or nameof(IEditableResource.RejectChanges);
+            or nameof(IEditableAccessor.RejectChanges);
     }
 
     public static bool IsFromProperty(this MethodInfo method) {

@@ -84,10 +84,10 @@ public class ChangeTrackingTests {
         var resource = new Resource().Data("message", originalMessage);
         var destination = CreateAccessor(resource);
 
-        var propertyChanged = false;
+        var isChangedChanged = false;
         destination.PropertyChanged += (_, e) => {
             if (e.PropertyName == nameof(destination.IsChanged)) {
-                propertyChanged = true;
+                isChangedChanged = true;
             }
         };
 
@@ -95,7 +95,29 @@ public class ChangeTrackingTests {
         destination.Message = GenerateRandom.String();
 
         //assert
-        Assert.IsTrue(propertyChanged);
+        Assert.IsTrue(isChangedChanged);
+    }
+
+    [TestMethod]
+    public void IsChangedShouldNotBeChangedIfProperyWasAlreadyChanged() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var resource = new Resource().Data("message", originalMessage);
+        var destination = CreateAccessor(resource);
+        destination.Message = GenerateRandom.String();
+
+        var isChangedChanged = false;
+        destination.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(destination.IsChanged)) {
+                isChangedChanged = true;
+            }
+        };
+
+        //act
+        destination.Message = GenerateRandom.String();
+
+        //assert
+        Assert.IsFalse(isChangedChanged);
     }
 
     [TestMethod]
@@ -121,10 +143,16 @@ public class ChangeTrackingTests {
         var destination = CreateAccessor(resource);
         destination.Message = GenerateRandom.String();
 
-        var propertyChanged = false;
+        var messageChanged = false;
+        var isChangedChanged = false;
         destination.PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(destination.Message)) {
-                propertyChanged = true;
+            switch (e.PropertyName) {
+                case nameof(destination.Message):
+                    messageChanged = true;
+                    break;
+                case nameof(destination.IsChanged):
+                    isChangedChanged = true;
+                    break;
             }
         };
 
@@ -133,7 +161,82 @@ public class ChangeTrackingTests {
 
         //assert
         Assert.IsFalse(destination.IsChanged);
-        Assert.IsTrue(propertyChanged);
+        Assert.IsTrue(messageChanged);
+        Assert.IsTrue(isChangedChanged);
         Assert.AreEqual(originalMessage, destination.Message);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToChangeValueOfChildAccessors() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var child = new ChildResource { ChildMessage = originalMessage };
+        var resource = new Resource()
+            .Data("childInterface", child);
+        var parent = CreateAccessor(resource);
+
+        //act
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterface.ChildMessage = newMessage;
+
+        //assert
+        Assert.AreEqual(newMessage, parent.ChildInterface.ChildMessage);
+    }
+
+    [TestMethod]
+    public void ChangingValueOnAChildAccessorMustSetIsChangedAndRaisePropertyChangedEvents() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var child = new ChildResource { ChildMessage = originalMessage };
+        var resource = new Resource()
+            .Data("childInterface", child);
+        var parent = CreateAccessor(resource);
+
+        var childMessageChanged = false;
+        var childIsChangedChanged = false;
+        parent.ChildInterface.PropertyChanged += (_, e) => {
+            switch (e.PropertyName) {
+                case nameof(parent.ChildInterface.ChildMessage):
+                    childMessageChanged = true;
+                    break;
+                case nameof(parent.ChildInterface.IsChanged):
+                    childIsChangedChanged = true;
+                    break;
+            }
+        };
+
+        //act
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterface.ChildMessage = newMessage;
+
+        //assert
+        Assert.IsTrue(parent.ChildInterface.IsChanged);
+        Assert.IsTrue(childMessageChanged);
+        Assert.IsTrue(childIsChangedChanged);
+    }
+
+    [TestMethod]
+    public void ChangingValueOnAChildAccessorMustChangeIsChangedOfParent() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var child = new ChildResource { ChildMessage = originalMessage };
+        var resource = new Resource()
+            .Data("childInterface", child);
+        var parent = CreateAccessor(resource);
+
+        var parentIsChangedChanged = false;
+        parent.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(parent.IsChanged)) {
+                parentIsChangedChanged = true;
+            }
+        };
+
+        //act
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterface.ChildMessage = newMessage;
+
+        //assert
+        Assert.IsTrue(parent.IsChanged);
+        Assert.IsTrue(parentIsChangedChanged);
     }
 }
