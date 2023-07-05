@@ -27,6 +27,7 @@ public class ChangeTrackingTests {
         Assert.AreEqual(newMessage, destination.Message);
     }
 
+
     [TestMethod]
     public void ChangingValueMustNotifyPropertyChanged() {
         //arrange
@@ -36,7 +37,9 @@ public class ChangeTrackingTests {
 
         var propertyChanged = false;
         destination.PropertyChanged += (_, e) => {
-            propertyChanged = e.PropertyName == nameof(destination.Message);
+            if (e.PropertyName == nameof(destination.Message)) {
+                propertyChanged = true;
+            }
         };
 
         //act
@@ -61,7 +64,7 @@ public class ChangeTrackingTests {
 
 
     [TestMethod]
-    public void HasDataChangesPropertyMustBeTrueIfDataChanged() {
+    public void IsChangedPropertyMustBeTrueIfDataChanged() {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
@@ -72,6 +75,27 @@ public class ChangeTrackingTests {
 
         //assert
         Assert.IsTrue(destination.IsChanged);
+    }
+
+    [TestMethod]
+    public void IsChangedChangingMustNotifyPropertyChanged() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var resource = new Resource().Data("message", originalMessage);
+        var destination = CreateAccessor(resource);
+
+        var propertyChanged = false;
+        destination.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(destination.IsChanged)) {
+                propertyChanged = true;
+            }
+        };
+
+        //act
+        destination.Message = GenerateRandom.String();
+
+        //assert
+        Assert.IsTrue(propertyChanged);
     }
 
     [TestMethod]
@@ -99,9 +123,10 @@ public class ChangeTrackingTests {
 
         var propertyChanged = false;
         destination.PropertyChanged += (_, e) => {
-            propertyChanged = e.PropertyName == nameof(destination.Message);
+            if (e.PropertyName == nameof(destination.Message)) {
+                propertyChanged = true;
+            }
         };
-
 
         //act
         destination.RejectChanges();

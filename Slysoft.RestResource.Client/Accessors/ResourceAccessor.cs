@@ -64,11 +64,16 @@ public abstract class ResourceAccessor : IResourceAccessor, IEditableResource {
     public Resource Resource { get; }
     public bool IsChanged => _updateValues.Any();
     public void RejectChanges() {
+        if (!_updateValues.Any()) {
+            return;
+        }
+
         var propertiesToBeReverted = _updateValues.Keys.ToList();
         _updateValues.Clear();
         foreach (var revertedProperty in propertiesToBeReverted) {
             OnPropertyChanged(revertedProperty);
         }
+        OnPropertyChanged(nameof(IsChanged));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -87,19 +92,21 @@ public abstract class ResourceAccessor : IResourceAccessor, IEditableResource {
     }
 
     protected void SetData<T>(string name, T? value) {
+        var originalIsChanged = IsChanged;
         //if this is the original value, remove our Update Value
         var originalValue = GetOriginalData<T>(name);
         if (ValuesAreEqual(originalValue, value)) {
             if (_updateValues.ContainsKey(name)) {
                 _updateValues.Remove(name);
             }
-
-            OnPropertyChanged(name);
-            return;
+        } else {
+            _updateValues[name] = value;
         }
-        
-        _updateValues[name] = value;
         OnPropertyChanged(name);
+
+        if (originalIsChanged != IsChanged) {
+            OnPropertyChanged(nameof(IsChanged));
+        }
     }
 
     private T? GetOriginalData<T>(string name) {
