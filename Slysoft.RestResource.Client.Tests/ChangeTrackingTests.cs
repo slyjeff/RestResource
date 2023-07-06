@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Slysoft.RestResource.Client.Tests.Common;
 using Slysoft.RestResource.Extensions;
@@ -17,14 +19,14 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
+        var accessor = CreateAccessor(resource);
 
         //act
         var newMessage = GenerateRandom.String();
-        destination.Message = newMessage;
+        accessor.Message = newMessage;
 
         //assert
-        Assert.AreEqual(newMessage, destination.Message);
+        Assert.AreEqual(newMessage, accessor.Message);
     }
 
 
@@ -33,17 +35,17 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
+        var accessor = CreateAccessor(resource);
 
         var propertyChanged = false;
-        destination.PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(destination.Message)) {
+        accessor.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(accessor.Message)) {
                 propertyChanged = true;
             }
         };
 
         //act
-        destination.Message = GenerateRandom.String();
+        accessor.Message = GenerateRandom.String();
 
         //assert
         Assert.IsTrue(propertyChanged);
@@ -54,12 +56,12 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
+        var accessor = CreateAccessor(resource);
 
         //act
 
         //assert
-        Assert.IsFalse(destination.IsChanged);
+        Assert.IsFalse(accessor.IsChanged);
     }
 
 
@@ -68,13 +70,13 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
+        var accessor = CreateAccessor(resource);
 
         //act
-        destination.Message = GenerateRandom.String();
+        accessor.Message = GenerateRandom.String();
 
         //assert
-        Assert.IsTrue(destination.IsChanged);
+        Assert.IsTrue(accessor.IsChanged);
     }
 
     [TestMethod]
@@ -82,57 +84,57 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
+        var accessor = CreateAccessor(resource);
 
         var isChangedChanged = false;
-        destination.PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(destination.IsChanged)) {
+        accessor.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(accessor.IsChanged)) {
                 isChangedChanged = true;
             }
         };
 
         //act
-        destination.Message = GenerateRandom.String();
+        accessor.Message = GenerateRandom.String();
 
         //assert
         Assert.IsTrue(isChangedChanged);
     }
 
     [TestMethod]
-    public void IsChangedShouldNotBeChangedIfProperyWasAlreadyChanged() {
+    public void IsChangedShouldNotBeChangedIfPropertyWasAlreadyChanged() {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
-        destination.Message = GenerateRandom.String();
+        var accessor = CreateAccessor(resource);
+        accessor.Message = GenerateRandom.String();
 
         var isChangedChanged = false;
-        destination.PropertyChanged += (_, e) => {
-            if (e.PropertyName == nameof(destination.IsChanged)) {
+        accessor.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(accessor.IsChanged)) {
                 isChangedChanged = true;
             }
         };
 
         //act
-        destination.Message = GenerateRandom.String();
+        accessor.Message = GenerateRandom.String();
 
         //assert
         Assert.IsFalse(isChangedChanged);
     }
 
     [TestMethod]
-    public void HasDataChangesPropertyMustBeFalseIfDataChangeReverted() {
+    public void IsChangedMustBeFalseIfDataChangeReverted() {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
-        destination.Message = GenerateRandom.String();
+        var accessor = CreateAccessor(resource);
+        accessor.Message = GenerateRandom.String();
 
         //act
-        destination.Message = originalMessage;
+        accessor.Message = originalMessage;
 
         //assert
-        Assert.IsFalse(destination.IsChanged);
+        Assert.IsFalse(accessor.IsChanged);
     }
 
     [TestMethod]
@@ -140,30 +142,30 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var resource = new Resource().Data("message", originalMessage);
-        var destination = CreateAccessor(resource);
-        destination.Message = GenerateRandom.String();
+        var accessor = CreateAccessor(resource);
+        accessor.Message = GenerateRandom.String();
 
         var messageChanged = false;
         var isChangedChanged = false;
-        destination.PropertyChanged += (_, e) => {
+        accessor.PropertyChanged += (_, e) => {
             switch (e.PropertyName) {
-                case nameof(destination.Message):
+                case nameof(accessor.Message):
                     messageChanged = true;
                     break;
-                case nameof(destination.IsChanged):
+                case nameof(accessor.IsChanged):
                     isChangedChanged = true;
                     break;
             }
         };
 
         //act
-        destination.RejectChanges();
+        accessor.RejectChanges();
 
         //assert
-        Assert.IsFalse(destination.IsChanged);
+        Assert.IsFalse(accessor.IsChanged);
         Assert.IsTrue(messageChanged);
         Assert.IsTrue(isChangedChanged);
-        Assert.AreEqual(originalMessage, destination.Message);
+        Assert.AreEqual(originalMessage, accessor.Message);
     }
 
     [TestMethod]
@@ -171,8 +173,8 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var child = new ChildResource { ChildMessage = originalMessage };
-        var resource = new Resource()
-            .Data("childInterface", child);
+        
+        var resource = new Resource().Data("childInterface", child);
         var parent = CreateAccessor(resource);
 
         //act
@@ -184,24 +186,19 @@ public class ChangeTrackingTests {
     }
 
     [TestMethod]
-    public void ChangingValueOnAChildAccessorMustSetIsChangedAndRaisePropertyChangedEvents() {
+    public void ChangingValueOnAChildAccessorMustRaisePropertyChangedEvent() {
         //arrange
         var originalMessage = GenerateRandom.String();
         var child = new ChildResource { ChildMessage = originalMessage };
-        var resource = new Resource()
-            .Data("childInterface", child);
+        
+        var resource = new Resource().Data("childInterface", child);
         var parent = CreateAccessor(resource);
 
         var childMessageChanged = false;
-        var childIsChangedChanged = false;
-        parent.ChildInterface.PropertyChanged += (_, e) => {
-            switch (e.PropertyName) {
-                case nameof(parent.ChildInterface.ChildMessage):
-                    childMessageChanged = true;
-                    break;
-                case nameof(parent.ChildInterface.IsChanged):
-                    childIsChangedChanged = true;
-                    break;
+        // ReSharper disable once SuspiciousTypeConversion.Global
+        ((INotifyPropertyChanged)parent.ChildInterface).PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(parent.ChildInterface.ChildMessage)) {
+                childMessageChanged = true;
             }
         };
 
@@ -210,9 +207,7 @@ public class ChangeTrackingTests {
         parent.ChildInterface.ChildMessage = newMessage;
 
         //assert
-        Assert.IsTrue(parent.ChildInterface.IsChanged);
         Assert.IsTrue(childMessageChanged);
-        Assert.IsTrue(childIsChangedChanged);
     }
 
     [TestMethod]
@@ -220,8 +215,8 @@ public class ChangeTrackingTests {
         //arrange
         var originalMessage = GenerateRandom.String();
         var child = new ChildResource { ChildMessage = originalMessage };
-        var resource = new Resource()
-            .Data("childInterface", child);
+        
+        var resource = new Resource().Data("childInterface", child);
         var parent = CreateAccessor(resource);
 
         var parentIsChangedChanged = false;
@@ -238,5 +233,93 @@ public class ChangeTrackingTests {
         //assert
         Assert.IsTrue(parent.IsChanged);
         Assert.IsTrue(parentIsChangedChanged);
+    }
+
+    [TestMethod]
+    public void RejectChangesOnParentMustRevertChildAccessor() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var child = new ChildResource { ChildMessage = originalMessage };
+
+        var resource = new Resource().Data("childInterface", child);
+        var parent = CreateAccessor(resource);
+
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterface.ChildMessage = newMessage;
+
+        //act
+        parent.RejectChanges();
+
+        //assert
+        Assert.AreEqual(originalMessage, parent.ChildInterface.ChildMessage);
+    }
+
+    [TestMethod]
+    public void ChangingListValueMustNotifyOfCollectionChanged() {
+        //arrange
+        var originalStrings = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
+        var resource = new Resource().Data("strings", originalStrings);
+        var accessor = CreateAccessor(resource);
+
+        var collectionChanged = false;
+        ((INotifyCollectionChanged)accessor.Strings).CollectionChanged += (_, _) => {
+            collectionChanged = true;
+        };
+
+        //act
+        accessor.Strings[1] = GenerateRandom.String();
+
+        //assert
+        Assert.IsTrue(collectionChanged);
+    }
+
+    [TestMethod]
+    public void ChangingListValueMustIsChangedToFalse() {
+        //arrange
+        var originalStrings = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
+        var resource = new Resource().Data("strings", originalStrings);
+        var accessor = CreateAccessor(resource);
+
+        var isChangedChanged = false;
+        accessor.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(accessor.IsChanged)) {
+                isChangedChanged = true;
+            }
+        };
+
+        //act
+        accessor.Strings[1] = GenerateRandom.String();
+
+        //assert
+        Assert.IsTrue(isChangedChanged);
+        Assert.IsTrue(accessor.IsChanged);
+    }
+
+    [TestMethod]
+    public void RevertingListValueMustSetIsChangedToFalse() {
+        //arrange
+        var originalStrings = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
+        var resource = new Resource().Data("strings", originalStrings);
+        var accessor = CreateAccessor(resource);
+
+        //act
+        accessor.Strings[1] = originalStrings[1];
+
+        //assert
+        Assert.IsFalse(accessor.IsChanged);
+    }
+
+    [TestMethod]
+    public void RejectChangesMustRevertList() {
+        //arrange
+        var originalStrings = new List<string> { GenerateRandom.String(), GenerateRandom.String(), GenerateRandom.String() };
+        var resource = new Resource().Data("strings", originalStrings);
+        var accessor = CreateAccessor(resource);
+
+        //act
+        accessor.RejectChanges();
+
+        //assert
+        Assert.AreEqual(originalStrings[1], accessor.Strings[1]);
     }
 }

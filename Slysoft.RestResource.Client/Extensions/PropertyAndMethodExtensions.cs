@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Slysoft.RestResource.Client.Accessors;
 
-namespace Slysoft.RestResource.Client.Extensions; 
+namespace Slysoft.RestResource.Client.Extensions;
 
 internal static class PropertyAndMethodExtensions {
     public static bool IsFromResourceAccessorInterface(this PropertyInfo property) {

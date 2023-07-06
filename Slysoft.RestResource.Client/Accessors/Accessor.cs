@@ -2,56 +2,28 @@
 using System.ComponentModel;
 using System.Linq;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Slysoft.RestResource.Client.Accessors;
 
-/// Inheriting from IEditableAccessor allows a resource accessor to report changes to properties, whether the resource has changes, and revert changes
-public interface IEditableAccessor : INotifyPropertyChanged {
-    /// <summary>
-    /// Whether changes have been made to any properties in the resource
-    /// </summary>
-    bool IsChanged { get; }
-
-    /// <summary>
-    /// Revert changes back to the original values received from the service call
-    /// </summary>
-    void RejectChanges();
-}
-
-public abstract class Accessor : IEditableAccessor {
+public abstract class Accessor : EditableAccessor {
     protected readonly IDictionary<string, object?> CachedData = new Dictionary<string, object?>();
     private readonly IDictionary<string, object?> _updateValues = new Dictionary<string, object?>();
     private readonly IList<IEditableAccessor> _editableAccessors = new List<IEditableAccessor>();
 
-    private bool _isChanged;
-    public bool IsChanged {
-        get => _isChanged;
-        set {
-            if (value == _isChanged) {
-                return;
+    public override void RejectChanges() {
+        foreach (var editableAccessor in _editableAccessors) {
+            editableAccessor.RejectChanges();
+        }
+
+        if (_updateValues.Any()) {
+            var revertedProperties = _updateValues.Keys.ToList();
+            _updateValues.Clear();
+            foreach (var revertedProperty in revertedProperties) {
+                OnPropertyChanged(revertedProperty);
             }
-
-            _isChanged = value;
-            OnPropertyChanged(nameof(IsChanged));
-        }
-    }
-
-    public void RejectChanges() {
-        if (!_updateValues.Any()) {
-            return;
-        }
-
-        var propertiesToBeReverted = _updateValues.Keys.ToList();
-        _updateValues.Clear();
-        foreach (var revertedProperty in propertiesToBeReverted) {
-            OnPropertyChanged(revertedProperty);
         }
         RefreshIsChanged();
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged(string propertyName) {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     protected T? GetData<T>(string name) {
@@ -86,7 +58,7 @@ public abstract class Accessor : IEditableAccessor {
 
         if (newData is IEditableAccessor editableAccessor) {
             _editableAccessors.Add(editableAccessor);
-            editableAccessor.PropertyChanged += (s, e) => {
+            editableAccessor.PropertyChanged += (_, _) => {
                 RefreshIsChanged();
             };
         }

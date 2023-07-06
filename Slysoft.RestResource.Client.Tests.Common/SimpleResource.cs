@@ -35,7 +35,7 @@ public sealed class SimpleResource {
     public IList<ChildResource> ChildInterfaces { get; } = new List<ChildResource> { new ChildResource(), new ChildResource(), new ChildResource() };
 }
 
-public interface IChildResource : IEditableAccessor {
+public interface IChildResource {
     string ChildMessage { get; set; }
     int ChildNumber { get; }
 }
