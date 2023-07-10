@@ -78,7 +78,7 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
             throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {InterfaceType.Name}");
         }
 
-        var linkCheckMethod = TypeBuilder.BaseType.GetMethod("LinkCheck", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
+        var linkCheckMethod = TypeBuilder.BaseType.GetMethod("LinkCheck", BindingFlags.Instance | BindingFlags.NonPublic);
         if (linkCheckMethod == null) {
             throw new CreateAccessorException($"Could not find 'LinkCheck' method when generating based in on interface {InterfaceType.Name}");
         }
@@ -103,7 +103,7 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
             throw new CreateAccessorException($"BaseType of TypeBuilder is null when generating accessor based in on interface {InterfaceType.Name}");
         }
 
-        var getParameterInfoMethod = TypeBuilder.BaseType.GetMethod("GetParameterInfo", BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(string), typeof(string) }, null);
+        var getParameterInfoMethod = TypeBuilder.BaseType.GetMethod("GetParameterInfo", BindingFlags.Instance | BindingFlags.NonPublic);
         if (getParameterInfoMethod == null) {
             throw new CreateAccessorException($"Could not find 'GetParameterInfo' method when generating based in on interface {InterfaceType.Name}");
         }
@@ -127,7 +127,15 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
 
     private void AddMethods() {
         foreach (var method in InterfaceType.GetAllMethods()) {
-            if (method.IsFromResourceAccessorInterface()) {
+            if (method.IsFromResourceAccessorInterfaces()) {
+                continue;
+            }
+
+            if (method.IsFromProperty()) {
+                continue;
+            }
+
+            if (method.IsFromEvent()) {
                 continue;
             }
 
@@ -138,7 +146,6 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
     private void AddMethod(MethodInfo method) {
         var methodParameters = method.GetParameters();
         var parameterTypes = methodParameters.Select(x => x.ParameterType).ToArray();
-
         var methodBuilder = TypeBuilder.DefineMethod(method.Name, MethodAttributes.Public | MethodAttributes.Virtual, CallingConventions.Standard | CallingConventions.HasThis, method.ReturnType, parameterTypes);
 
         var codeGenerator = methodBuilder.GetILGenerator();
@@ -151,7 +158,7 @@ internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
 
         var isAsync = method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>);
         var methodName = isAsync ? "CallRestLinkAsync" : "CallRestLink";
-        var callRestLinkMethod = TypeBuilder.BaseType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(string), typeof(IDictionary<string, object?>) }, null);
+        var callRestLinkMethod = TypeBuilder.BaseType.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
         if (callRestLinkMethod == null) {
             throw new CreateAccessorException($"'{methodName}' not found when generating accessor based in on interface {typeof(T).Name}");
         }

@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
+using Slysoft.RestResource.Client.Accessors;
 
 namespace Slysoft.RestResource.Client.Extensions;
 
@@ -43,7 +45,7 @@ internal static class AccessorExtensions {
                     list.Add(ResourceAccessorFactory.CreateAccessor(interfaceType, resourceItem, restClient));
                 }
 
-                return list;
+                return CreateEditableAccessorList(interfaceType, list);
             }
 
             if (data.Value is Resource resource) {
@@ -62,6 +64,13 @@ internal static class AccessorExtensions {
         }
 
         return list;
+    }
+
+    private static object CreateEditableAccessorList(Type type, object sourceList) {
+        var listType = typeof(EditableAccessorList<>);
+        var genericListType = listType.MakeGenericType(type);
+        return Activator.CreateInstance(genericListType, sourceList)
+               ?? throw new CreateAccessorException($"Error creating editable accessor list of type {type.Name}");
     }
 
 
@@ -114,7 +123,7 @@ internal static class AccessorExtensions {
             list.Add(ParseValue(item, genericArgumentType));
         }
 
-        return list;
+        return CreateEditableAccessorList(genericArgumentType, list);
     }
 
     private static object? ParseObject(IDictionary<string, object?> dictionary, Type type) {

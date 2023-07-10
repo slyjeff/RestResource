@@ -49,8 +49,11 @@ internal sealed class DictionaryAccessorGenerator : AccessorGenerator {
 
     private void AddProperties() {
         foreach (var property in InterfaceType.GetAllProperties()) {
+            if (property.IsFromResourceAccessorInterface()) {
+                continue;
+            }
+
             AddProperty(property);
         }
     }
-
 }

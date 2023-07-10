@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Extensions;
 using Slysoft.RestResource.Extensions;
@@ -8,15 +9,35 @@ using Slysoft.RestResource.Extensions;
 
 namespace Slysoft.RestResource.Client.Accessors;
 
+/// <summary>
+/// Inheriting from IResourceAccessor allows a resource accessor to use the raw resource and execute calls- use in situations when you do not know the structure of the resource in advance
+/// </summary>
 public interface IResourceAccessor {
+    /// <summary>
+    /// Deserialized Resource received from a call
+    /// </summary>
     Resource Resource { get; }
+
+    /// <summary>
+    /// Make a REST call passing in a link name and parameters as a dictionary
+    /// </summary>
+    /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
+    /// <param name="name">Name of the link- must be a link that exists in the Resource</param>
+    /// <param name="parameters">Dictionary containing name/value pairs of the values to use when calling the link for the body/query parameters</param>
+    /// <returns>content of the service call</returns>
     T CallRestLink<T>(string name, IDictionary<string, object?> parameters);
+
+    /// <summary>
+    /// Make an asynchronous REST call passing in a link name and parameters as a dictionary
+    /// </summary>
+    /// <typeparam name="T">How to return the result. String returns the content as text, Resource returns a resource object, an interface will create a typed accessor to wrap the resource</typeparam>
+    /// <param name="name">Name of the link- must be a link that exists in the Resource</param>
+    /// <param name="parameters">Dictionary containing name/value pairs of the values to use when calling the link for the body/query parameters</param>
+    /// <returns>content of the service call</returns>
     Task<T> CallRestLinkAsync<T>(string name, IDictionary<string, object?> parameters);
 }
 
-public abstract class ResourceAccessor : IResourceAccessor {
-    private readonly IDictionary<string, object?> _cachedData = new Dictionary<string, object?>();
-
+public abstract class ResourceAccessor : Accessor, IResourceAccessor {
     protected ResourceAccessor(Resource resource, IRestClient restClient) {
         Resource = resource;
         RestClient = restClient;
@@ -25,14 +46,8 @@ public abstract class ResourceAccessor : IResourceAccessor {
     public Resource Resource { get; }
     internal IRestClient RestClient { get; }
 
-    protected T? GetData<T>(string name) {
-        if (_cachedData.TryGetValue(name, out var value)) {
-            return (T?)value;
-        }
-
-        _cachedData[name] = Resource.GetData<T>(name, RestClient);
-
-        return (T?)_cachedData[name];
+    protected override T? CreateData<T>(string name) where T : default {
+        return Resource.GetData<T>(name, RestClient);
     }
 
     protected IParameterInfo GetParameterInfo(string linkName, string parameterName) {

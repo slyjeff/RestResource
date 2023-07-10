@@ -145,7 +145,7 @@ public sealed class PropertyTests {
         var source = new SimpleResource();
         var resource = new Resource()
             .MapDataFrom(source)
-            .Map(x => x.Children)
+                .Map(x => x.Children)
             .EndMap();
 
         //act
