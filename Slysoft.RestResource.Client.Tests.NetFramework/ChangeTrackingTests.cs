@@ -214,8 +214,7 @@ public class ChangeTrackingTests {
     [TestMethod]
     public void ChangingValueOnAChildAccessorMustChangeIsChangedOfParent() {
         //arrange
-        var originalMessage = GenerateRandom.String();
-        var child = new ChildResource { ChildMessage = originalMessage };
+        var child = new ChildResource();
 
         var resource = new Resource().Data("childInterface", child);
         var parent = CreateAccessor(resource);
@@ -322,5 +321,88 @@ public class ChangeTrackingTests {
 
         //assert
         Assert.AreEqual(originalStrings[1], accessor.Strings[1]);
+    }
+
+    [TestMethod]
+    public void MustBeAbleToChangeValueOfChildAccessorInAList() {
+        //arrange
+        var originalChildren = new List<ChildResource> { new(), new(), new() };
+
+        var resource = new Resource().Data("ChildInterfaces", originalChildren);
+        var parent = CreateAccessor(resource);
+
+        //act
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterfaces[1].ChildMessage = newMessage;
+
+        //assert
+        Assert.AreEqual(newMessage, parent.ChildInterfaces[1].ChildMessage);
+    }
+
+    [TestMethod]
+    public void ChangingValueOnAChildAccessorInAListMustRaisePropertyChangedEvent() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var originalChildren = new List<ChildResource> { new(), new() { ChildMessage = originalMessage}, new() };
+
+        var resource = new Resource().Data("ChildInterfaces", originalChildren);
+        var parent = CreateAccessor(resource);
+
+        var childMessageChanged = false;
+        // ReSharper disable once SuspiciousTypeConversion.Global
+        ((INotifyPropertyChanged)parent.ChildInterfaces[1]).PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(IChildResource.ChildMessage)) {
+                childMessageChanged = true;
+            }
+        };
+
+        //act
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterfaces[1].ChildMessage = newMessage;
+
+        //assert
+        Assert.IsTrue(childMessageChanged);
+    }
+
+    [TestMethod]
+    public void ChangingValueOnAChildAccessorInAListMustChangeIsChangedOfParent() {
+        //arrange
+        var originalChildren = new List<ChildResource> { new(), new(), new() };
+        var resource = new Resource().Data("ChildInterfaces", originalChildren);
+        var parent = CreateAccessor(resource);
+
+        var parentIsChangedChanged = false;
+        parent.PropertyChanged += (_, e) => {
+            if (e.PropertyName == nameof(parent.IsChanged)) {
+                parentIsChangedChanged = true;
+            }
+        };
+
+        //act
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterfaces[1].ChildMessage = newMessage;
+
+        //assert
+        Assert.IsTrue(parent.IsChanged);
+        Assert.IsTrue(parentIsChangedChanged);
+    }
+
+    [TestMethod]
+    public void RejectChangesOnParentMustRevertChildAccessorInAList() {
+        //arrange
+        var originalMessage = GenerateRandom.String();
+        var originalChildren = new List<ChildResource> { new(), new() { ChildMessage = originalMessage }, new() };
+
+        var resource = new Resource().Data("ChildInterfaces", originalChildren);
+        var parent = CreateAccessor(resource);
+
+        var newMessage = GenerateRandom.String();
+        parent.ChildInterfaces[1].ChildMessage = newMessage;
+
+        //act
+        parent.RejectChanges();
+
+        //assert
+        Assert.AreEqual(originalMessage, parent.ChildInterfaces[1].ChildMessage);
     }
 }

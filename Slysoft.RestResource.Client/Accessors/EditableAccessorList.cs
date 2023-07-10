@@ -14,21 +14,32 @@ public class EditableAccessorList<T> : EditableAccessor, IList<T>, INotifyCollec
         _sourceList = sourceList;
         _editList = new ObservableCollection<T>(sourceList);
         _editList.CollectionChanged += EditListCollectionChanged;
+
+        foreach (var item in sourceList.OfType<EditableAccessor>()) {
+            item.PropertyChanged += (_, _) => {
+                RefreshIsChanged();
+            };
+        }
     }
 
     public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-    private void EditListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+    private void EditListCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         CollectionChanged?.Invoke(this, e);
     }
 
     private void RefreshIsChanged() {
-        IsChanged = _sourceList.Except(_editList).Any() || _editList.Except(_sourceList).Any();
+        IsChanged = _sourceList.Except(_editList).Any() 
+                 || _editList.Except(_sourceList).Any()
+                 || _sourceList.OfType<EditableAccessor>().Any(x => x.IsChanged);
     }
 
     public override void RejectChanges() {
         _editList.CollectionChanged -= EditListCollectionChanged;
         _editList = new ObservableCollection<T>(_sourceList);
+        foreach (var item in _sourceList.OfType<EditableAccessor>()) {
+            item.RejectChanges();
+        }
         _editList.CollectionChanged += EditListCollectionChanged;
         IsChanged = false;
     }
