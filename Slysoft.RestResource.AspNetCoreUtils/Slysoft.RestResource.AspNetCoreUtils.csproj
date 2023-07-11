@@ -7,7 +7,7 @@
     <Version>1.0.0.0</Version>
     <Authors>Jeff Sylvester</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Slysoft Rest Resource Asp.Net Core Utilities</Title>
+    <Title>Slysoft REST Resource ASP.NET Core Utils</Title>
     <Company>Slysoft</Company>
   </PropertyGroup>
 

@@ -8,7 +8,7 @@
     <Version>1.0.0.0</Version>
     <Authors>Jeff Sylvester</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Slysoft Rest Resource HTML Utilities</Title>
+    <Title>Slysoft REST Resource HTML Utils</Title>
     <Company>Slysoft</Company>
   </PropertyGroup>
 
