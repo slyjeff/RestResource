@@ -8,7 +8,7 @@ namespace Slysoft.RestResource.Client.Accessors;
 
 public abstract class Accessor : EditableAccessor {
     protected readonly IDictionary<string, object?> CachedData = new Dictionary<string, object?>();
-    private readonly IDictionary<string, object?> _updateValues = new Dictionary<string, object?>();
+    protected readonly IDictionary<string, object?> UpdateValues = new Dictionary<string, object?>();
     private readonly IList<IEditableAccessor> _editableAccessors = new List<IEditableAccessor>();
 
     public override void RejectChanges() {
@@ -16,9 +16,9 @@ public abstract class Accessor : EditableAccessor {
             editableAccessor.RejectChanges();
         }
 
-        if (_updateValues.Any()) {
-            var revertedProperties = _updateValues.Keys.ToList();
-            _updateValues.Clear();
+        if (UpdateValues.Any()) {
+            var revertedProperties = UpdateValues.Keys.ToList();
+            UpdateValues.Clear();
             foreach (var revertedProperty in revertedProperties) {
                 OnPropertyChanged(revertedProperty);
             }
@@ -27,7 +27,7 @@ public abstract class Accessor : EditableAccessor {
     }
 
     protected T? GetData<T>(string name) {
-        if (_updateValues.TryGetValue(name, out var value)) {
+        if (UpdateValues.TryGetValue(name, out var value)) {
             return (T?)value;
         }
 
@@ -38,11 +38,11 @@ public abstract class Accessor : EditableAccessor {
         //if this is the original value, remove our Update Value
         var originalValue = GetOriginalData<T>(name);
         if (ValuesAreEqual(originalValue, value)) {
-            if (_updateValues.ContainsKey(name)) {
-                _updateValues.Remove(name);
+            if (UpdateValues.ContainsKey(name)) {
+                UpdateValues.Remove(name);
             }
         } else {
-            _updateValues[name] = value;
+            UpdateValues[name] = value;
         }
         OnPropertyChanged(name);
 
@@ -79,7 +79,7 @@ public abstract class Accessor : EditableAccessor {
     }
 
     private void RefreshIsChanged() {
-        if (_updateValues.Count > 0) {
+        if (UpdateValues.Count > 0) {
             IsChanged = true;
             return;
         }

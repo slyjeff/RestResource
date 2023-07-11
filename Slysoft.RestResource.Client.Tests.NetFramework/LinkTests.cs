@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Slysoft.RestResource.Client.Tests.NetFramework;
 
-//note: PUT, DELETE, and PATCH work the same as GET and POST, so not writing tests for them.
+//note: PUT, DELETE, and PATCH work the same as GET and POST, so not writing tests for them, unless there is a specific difference (for example, PATCH only contains changed values if called with no parameters)
 
 [TestClass]
 public sealed class LinkTests {
@@ -24,6 +24,8 @@ public sealed class LinkTests {
     public void SetUp() {
         _mockRestClient = new Mock<IRestClient>();
         var linkTestResource = new Resource()
+            .Data("lastName", GenerateRandom.String())
+            .Data("firstName", GenerateRandom.String())
             .Get("getAllUsers", "/user")
             .Get("getAllUsersWithTimeout", "/user", timeout: _timeout)
             .Get("getAllUsersTemplated", "/user/{id1}/{id2}", templated: true)
@@ -38,7 +40,12 @@ public sealed class LinkTests {
             .Post<IUser>("CreateUserWithTimeout", "/user", timeout: _timeout)
                 .Field(x => x.LastName)
                 .Field(x => x.FirstName)
+            .EndBody()
+            .Patch<IUser>("updateUser", "/user")
+                .Field(x => x.LastName)
+                .Field(x => x.FirstName)
             .EndBody();
+
 
         _linkTest = ResourceAccessorFactory.CreateAccessor<ILinkTest>(linkTestResource, _mockRestClient.Object);
         _linkTestAsync = ResourceAccessorFactory.CreateAccessor<ILinkTestAsync>(linkTestResource, _mockRestClient.Object);
@@ -211,6 +218,76 @@ public sealed class LinkTests {
             { "firstName", firstName }
         };
         _mockRestClient.VerifyCall<IUser>("/user", verb: "POST", expectedBody);
+    }
+
+    [TestMethod]
+    public void PostMustTakeParametersFromObject() {
+        //arrange
+        var lastName = GenerateRandom.String();
+        var firstName = GenerateRandom.String();
+
+        //act
+        var parameters = new { lastName, firstName };
+        _linkTest.CreateUser(parameters);
+
+        //assert
+        var expectedBody = new Dictionary<string, object>() {
+            { "lastName", lastName },
+            { "firstName", firstName }
+        };
+        _mockRestClient.VerifyCall<IUser>("/user", verb: "POST", expectedBody);
+    }
+
+    [TestMethod]
+    public void PostMustTakeParametersFromSelf() {
+        //arrange
+        var lastName = GenerateRandom.String();
+        var firstName = GenerateRandom.String();
+
+        //act
+        _linkTest.LastName = lastName;
+        _linkTest.FirstName = firstName;
+        _linkTest.CreateUser();
+
+        //assert
+        var expectedBody = new Dictionary<string, object>() {
+            { "lastName", lastName },
+            { "firstName", firstName }
+        };
+        _mockRestClient.VerifyCall<IUser>("/user", verb: "POST", expectedBody);
+    }
+
+    [TestMethod]
+    public void PostMustUseExistingValuesFromSelfIfNotChanged() {
+        //arrange
+        var firstName = GenerateRandom.String();
+
+        //act
+        _linkTest.FirstName = firstName;
+        _linkTest.CreateUser();
+
+        //assert
+        var expectedBody = new Dictionary<string, object>() {
+            { "lastName", _linkTest.LastName },
+            { "firstName", firstName }
+        };
+        _mockRestClient.VerifyCall<IUser>("/user", verb: "POST", expectedBody);
+    }
+
+    [TestMethod]
+    public void PatchFromSelfMustOnlyIncludeChangedValues() {
+        //arrange
+        var firstName = GenerateRandom.String();
+
+        //act
+        _linkTest.FirstName = firstName;
+        _linkTest.UpdateUser();
+
+        //assert
+        var expectedBody = new Dictionary<string, object>() {
+            { "firstName", firstName }
+        };
+        _mockRestClient.VerifyCall<IUser>("/user", verb: "PATCH", expectedBody);
     }
 
     [TestMethod]

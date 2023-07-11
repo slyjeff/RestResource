@@ -18,6 +18,9 @@ public interface ILinkTestCommon {
 }
 
 public interface ILinkTest : ILinkTestCommon {
+    string FirstName { get; set; }
+    string LastName { get; set; }
+
     IUserList GetAllUsers();
     IUserList GetAllUsersWithTimeout();
     IUserList GetAllUsersTemplated(int id1, int id2);
@@ -26,8 +29,11 @@ public interface ILinkTest : ILinkTestCommon {
     IUserList SearchUsers(string lastName, string firstName);
     IUserList SearchUsers(object searchParameters);
     IUserList LinkThatDoesNotExist();
+    IUser CreateUser();
     IUser CreateUser(string lastName, string firstName);
+    IUser CreateUser(object createParameters);
     IUser CreateUserWithTimeout(string lastName, string firstName);
+    IUser UpdateUser();
 }
 
 public interface ILinkTestAsync : ILinkTestCommon {
@@ -39,8 +45,11 @@ public interface ILinkTestAsync : ILinkTestCommon {
     Task<IUserList> SearchUsers(string lastName, string firstName);
     Task<IUserList> SearchUsers(object searchParameters);
     Task<IUserList> LinkThatDoesNotExist();
+    Task<IUser> CreateUser();
     Task<IUser> CreateUser(string lastName, string firstName);
+    Task<IUser> CreateUser(object createParameters);
     Task<IUser> CreateUserWithTimeout(string lastName, string firstName);
+    Task<IUser> UpdateUser();
 }
 
 public interface IUserList {

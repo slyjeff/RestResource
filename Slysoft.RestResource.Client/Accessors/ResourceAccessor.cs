@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Slysoft.RestResource.Client.Extensions;
 using Slysoft.RestResource.Extensions;
@@ -102,9 +103,9 @@ public abstract class ResourceAccessor : Accessor, IResourceAccessor {
 
         var url = link.Templated ? link.Href.ResolveTemplatedUrl(parameters) : link.Href;
 
-        var linkParameters = GetLinkParameters(link.Parameters, parameters);
 
         if (link.Verb.SupportsQueryParameters()) {
+            var linkParameters = GetLinkParameters(link.Parameters, parameters);
             url = url.AppendQueryParameters(linkParameters);
         }
 
@@ -112,7 +113,9 @@ public abstract class ResourceAccessor : Accessor, IResourceAccessor {
             return new CallableLink(url, link.Verb, timeout: link.Timeout);
         }
 
-        var body = GetLinkParameters(link.Parameters, parameters);
+        var body = parameters.Any()
+            ? GetLinkParameters(link.Parameters, parameters)
+            : GetParametersFromThis(link);
         return new CallableLink(url, link.Verb, body, timeout: link.Timeout);
     }
 
@@ -129,6 +132,41 @@ public abstract class ResourceAccessor : Accessor, IResourceAccessor {
             }
 
             dictionary[linkParameter.Name] = value;
+        }
+        return dictionary;
+    }
+
+    private IDictionary<string, object?> GetParametersFromThis(Link link) {
+        return link.Verb == "PATCH"
+            ? GetChangedParametersFromThis(link.Parameters)
+            : GetAllParametersFromThis(link.Parameters);
+    }
+
+    private IDictionary<string, object?> GetChangedParametersFromThis(IEnumerable<LinkParameter> parameters) {
+        var dictionary = new Dictionary<string, object?>();
+        foreach (var parameter in parameters) {
+            foreach (var item in UpdateValues) {
+                if (item.Key.Equals(parameter.Name, StringComparison.CurrentCultureIgnoreCase)) {
+                    dictionary[parameter.Name] = item.Value;
+                }
+            }
+
+        }
+        return dictionary;
+    }
+
+    private IDictionary<string, object?> GetAllParametersFromThis(IEnumerable<LinkParameter> parameters) {
+        var dictionary = new Dictionary<string, object?>();
+        foreach (var parameter in parameters) {
+            object? value = parameter.DefaultValue;
+            foreach (var property in GetType().GetAllProperties()) {
+                if (property.Name.Equals(parameter.Name, StringComparison.CurrentCultureIgnoreCase)) {
+                    value = property.GetValue(this);
+                    break;
+                }
+            }
+
+            dictionary[parameter.Name] = value;
         }
         return dictionary;
     }

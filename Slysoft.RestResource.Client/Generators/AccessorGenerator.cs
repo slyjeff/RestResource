@@ -52,7 +52,7 @@ internal abstract class AccessorGenerator {
         }
 
         if (property.CanWrite) {
-            propertyBuilder.SetGetMethod(CreateSetter(property));
+            propertyBuilder.SetSetMethod(CreateSetter(property));
         }
     }
 
