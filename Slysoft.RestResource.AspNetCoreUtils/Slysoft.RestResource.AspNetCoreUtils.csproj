@@ -6,9 +6,13 @@
     <Nullable>enable</Nullable>
     <Version>1.0.0.0-Beta</Version>
     <Authors>Jeff Sylvester</Authors>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Slysoft REST Resource ASP.NET Core Utils</Title>
     <Company>Slysoft</Company>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageOutputPath>..\PackageBuild\</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
