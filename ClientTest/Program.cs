@@ -15,7 +15,7 @@ Test.Start("Get Application", test => {
 
 await Test.StartAsync("Get Application Async", async test => {
     restClient = new RestClient("http://localhost:35093/");
-    application = await restClient.CallAsync<IApplicationResource>(string.Empty);
+    application = await restClient.CallAsync<IApplicationResource>();
     const string expectedInformation = "This is a test web service for demonstrating how to use Slysoft.RestResource and related libraries.";
     test.AssertAreEqual(expectedInformation, application.Information);
 });

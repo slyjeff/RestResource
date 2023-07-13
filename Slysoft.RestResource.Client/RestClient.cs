@@ -173,7 +173,7 @@ public sealed class RestClient : IRestClient {
     /// <param name="body">Dictionary of objects to use as query parameters or to serialize for the body of the call</param>
     /// <param name="timeout">Timeout in seconds to wait for the call to complete</param>
     /// <returns>content of the service call</returns>
-    public async Task<T> CallAsync<T>(string? url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
+    public async Task<T> CallAsync<T>(string? url = null, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {
         var response = await CallAsync(url ?? string.Empty, verb, body, timeout);
         if (!response.IsSuccessStatusCode) {
             throw new ResponseErrorCodeException(response);

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -14,9 +14,22 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>..\PackageBuild\</PackageOutputPath>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://sly-soft.com/</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/slyjeff/RestResource</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>REST, HATEOAS, HAL, XML</PackageTags>
+    <PackageReleaseNotes>This is a beta version.</PackageReleaseNotes>
   </PropertyGroup>
 
-
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <None Include="LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj" />
   </ItemGroup>
