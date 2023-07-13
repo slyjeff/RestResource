@@ -12,8 +12,7 @@ internal static class HttpResponseMessageExtensions {
         using var reader = new StreamReader(response.Content.ReadAsStream());
         content = reader.ReadToEnd();
 #else
-            using var reader = new StreamReader(response.Content.ReadAsStringAsync().Result);
-            content = reader.ReadToEnd();
+            content = response.Content.ReadAsStringAsync().Result;
 #endif
         } catch {
             return $"HTTP Status Code: {response.StatusCode}";

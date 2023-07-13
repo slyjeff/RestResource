@@ -35,10 +35,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slysoft.RestResource.Client
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slysoft.RestResource.Client.Tests.NetFramework", "Slysoft.RestResource.Client.Tests.NetFramework\Slysoft.RestResource.Client.Tests.NetFramework.csproj", "{30EEB775-80D3-4E65-85E6-983BE7A6FB35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest", "ClientTest\ClientTest.csproj", "{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientTest", "ClientTest\ClientTest.csproj", "{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C9382555-ED60-4192-9A75-BF9E67A011A2} = {C9382555-ED60-4192-9A75-BF9E67A011A2}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest.DotNetFramework", "ClientTest.DotNetFramework\ClientTest.DotNetFramework.csproj", "{47F3D562-87DD-4C4D-9816-143D7C6317F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,6 +108,10 @@ Global
 		{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47F3D562-87DD-4C4D-9816-143D7C6317F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47F3D562-87DD-4C4D-9816-143D7C6317F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47F3D562-87DD-4C4D-9816-143D7C6317F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47F3D562-87DD-4C4D-9816-143D7C6317F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{548AD971-A321-472D-BBA5-F0687239AF42} = {B71514A4-AA29-4997-9816-7F0883EA6B56}
 		{30EEB775-80D3-4E65-85E6-983BE7A6FB35} = {B71514A4-AA29-4997-9816-7F0883EA6B56}
 		{86E87D81-212A-4ED8-9EF7-2A24C02CAEBA} = {D029C52E-72D3-438D-ACFB-8D73F2A1686F}
+		{47F3D562-87DD-4C4D-9816-143D7C6317F3} = {D029C52E-72D3-438D-ACFB-8D73F2A1686F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A1F6999-C6A8-4741-A1B5-F2C3693FAF5F}

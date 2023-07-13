@@ -20,7 +20,11 @@ internal class XmlDeserializer : IResourceDeserializer {
     }
 
     public Resource Deserialize(HttpResponseMessage response) {
-        var content = response.GetContent();
-        return new Resource().FromHalXml(content);
+        try {
+            var content = response.GetContent();
+            return new Resource().FromHalXml(content);
+        } catch {
+            return new Resource();
+        }
     }
 }

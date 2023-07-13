@@ -20,7 +20,11 @@ internal class HalJsonDeserializer : IResourceDeserializer {
     }
 
     public Resource Deserialize(HttpResponseMessage response) {
-        var content = response.GetContent();
-        return new Resource().FromHalJson(content);
+        try {
+            var content = response.GetContent();
+            return new Resource().FromHalJson(content);
+        } catch {
+            return new Resource();
+        }
     }
 }
