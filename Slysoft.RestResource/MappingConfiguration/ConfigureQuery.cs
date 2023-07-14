@@ -47,11 +47,21 @@ public interface IConfigureQuery<T> {
     /// </summary>
     /// <typeparam name="TParameter">Type of parameter to map</typeparam>
     /// <param name="mapAction">Expression to tell the name of the parameter- example: x => x.Name</param>
-    /// <param name="type">Data type of this parameter (text, number, date, etc.)</param>
     /// <param name="defaultValue">Default value for this parameter</param>
     /// <param name="listOfValues">List of values that are acceptable for this parameter</param>
+    /// <param name="type">Data type of this parameter (text, number, date, etc.)</param>
     /// <returns>The configuration class so more values can be configured</returns>
-    public IConfigureQuery<T> Parameter<TParameter>(Expression<Func<T, TParameter>> mapAction, string? type = null, TParameter? defaultValue = default, IList<TParameter>? listOfValues = null);
+    public IConfigureQuery<T> Parameter<TParameter>(Expression<Func<T, TParameter>> mapAction, TParameter defaultValue, IList<TParameter>? listOfValues = null, string ? type = null);
+
+    /// <summary>
+    /// Add a parameter that a user can provide in the url when calling the link
+    /// </summary>
+    /// <typeparam name="TParameter">Type of parameter to map</typeparam>
+    /// <param name="mapAction">Expression to tell the name of the parameter- example: x => x.Name</param>
+    /// <param name="listOfValues">List of values that are acceptable for this parameter</param>
+    /// <param name="type">Data type of this parameter (text, number, date, etc.)</param>
+    /// <returns>The configuration class so more values can be configured</returns>
+    public IConfigureQuery<T> Parameter<TParameter>(Expression<Func<T, TParameter>> mapAction, IList<TParameter>? listOfValues = null, string? type = null);
 
     /// <summary>
     /// Automatically maps all parameters in T- individual fields can be overridden or excluded
@@ -83,15 +93,10 @@ internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
         _link = link;
     }
 
-    public IConfigureQuery<T> Parameter<TParameter>(Expression<Func<T, TParameter>> mapAction, string? type = null, TParameter? defaultValue = default, IList<TParameter>? listOfValues = null) {
+    public IConfigureQuery<T> Parameter<TParameter>(Expression<Func<T, TParameter>> mapAction, TParameter defaultValue, IList<TParameter>? listOfValues = null, string? type = null) {
         var parameterName = mapAction.Evaluate();
         if (parameterName == null) {
             return this;
-        }
-
-        string? defaultValueAsString = null;
-        if (defaultValue != null && !defaultValue.Equals(default(TParameter))) {
-            defaultValueAsString = defaultValue?.ToString();
         }
 
         IList<string>? listOfValuesAsStrings = null;
@@ -99,10 +104,27 @@ internal sealed class ConfigureQuery<T> : IConfigureQuery<T> {
             listOfValuesAsStrings = listOfValues.Select(x => x?.ToString() ?? string.Empty).ToList();
         }
 
-        AddParameter(parameterName, type, defaultValueAsString, listOfValuesAsStrings);
+        AddParameter(parameterName, type, defaultValue?.ToString(), listOfValuesAsStrings);
 
         return this;
     }
+
+    public IConfigureQuery<T> Parameter<TParameter>(Expression<Func<T, TParameter>> mapAction, IList<TParameter>? listOfValues = null, string? type = null) {
+        var parameterName = mapAction.Evaluate();
+        if (parameterName == null) {
+            return this;
+        }
+
+        IList<string>? listOfValuesAsStrings = null;
+        if (listOfValues != null) {
+            listOfValuesAsStrings = listOfValues.Select(x => x?.ToString() ?? string.Empty).ToList();
+        }
+
+        AddParameter(parameterName, type, null, listOfValuesAsStrings);
+
+        return this;
+    }
+
 
     public IConfigureQuery<T> AllParameters() {
         foreach (var property in typeof(T).GetAllProperties()) {

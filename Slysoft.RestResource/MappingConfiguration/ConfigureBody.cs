@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Slysoft.RestResource.Extensions;
 using Slysoft.RestResource.Utils;
 
@@ -48,11 +47,21 @@ public interface IConfigureBody<T> {
     /// </summary>
     /// <typeparam name="TField">Type of field to map</typeparam>
     /// <param name="mapAction">Expression to tell the name of the field- example: x => x.Name</param>
-    /// <param name="type">Data type of this field (text, number, date, etc.)</param>
     /// <param name="defaultValue">Default value for this field</param>
     /// <param name="listOfValues">List of values that are acceptable for this field</param>
+    /// <param name="type">Data type of this field (text, number, date, etc.)</param>
     /// <returns>The configuration class so more values can be configured</returns>
-    public IConfigureBody<T> Field<TField>(Expression<Func<T, TField>> mapAction, string? type = null, TField? defaultValue = default, IList<TField>? listOfValues = null);
+    public IConfigureBody<T> Field<TField>(Expression<Func<T, TField>> mapAction, TField defaultValue, IList<TField>? listOfValues = null, string? type = null);
+
+    /// <summary>
+    /// Add a field that the user can provide in the body of the request
+    /// </summary>
+    /// <typeparam name="TField">Type of field to map</typeparam>
+    /// <param name="mapAction">Expression to tell the name of the field- example: x => x.Name</param>
+    /// <param name="listOfValues">List of values that are acceptable for this field</param>
+    /// <param name="type">Data type of this field (text, number, date, etc.)</param>
+    /// <returns>The configuration class so more values can be configured</returns>
+    public IConfigureBody<T> Field<TField>(Expression<Func<T, TField>> mapAction, IList<TField>? listOfValues = null, string? type = null);
 
     /// <summary>
     /// Automatically maps all field in T- individual fields can be overridden or excluded
@@ -84,15 +93,10 @@ internal sealed class ConfigureBody<T> : IConfigureBody<T> {
         _link = link;
     }
 
-    public IConfigureBody<T> Field<TField>(Expression<Func<T, TField>> mapAction, string? type = null, TField? defaultValue = default, IList<TField>? listOfValues = null) {
+    public IConfigureBody<T> Field<TField>(Expression<Func<T, TField>> mapAction, TField defaultValue, IList<TField>? listOfValues = null, string? type = null) {
         var fieldName = mapAction.Evaluate();
         if (fieldName == null) {
             return this;
-        }
-
-        string? defaultValueAsString = null;
-        if (defaultValue != null && !defaultValue.Equals(default(TField))) {
-            defaultValueAsString = defaultValue?.ToString();
         }
 
         IList<string>? listOfValuesAsStrings = null;
@@ -100,10 +104,27 @@ internal sealed class ConfigureBody<T> : IConfigureBody<T> {
             listOfValuesAsStrings = listOfValues.Select(x => x?.ToString() ?? string.Empty).ToList();
         }
 
-        AddField(fieldName, type, defaultValueAsString, listOfValuesAsStrings);
+        AddField(fieldName, type, defaultValue?.ToString(), listOfValuesAsStrings);
 
         return this;
     }
+
+    public IConfigureBody<T> Field<TField>(Expression<Func<T, TField>> mapAction, IList<TField>? listOfValues = null, string? type = null) {
+        var fieldName = mapAction.Evaluate();
+        if (fieldName == null) {
+            return this;
+        }
+
+        IList<string>? listOfValuesAsStrings = null;
+        if (listOfValues != null) {
+            listOfValuesAsStrings = listOfValues.Select(x => x?.ToString() ?? string.Empty).ToList();
+        }
+
+        AddField(fieldName, type, null, listOfValuesAsStrings);
+
+        return this;
+    }
+
 
     public IConfigureBody<T> AllFields() {
         foreach (var property in typeof(T).GetAllProperties()) {

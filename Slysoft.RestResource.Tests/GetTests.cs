@@ -206,7 +206,7 @@ public class GetTests {
         //act
         var resource = new Resource()
             .Query<User>("search", "/api/user")
-                .Parameter(x => x.Position, defaultValue: UserPosition.Admin)
+                .Parameter(x => x.Position, defaultValue: UserPosition.Standard)
             .EndQuery();
 
         //assert
@@ -214,7 +214,7 @@ public class GetTests {
         Assert.IsNotNull(link);
         var queryParameter = link.GetParameter("position");
         Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("Admin", queryParameter.DefaultValue);
+        Assert.AreEqual("Standard", queryParameter.DefaultValue);
     }
 
     [TestMethod]
