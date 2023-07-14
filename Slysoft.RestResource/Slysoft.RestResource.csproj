@@ -5,10 +5,10 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.0.2-Beta</Version>
+    <Version>1.0.0.3-Beta</Version>
     <Authors>Jeff Sylvester</Authors>
-    <Title>Slysoft Rest Resource</Title>
-    <Company>Slysoft</Company>
+    <Title>SlySoft Rest Resource</Title>
+    <Company>SlySoft</Company>
     <Copyright>Jeff Sylvester, 2023</Copyright>
     <Description>Utility for creating representing resources containing data, links, and embedded resources.</Description>
   </PropertyGroup>

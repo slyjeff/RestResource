@@ -8,7 +8,7 @@ Install from Nuget.Org
 
 ### Prerequisites
 
-Slysoft.RestResource
+SlySoft.RestResource
 
 ## Usage
 

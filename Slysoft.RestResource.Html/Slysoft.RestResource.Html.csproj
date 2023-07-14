@@ -5,10 +5,11 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.0.0-Beta</Version>
+    <Version>1.0.0.1-Beta</Version>
     <Authors>Jeff Sylvester</Authors>
-    <Title>Slysoft REST Resource HTML Utils</Title>
-    <Company>Slysoft</Company>
+    <Title>SlySoft REST Resource HTML Utils</Title>
+    <Company>SlySoft</Company>
+    <Copyright>Jeff Sylvester, 2023</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -36,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource\SlySoft.RestResource.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 
 </Project>

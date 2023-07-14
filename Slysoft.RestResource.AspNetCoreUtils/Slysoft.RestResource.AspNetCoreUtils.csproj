@@ -4,10 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.0.0-Beta</Version>
+    <Version>1.0.0.1-Beta</Version>
     <Authors>Jeff Sylvester</Authors>
-    <Title>Slysoft REST Resource ASP.NET Core Utils</Title>
-    <Company>Slysoft</Company>
+    <Title>SlySoft REST Resource ASP.NET Core Utils</Title>
+    <Company>SlySoft</Company>
+    <Copyright>Jeff Sylvester, 2023</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -35,10 +36,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource.Html\SlySoft.RestResource.Html.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource\SlySoft.RestResource.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource.Html\SlySoft.RestResource.Html.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 
 </Project>

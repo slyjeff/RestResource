@@ -5,10 +5,11 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
-    <Version>1.0.0.2-Beta</Version>
+    <Version>1.0.0.3-Beta</Version>
     <Authors>Jeff Sylvester</Authors>
-    <Title>Slysoft REST Resource Client Utilities</Title>
-    <Company>Slysoft</Company>
+    <Title>SlySoft REST Resource Client Utilities</Title>
+    <Company>SlySoft</Company>
+    <Copyright>Jeff Sylvester, 2023</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -32,9 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource\SlySoft.RestResource.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 
 </Project>

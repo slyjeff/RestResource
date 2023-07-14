@@ -8,9 +8,9 @@ Install from Nuget.Org, and create a Resource() class. Use the extension methods
 
 ### Prerequisites
 
-No prerequisites are required; however, to get maximum benifits use Slysoft.RestResource.HalJson, SlySoft.RestResource.HalXml, and SlySoft.RestResource.Html to serialize and deserialize resources.
-Slysoft.RestResource.AspNetCoreUtils contains utilities for returning Resources from controller methods, respected the Accept header for serialization
-Slysoft.RestResource.Client contains utilities for communicating with web services created using RestResource
+No prerequisites are required; however, to get maximum benifits use SlySoft.RestResource.HalJson, SlySoft.RestResource.HalXml, and SlySoft.RestResource.Html to serialize and deserialize resources.
+SlySoft.RestResource.AspNetCoreUtils contains utilities for returning Resources from controller methods, respected the Accept header for serialization
+SlySoft.RestResource.Client contains utilities for communicating with web services created using RestResource
 
 ## Usage
 
