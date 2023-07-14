@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Slysoft.RestResource.Extensions;
-using SlySoft.RestResource.HalJson;
 using TestUtils;
 
 namespace Slysoft.RestResource.HalJson.Tests;

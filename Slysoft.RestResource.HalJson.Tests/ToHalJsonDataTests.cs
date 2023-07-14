@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Slysoft.RestResource.Extensions;
-using SlySoft.RestResource.HalJson;
 using TestUtils;
 #pragma warning disable IDE0037
 

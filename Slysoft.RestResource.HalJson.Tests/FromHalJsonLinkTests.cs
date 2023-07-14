@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Slysoft.RestResource.Extensions;
-using SlySoft.RestResource.HalJson;
 
 namespace Slysoft.RestResource.HalJson.Tests;
 

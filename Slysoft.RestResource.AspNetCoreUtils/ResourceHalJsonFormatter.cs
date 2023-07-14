@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using SlySoft.RestResource.HalJson;
+using Slysoft.RestResource.HalJson;
 
 namespace Slysoft.RestResource.AspNetCoreUtils; 
 

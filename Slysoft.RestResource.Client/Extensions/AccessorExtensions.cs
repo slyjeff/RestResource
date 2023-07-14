@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
 using Slysoft.RestResource.Client.Accessors;
 
 namespace Slysoft.RestResource.Client.Extensions;
@@ -110,7 +109,7 @@ internal static class AccessorExtensions {
 
         var parseMethod = type.GetMethod("Parse", BindingFlags.Static | BindingFlags.Public, null, new[] { typeof(string) }, null);
         if (parseMethod != null) {
-            return parseMethod.Invoke(null, new object[] { value.ToString() });
+            return parseMethod.Invoke(null, new object[] { value.ToString() ?? string.Empty });
         }
 
         return default;
