@@ -34,6 +34,13 @@ public interface IRestClient {
     void SetDefaultAcceptHeader(params string[] contentTypes);
 
     /// <summary>
+    /// Set authorization header value for all requests
+    /// </summary>
+    /// <param name="scheme">The scheme to use for authorization</param>
+    /// <param name="value">The credentials containing the authorization information of the user agent</param>
+    void SetAuthorizationHeaderValue(string scheme, string value);
+
+    /// <summary>
     /// Timeout (in seconds) to use if the server doesn't specify a timeout- defaults to 100 seconds;
     /// </summary>
     int DefaultTimeout { get; set; }
@@ -108,6 +115,15 @@ public sealed class RestClient : IRestClient {
         foreach (var contentType in contentTypes) {
             acceptHeader.Add(new MediaTypeWithQualityHeaderValue(contentType));
         }
+    }
+
+    /// <summary>
+    /// Set authorization header value for all requests
+    /// </summary>
+    /// <param name="scheme">The scheme to use for authorization</param>
+    /// <param name="value">The credentials containing the authorization information of the user agent</param>
+    public void SetAuthorizationHeaderValue(string scheme, string value) {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme, value);
     }
 
     /// <summary>
