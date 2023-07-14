@@ -140,7 +140,7 @@ public class PutTests {
         //act
         var resource = new Resource()
             .Put<User>("updateUser", "/api/user")
-                .Field(x => x.Position, defaultValue: "admin")
+                .Field(x => x.Position, defaultValue: UserPosition.Admin)
             .EndBody();
 
         //assert
@@ -148,7 +148,7 @@ public class PutTests {
         Assert.IsNotNull(link);
         var queryParameter = link.GetParameter("position");
         Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("admin", queryParameter.DefaultValue);
+        Assert.AreEqual("Admin", queryParameter.DefaultValue);
     }
 
     [TestMethod]
@@ -156,7 +156,7 @@ public class PutTests {
         //act
         var resource = new Resource()
             .Put<User>("updateUser", "/api/user")
-                .Field(x => x.Position, listOfValues: new[] { "Standard", "Admin" })
+                .Field(x => x.Position, listOfValues: new[] { UserPosition.Standard, UserPosition.Admin })
             .EndBody();
 
         //assert

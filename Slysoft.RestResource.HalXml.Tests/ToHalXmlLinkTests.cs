@@ -112,7 +112,7 @@ public class ToHalJsonGetLinkTest {
         var resource = new Resource()
             .Data("message", message)
             .Query<User>("getLink", href)
-                .Parameter(x => x.Position, defaultValue: "Admin", listOfValues: new[] { "Standard", "Admin" })
+                .Parameter(x => x.Position, defaultValue: UserPosition.Admin, listOfValues: new[] { UserPosition.Standard, UserPosition.Admin })
                 .Parameter(x => x.YearsEmployed, type: "number")
             .EndQuery();
 

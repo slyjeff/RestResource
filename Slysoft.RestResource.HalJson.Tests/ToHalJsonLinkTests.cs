@@ -141,7 +141,7 @@ public class ToHalJsonLinkTests {
         var href = GenerateRandom.String();
         var resource = new Resource()
             .Query<User>("getLink", href)
-                .Parameter(x => x.Position, defaultValue: "Admin", listOfValues: new []{"Standard", "Admin"})
+                .Parameter(x => x.Position, defaultValue: UserPosition.Admin, listOfValues: new []{ UserPosition.Standard, UserPosition.Admin })
                 .Parameter(x => x.YearsEmployed, type: "number")
             .EndQuery();
 
