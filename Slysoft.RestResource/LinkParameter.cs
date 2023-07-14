@@ -1,4 +1,4 @@
-﻿namespace Slysoft.RestResource; 
+﻿namespace SlySoft.RestResource;
 
 /// <summary>
 /// A class to define an item for input (ex: form field, query parameter)

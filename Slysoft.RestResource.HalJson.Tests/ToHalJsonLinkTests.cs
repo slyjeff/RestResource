@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Slysoft.RestResource.Extensions;
 using TestUtils;
+
 // ReSharper disable RedundantAnonymousTypePropertyName
 #pragma warning disable IDE0037
 
-namespace Slysoft.RestResource.HalJson.Tests; 
+namespace SlySoft.RestResource.HalJson.Tests;
 
 [TestClass]
 public class ToHalJsonLinkTests {

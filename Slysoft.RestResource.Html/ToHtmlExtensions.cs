@@ -1,8 +1,7 @@
 ﻿using System.Collections;
-using Slysoft.RestResource.Extensions;
 using System.Web.UI;
 
-namespace Slysoft.RestResource.Html;
+namespace SlySoft.RestResource.Html;
 
 public static class ToHtmlExtensions {
     /// <summary>

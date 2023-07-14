@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Slysoft.RestResource.Client.Tests.Common;
+namespace SlySoft.RestResource.Client.Tests.Common;
 
 public interface ILinkTestCommon {
     [LinkCheck]

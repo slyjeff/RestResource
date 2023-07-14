@@ -1,9 +1,9 @@
-﻿namespace Slysoft.RestResource;
+﻿namespace SlySoft.RestResource;
 
 /// <summary>
 /// Represents a REST resource that can contain data, links, and embedded resource
 /// </summary>
-public sealed class Resource  {
+public sealed class Resource {
     /// <summary>
     /// URI of the resource that will be used to construct a "self" link
     /// </summary>

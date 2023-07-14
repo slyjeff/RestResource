@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Slysoft.RestResource.Extensions;
 
-namespace Slysoft.RestResource.HalXml.Tests;
+namespace SlySoft.RestResource.HalXml.Tests;
 
 [TestClass]
 public sealed class FromHalXmlLinkTests {

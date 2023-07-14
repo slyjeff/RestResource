@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using Newtonsoft.Json.Linq;
 
-namespace Slysoft.RestResource.HalJson;
+namespace SlySoft.RestResource.HalJson;
 
 public static class FromHalJsonExtensions {
     /// <summary>

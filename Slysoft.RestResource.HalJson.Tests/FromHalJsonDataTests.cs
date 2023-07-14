@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Slysoft.RestResource.Extensions;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestUtils;
 
-namespace Slysoft.RestResource.HalJson.Tests;
+namespace SlySoft.RestResource.HalJson.Tests;
 
 [TestClass]
 public sealed class FromHalJsonDataTests {

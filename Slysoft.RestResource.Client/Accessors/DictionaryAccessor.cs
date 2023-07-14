@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Slysoft.RestResource.Client.Extensions;
+using SlySoft.RestResource.Client.Extensions;
 
-namespace Slysoft.RestResource.Client.Accessors;
+namespace SlySoft.RestResource.Client.Accessors;
 
 public abstract class DictionaryAccessor : Accessor {
     private readonly IDictionary<string, object?> _dictionary;

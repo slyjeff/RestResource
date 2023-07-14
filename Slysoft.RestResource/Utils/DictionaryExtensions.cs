@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Linq.Expressions;
 
-namespace Slysoft.RestResource.Utils; 
+namespace SlySoft.RestResource.Utils; 
 
 internal static class DictionaryExtensions {
     internal static void AddResourceData(this IDictionary<string, object?> dictionary, string name, object? value, string? format = null) {

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Slysoft.RestResource.Extensions;
-using Slysoft.RestResource.HalJson.Tests.Utils;
+using SlySoft.RestResource.HalJson.Tests.Utils;
 using TestUtils;
 
-namespace Slysoft.RestResource.HalJson.Tests; 
+namespace SlySoft.RestResource.HalJson.Tests;
 
 [TestClass]
 public sealed class ToHalJsonEmbeddedTests {

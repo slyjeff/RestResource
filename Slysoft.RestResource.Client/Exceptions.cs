@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Slysoft.RestResource.Client.Extensions;
+using SlySoft.RestResource.Client.Extensions;
 
-namespace Slysoft.RestResource.Client; 
+namespace SlySoft.RestResource.Client; 
 
 public abstract class RestResourceClientException : Exception {
     protected RestResourceClientException(string message) : base(message) {

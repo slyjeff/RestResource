@@ -1,9 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Slysoft.RestResource.Client.Tests.Common;
-using Slysoft.RestResource.Extensions;
+using SlySoft.RestResource.Client.Tests.Common;
 
-namespace Slysoft.RestResource.Client.Tests;
+namespace SlySoft.RestResource.Client.Tests;
 
 [TestClass]
 public sealed class PropertyTests {

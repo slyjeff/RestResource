@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Slysoft.RestResource.Utils; 
+namespace SlySoft.RestResource.Utils; 
 
 internal static class TypeExtensions {
     public static IEnumerable<PropertyInfo> GetAllProperties(this Type type) {

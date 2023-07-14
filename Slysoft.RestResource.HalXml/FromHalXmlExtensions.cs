@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Xml.Linq;
 
-namespace Slysoft.RestResource.HalXml;
+namespace SlySoft.RestResource.HalXml;
 
 public static class FromHalXmlExtensions {
     /// <summary>

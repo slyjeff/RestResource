@@ -1,4 +1,5 @@
-﻿namespace Slysoft.RestResource.Extensions; 
+﻿// ReSharper disable once CheckNamespace
+namespace SlySoft.RestResource;
 
 public static class UriExtensions {
     /// <summary>

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using Slysoft.RestResource.Html;
+using SlySoft.RestResource.Html;
 
-namespace Slysoft.RestResource.AspNetCoreUtils; 
+namespace SlySoft.RestResource.AspNetCoreUtils; 
 
 public sealed class ResourceHtmlFormatter : TextOutputFormatter {
     public ResourceHtmlFormatter() {

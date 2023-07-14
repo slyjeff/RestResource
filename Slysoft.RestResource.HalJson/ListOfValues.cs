@@ -1,4 +1,4 @@
-﻿namespace Slysoft.RestResource.HalJson; 
+﻿namespace SlySoft.RestResource.HalJson; 
 
 /// <summary>
 /// Use an enum to create a list of strings

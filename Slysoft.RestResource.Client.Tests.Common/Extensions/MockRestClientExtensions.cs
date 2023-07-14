@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Moq;
 
-namespace Slysoft.RestResource.Client.Tests.Common.Extensions; 
+namespace SlySoft.RestResource.Client.Tests.Common.Extensions; 
 
 public static class MockRestClientExtensions {
     public static CallSetup<T> SetupCall<T>(this Mock<IRestClient> mockRestMock, string url, string? verb = null, IDictionary<string, object?>? body = null, int timeout = 0) {

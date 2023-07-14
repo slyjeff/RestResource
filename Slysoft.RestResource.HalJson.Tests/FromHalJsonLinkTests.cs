@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Slysoft.RestResource.Extensions;
 
-namespace Slysoft.RestResource.HalJson.Tests;
+namespace SlySoft.RestResource.HalJson.Tests;
 
 [TestClass]
 public sealed class FromHalJsonLinkTests {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Slysoft.RestResource.Extensions;
 
-namespace Slysoft.RestResource.Tests; 
+namespace SlySoft.RestResource.Tests;
 
 [TestClass]
 public class DeleteTests {

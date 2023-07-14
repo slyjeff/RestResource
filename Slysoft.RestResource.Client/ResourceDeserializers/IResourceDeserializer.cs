@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace Slysoft.RestResource.Client.ResourceDeserializers; 
+namespace SlySoft.RestResource.Client.ResourceDeserializers; 
 
 /// <summary>
 /// User to provide a custom deserializer for converting an HttpResponseMessage into a resource

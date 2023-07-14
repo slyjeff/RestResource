@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using ClientTest;
-using Slysoft.RestResource;
-using Slysoft.RestResource.Client;
+using SlySoft.RestResource;
+using SlySoft.RestResource.Client;
 using TestUtils;
 
 var restClient = new RestClient("http://localhost:35093/");

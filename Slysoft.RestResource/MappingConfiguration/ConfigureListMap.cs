@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
-using Slysoft.RestResource.Utils;
+using SlySoft.RestResource.Utils;
 
-namespace Slysoft.RestResource.MappingConfiguration;
+namespace SlySoft.RestResource.MappingConfiguration;
 
 internal sealed class CopyPair<T> {
     public CopyPair(T source, IDictionary<string, object?> destination) {

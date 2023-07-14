@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 // ReSharper disable UnusedMember.Global
 
-namespace Slysoft.RestResource.Client.Accessors;
+namespace SlySoft.RestResource.Client.Accessors;
 
 public abstract class Accessor : EditableAccessor {
     protected readonly IDictionary<string, object?> CachedData = new Dictionary<string, object?>();

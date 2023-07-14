@@ -74,17 +74,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource.Client.Tests.Common\Slysoft.RestResource.Client.Tests.Common.csproj">
+    <ProjectReference Include="..\Slysoft.RestResource.Client.Tests.Common\SlySoft.RestResource.Client.Tests.Common.csproj">
       <Project>{548AD971-A321-472D-BBA5-F0687239AF42}</Project>
-      <Name>Slysoft.RestResource.Client.Tests.Common</Name>
+      <Name>SlySoft.RestResource.Client.Tests.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Slysoft.RestResource.Client\Slysoft.RestResource.Client.csproj">
+    <ProjectReference Include="..\Slysoft.RestResource.Client\SlySoft.RestResource.Client.csproj">
       <Project>{5141bc92-3f45-4928-a67b-524141888a79}</Project>
-      <Name>Slysoft.RestResource.Client</Name>
+      <Name>SlySoft.RestResource.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj">
+    <ProjectReference Include="..\Slysoft.RestResource\SlySoft.RestResource.csproj">
       <Project>{620F2ABE-F2E7-4837-B35D-072C1B9FB777}</Project>
-      <Name>Slysoft.RestResource</Name>
+      <Name>SlySoft.RestResource</Name>
     </ProjectReference>
     <ProjectReference Include="..\TestUtils\TestUtils.csproj">
       <Project>{5bba0026-2bd9-47b1-9b3c-1e5c762d2a8d}</Project>

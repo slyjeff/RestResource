@@ -1,4 +1,4 @@
-using Slysoft.RestResource.AspNetCoreUtils;
+using SlySoft.RestResource.AspNetCoreUtils;
 
 var builder = WebApplication.CreateBuilder(args);
 

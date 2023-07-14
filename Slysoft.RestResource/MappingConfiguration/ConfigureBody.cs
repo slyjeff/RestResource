@@ -1,8 +1,7 @@
 ﻿using System.Linq.Expressions;
-using Slysoft.RestResource.Extensions;
-using Slysoft.RestResource.Utils;
+using SlySoft.RestResource.Utils;
 
-namespace Slysoft.RestResource.MappingConfiguration;
+namespace SlySoft.RestResource.MappingConfiguration;
 
 public interface IConfigureBody {
     /// <summary>

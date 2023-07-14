@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace Slysoft.RestResource.Client.Accessors;
+namespace SlySoft.RestResource.Client.Accessors;
 
 public class EditableAccessorList<T> : EditableAccessor, IList<T>, INotifyCollectionChanged {
     private readonly IList<T> _sourceList;

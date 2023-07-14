@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Slysoft.RestResource.Extensions;
 using TestUtils;
 
-namespace Slysoft.RestResource.Tests; 
+namespace SlySoft.RestResource.Tests;
 
 [TestClass]
 public sealed class MappedDataTests {

@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 
 </Project>

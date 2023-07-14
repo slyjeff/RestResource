@@ -1,10 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Reflection;
-using Slysoft.RestResource.Client.Accessors;
+using SlySoft.RestResource.Client.Accessors;
 
-namespace Slysoft.RestResource.Client.Extensions;
+namespace SlySoft.RestResource.Client.Extensions;
 
 internal static class PropertyAndMethodExtensions {
     public static bool IsFromResourceAccessorInterface(this PropertyInfo property) {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Slysoft.RestResource.Client.Generators;
+using SlySoft.RestResource.Client.Generators;
 
-namespace Slysoft.RestResource.Client;
+namespace SlySoft.RestResource.Client;
 
 /// <summary>
 /// Create a runtime class that implements an interface to access a resource. The interface does not have to match the resource completely, but [LinkCheck] properties should be used

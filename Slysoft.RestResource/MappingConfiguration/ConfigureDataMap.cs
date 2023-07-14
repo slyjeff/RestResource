@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
-using Slysoft.RestResource.Utils;
+using SlySoft.RestResource.Utils;
 
-namespace Slysoft.RestResource.MappingConfiguration;
+namespace SlySoft.RestResource.MappingConfiguration;
 
 internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, TParent> {
     private readonly TParent _parent;

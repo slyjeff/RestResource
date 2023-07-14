@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource.AspNetCoreUtils\Slysoft.RestResource.AspNetCoreUtils.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource.AspNetCoreUtils\SlySoft.RestResource.AspNetCoreUtils.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 
 </Project>

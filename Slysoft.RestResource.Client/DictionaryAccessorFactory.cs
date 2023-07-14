@@ -1,9 +1,8 @@
-﻿using Slysoft.RestResource.Client.Generators;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using SlySoft.RestResource.Client.Generators;
 
-namespace Slysoft.RestResource.Client;
+namespace SlySoft.RestResource.Client;
 
 internal static class DictionaryAccessorFactory {
     private static readonly Dictionary<Type, Type> CreatedTypes = new();

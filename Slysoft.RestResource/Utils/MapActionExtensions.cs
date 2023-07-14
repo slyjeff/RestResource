@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Slysoft.RestResource.Utils; 
+namespace SlySoft.RestResource.Utils; 
 
 internal static class MapActionExtensions {
     public static string? Evaluate<T1, T2>(this Expression<Func<T1, T2>> mapAction) {

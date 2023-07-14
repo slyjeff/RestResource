@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Slysoft.RestResource.HalJson.Tests.Utils;
+namespace SlySoft.RestResource.HalJson.Tests.Utils;
 
 internal static class JsonStringExtensions {
     public static string WithPlaceholder(this string json, string placeholder, string value) {

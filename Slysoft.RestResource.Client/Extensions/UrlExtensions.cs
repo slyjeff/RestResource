@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Slysoft.RestResource.Client.Extensions; 
+namespace SlySoft.RestResource.Client.Extensions; 
 
 internal static class UrlExtensions {
     public static string AppendQueryParameters(this string url, IDictionary<string, object?>? parameters) {

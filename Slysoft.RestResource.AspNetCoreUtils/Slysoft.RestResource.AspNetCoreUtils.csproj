@@ -35,10 +35,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slysoft.RestResource.HalJson\Slysoft.RestResource.HalJson.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource.HalXml\Slysoft.RestResource.HalXml.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource.Html\Slysoft.RestResource.Html.csproj" />
-    <ProjectReference Include="..\Slysoft.RestResource\Slysoft.RestResource.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource.Html\SlySoft.RestResource.Html.csproj" />
+    <ProjectReference Include="..\Slysoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 
 </Project>

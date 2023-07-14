@@ -1,9 +1,9 @@
-﻿using Slysoft.RestResource.Client.Extensions;
-using System;
+﻿using System;
 using System.Net.Http;
-using Slysoft.RestResource.HalXml;
+using SlySoft.RestResource.Client.Extensions;
+using SlySoft.RestResource.HalXml;
 
-namespace Slysoft.RestResource.Client.ResourceDeserializers;
+namespace SlySoft.RestResource.Client.ResourceDeserializers;
 
 internal class XmlDeserializer : IResourceDeserializer {
     public bool CanDeserialize(HttpResponseMessage response) {

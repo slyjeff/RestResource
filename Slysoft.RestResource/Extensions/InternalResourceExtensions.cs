@@ -1,6 +1,7 @@
-﻿using Slysoft.RestResource.Utils;
+﻿using SlySoft.RestResource.Utils;
 
-namespace Slysoft.RestResource.Extensions; 
+// ReSharper disable once CheckNamespace
+namespace SlySoft.RestResource;
 
 internal static class InternalResourceExtensions {
     public static void AddParameter(this Link link, string name, string? type, string? defaultValue, IList<string>? listOfValues) {

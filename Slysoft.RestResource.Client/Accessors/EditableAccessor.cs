@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Slysoft.RestResource.Client.Accessors;
+namespace SlySoft.RestResource.Client.Accessors;
 
 /// Inheriting from IEditableAccessor allows a resource accessor to report changes to properties, whether the resource has changes, and revert changes
 public interface IEditableAccessor : INotifyPropertyChanged {

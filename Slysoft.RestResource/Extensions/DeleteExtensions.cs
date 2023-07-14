@@ -1,6 +1,7 @@
-﻿using Slysoft.RestResource.Utils;
+﻿using SlySoft.RestResource.Utils;
 
-namespace Slysoft.RestResource.Extensions; 
+// ReSharper disable once CheckNamespace
+namespace SlySoft.RestResource;
 
 public static class DeleteExtensions {
     /// <summary>

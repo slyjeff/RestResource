@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Slysoft.RestResource.Client; 
+namespace SlySoft.RestResource.Client; 
 
 /// <summary>
 /// Information about a field/query parameter defined by the server

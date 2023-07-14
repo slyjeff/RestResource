@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Slysoft.RestResource.Client.Accessors;
+using SlySoft.RestResource.Client.Accessors;
 using TestUtils;
 
-namespace Slysoft.RestResource.Client.Tests.Common;
+namespace SlySoft.RestResource.Client.Tests.Common;
 
 public enum OptionEnum { Option1, Option2 };
 

@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Slysoft.RestResource.Client.Accessors;
+using SlySoft.RestResource.Client.Accessors;
 
-namespace Slysoft.RestResource.Client.Extensions;
+namespace SlySoft.RestResource.Client.Extensions;
 
 internal static class AccessorExtensions {
     internal static T? GetData<T>(this Resource resource, string name, IRestClient restClient) {

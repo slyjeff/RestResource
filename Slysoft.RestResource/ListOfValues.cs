@@ -1,4 +1,4 @@
-﻿namespace Slysoft.RestResource; 
+﻿namespace SlySoft.RestResource;
 
 /// <summary>
 /// Use an enum to create a list of strings

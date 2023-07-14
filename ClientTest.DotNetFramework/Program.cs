@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Slysoft.RestResource;
-using Slysoft.RestResource.Client;
+using SlySoft.RestResource;
+using SlySoft.RestResource.Client;
 using TestUtils;
 
 namespace ClientTest.DotNetFramework {

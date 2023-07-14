@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Slysoft.RestResource.Client.Extensions;
+namespace SlySoft.RestResource.Client.Extensions;
 
 internal static class TypeExtensions
 {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestUtils;
-using Slysoft.RestResource.Extensions;
 
-namespace Slysoft.RestResource.Tests;
+namespace SlySoft.RestResource.Tests;
 
 [TestClass]
 public sealed class EmbeddedTests {

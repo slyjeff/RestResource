@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Slysoft.RestResource.MappingConfiguration {
+namespace SlySoft.RestResource.MappingConfiguration {
     /// <summary>
     /// A configuration class that will allow configuration of parameters to be mapped into a resource
     /// </summary>

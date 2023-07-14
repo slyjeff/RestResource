@@ -1,8 +1,8 @@
-﻿using Slysoft.RestResource.MappingConfiguration;
-using Slysoft.RestResource.Utils;
-using System.Threading;
+﻿using SlySoft.RestResource.MappingConfiguration;
+using SlySoft.RestResource.Utils;
 
-namespace Slysoft.RestResource.Extensions; 
+// ReSharper disable once CheckNamespace
+namespace SlySoft.RestResource;
 
 public static class GetExtensions {
     /// <summary>

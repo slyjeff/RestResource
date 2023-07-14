@@ -7,13 +7,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Slysoft.RestResource.Client.Extensions;
-using Slysoft.RestResource.Client.ResourceDeserializers;
+using SlySoft.RestResource.Client.Extensions;
+using SlySoft.RestResource.Client.ResourceDeserializers;
 
 // ReSharper disable UnusedMemberInSuper.Global
 // ReSharper disable UnusedMember.Global
 
-namespace Slysoft.RestResource.Client;
+namespace SlySoft.RestResource.Client;
 
 /// <summary>
 /// Provide custom serialization

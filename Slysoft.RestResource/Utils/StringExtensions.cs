@@ -1,4 +1,4 @@
-﻿namespace Slysoft.RestResource.Utils; 
+﻿namespace SlySoft.RestResource.Utils; 
 
 internal static class StringExtensions {
     public static string ToCamelCase(this string value) {

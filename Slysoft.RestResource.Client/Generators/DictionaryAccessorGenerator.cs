@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Slysoft.RestResource.Client.Accessors;
-using Slysoft.RestResource.Client.Extensions;
+using SlySoft.RestResource.Client.Accessors;
+using SlySoft.RestResource.Client.Extensions;
 
-namespace Slysoft.RestResource.Client.Generators;
+namespace SlySoft.RestResource.Client.Generators;
 
 internal sealed class DictionaryAccessorGenerator : AccessorGenerator {
     public DictionaryAccessorGenerator(Type interfaceType) : base(interfaceType, typeof(DictionaryAccessor)) {

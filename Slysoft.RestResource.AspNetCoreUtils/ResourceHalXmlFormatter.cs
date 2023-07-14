@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using Slysoft.RestResource.HalXml;
+using SlySoft.RestResource.HalXml;
 
-namespace Slysoft.RestResource.AspNetCoreUtils; 
+namespace SlySoft.RestResource.AspNetCoreUtils; 
 
 public sealed class ResourceHalXmlFormatter : TextOutputFormatter {
     public ResourceHalXmlFormatter() {

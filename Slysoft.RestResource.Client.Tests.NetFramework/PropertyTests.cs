@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Slysoft.RestResource.Client.Tests.Common;
-using Slysoft.RestResource.Extensions;
 using System.Collections.Generic;
 using Moq;
+using SlySoft.RestResource;
+using SlySoft.RestResource.Client;
+using SlySoft.RestResource.Client.Tests.Common;
 
 namespace Slysoft.RestResource.Client.Tests.NetFramework;
 

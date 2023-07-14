@@ -4,10 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
-using Slysoft.RestResource.Client.Accessors;
-using Slysoft.RestResource.Client.Extensions;
+using SlySoft.RestResource.Client.Accessors;
+using SlySoft.RestResource.Client.Extensions;
 
-namespace Slysoft.RestResource.Client.Generators;
+namespace SlySoft.RestResource.Client.Generators;
 
 internal sealed class ResourceAccessorGenerator<T> : AccessorGenerator {
     public ResourceAccessorGenerator() : base(typeof(T), typeof(ResourceAccessor)) {

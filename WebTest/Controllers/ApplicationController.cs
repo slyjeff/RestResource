@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Slysoft.RestResource;
-using Slysoft.RestResource.Extensions;
+using SlySoft.RestResource;
 
 namespace WebTest.Controllers;
 

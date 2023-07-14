@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Reflection.Emit;
 using System.Reflection;
+using System.Reflection.Emit;
 
-namespace Slysoft.RestResource.Client.Generators; 
+namespace SlySoft.RestResource.Client.Generators; 
 
 internal abstract class AccessorGenerator {
     private static ModuleBuilder? _moduleBuilder;

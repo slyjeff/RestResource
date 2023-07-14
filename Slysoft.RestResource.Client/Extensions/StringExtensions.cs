@@ -1,4 +1,4 @@
-﻿namespace Slysoft.RestResource.Client.Extensions; 
+﻿namespace SlySoft.RestResource.Client.Extensions; 
 
 internal static class StringExtensions {
     public static string RemoveOuterQuotes(this string s) {

@@ -1,4 +1,4 @@
-﻿namespace Slysoft.RestResource;
+﻿namespace SlySoft.RestResource;
 
 public sealed class FormattedValue  {
     public FormattedValue(object value, string format) {

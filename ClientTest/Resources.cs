@@ -1,4 +1,4 @@
-﻿using Slysoft.RestResource.Client.Accessors;
+﻿using SlySoft.RestResource.Client.Accessors;
 
 namespace ClientTest; 
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 
-namespace Slysoft.RestResource.AspNetCoreUtils;
+namespace SlySoft.RestResource.AspNetCoreUtils;
 
 public static class RegisterTransformUrlEncodedFormsToJsonMiddleware {
     /// <summary>

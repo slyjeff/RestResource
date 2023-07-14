@@ -1,11 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Slysoft.RestResource.Client.Tests.Common;
-using Slysoft.RestResource.Extensions;
-using Slysoft.RestResource.Client.Tests.Common.Extensions;
+using SlySoft.RestResource.Client.Tests.Common;
+using SlySoft.RestResource.Client.Tests.Common.Extensions;
 using TestUtils;
 
-namespace Slysoft.RestResource.Client.Tests;
+namespace SlySoft.RestResource.Client.Tests;
 
 //note: PUT, DELETE, and PATCH work the same as GET and POST, so not writing tests for them, unless there is a specific difference (for example, PATCH only contains changed values if called with no parameters)
 

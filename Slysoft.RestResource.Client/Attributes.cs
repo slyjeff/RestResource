@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Slysoft.RestResource.Client; 
+namespace SlySoft.RestResource.Client; 
 
 /// <summary>
 /// Add to a bool property to return whether a link exists in the resource- by convention will look for a link named "Can[PropertyName]"- a link name can also be specified in the constructor

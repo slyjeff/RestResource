@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Slysoft.RestResource.Client.Extensions;
-using Slysoft.RestResource.Extensions;
+using SlySoft.RestResource.Client.Extensions;
 
 // ReSharper disable UnusedMember.Global
 
-namespace Slysoft.RestResource.Client.Accessors;
+namespace SlySoft.RestResource.Client.Accessors;
 
 /// <summary>
 /// Inheriting from IResourceAccessor allows a resource accessor to use the raw resource and execute calls- use in situations when you do not know the structure of the resource in advance

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 
-namespace Slysoft.RestResource.Client.Extensions; 
+namespace SlySoft.RestResource.Client.Extensions; 
 
 internal static class HttpResponseMessageExtensions {
     internal static string GetContent(this HttpResponseMessage response) {

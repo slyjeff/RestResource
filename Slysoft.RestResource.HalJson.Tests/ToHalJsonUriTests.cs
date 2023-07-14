@@ -1,10 +1,8 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Slysoft.RestResource.Extensions;
 using TestUtils;
 
-namespace Slysoft.RestResource.HalJson.Tests; 
+namespace SlySoft.RestResource.HalJson.Tests;
 
 [TestClass]
 public sealed class ToHalJsonUriTests {
