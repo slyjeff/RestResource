@@ -469,6 +469,9 @@ td:last-child {
             htmlWriter.RenderBeginTag(HtmlTextWriterTag.Select);
             foreach (var value in parameter.ListOfValues) {
                 htmlWriter.AddAttribute("value", value);
+                if (value == parameter.DefaultValue) {
+                    htmlWriter.AddAttribute("selected", null);
+                }
                 htmlWriter.RenderBeginTag(HtmlTextWriterTag.Option);
                 htmlWriter.Write(value);
                 htmlWriter.RenderEndTag(); //option

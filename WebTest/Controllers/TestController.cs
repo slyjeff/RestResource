@@ -25,7 +25,9 @@ public sealed class TestController  : ControllerBase {
                 .Field("list")
             .EndBody()
             .QueryWithAllParameters<BodyWithBool>("queryBool", "test/queryBool")
-            .PostWithAllFields<BodyWithBool>("bool", "test/bool")
+            .Post<BodyWithBool>("bool", "test/bool")
+                .Field(x => x.Value, defaultValue: false)
+            .EndBody()
             .PostWithAllFields<BodyWithInt>("int", "test/int")
             .PostWithAllFields<BodyWithEnum>("enum", "test/enum");
 
