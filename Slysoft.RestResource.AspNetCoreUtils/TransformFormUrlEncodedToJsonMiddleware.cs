@@ -75,10 +75,10 @@ internal class TransformUrlEncodedFormsToJsonMiddleware {
                 continue;
             }
 
-            //if (bool.TryParse(value, out var boolValue)) {
-            //    o[key] = boolValue;
-            //    continue;
-            //}
+            if (bool.TryParse(value, out var boolValue)) {
+                o[key] = boolValue;
+                continue;
+            }
 
             o[key] = value;
         }
