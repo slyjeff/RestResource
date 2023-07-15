@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Text;
 using System.Web.UI;
+using SlySoft.RestResource.Html.Extensions;
 
 namespace SlySoft.RestResource.Html;
 
@@ -301,13 +303,6 @@ td:last-child {
         htmlWriter.RenderEndTag(); //td
     }
 
-    private const string UpdateLinkScript =
-        @"var {link}_link= document.getElementById('{link}_link');
-              var {link}_input= document.getElementById('{link}_input');
-              {link}_input.onchange={link}_input.onkeyup= function() {
-                  {link}_link.href = '{uri1}' + encodeURIComponent({link}_input.value) + '{uri2}';
-              };";
-
     private static void WriteLinks(HtmlTextWriter htmlWriter, Resource resource, ICollection<string> scripts) {
         if (resource.Links.Count == 0) {
             return;
@@ -334,7 +329,7 @@ td:last-child {
 
             htmlWriter.RenderBeginTag(HtmlTextWriterTag.Td);
 
-            var parameter = link.GetParameters().FirstOrDefault();
+            var templatedParameters = link.GetParameters().ToList();
 
             switch (link.Verb) {
                 case "GET" when link.Parameters.Count > 0: {
@@ -344,12 +339,12 @@ td:last-child {
                     htmlWriter.AddAttribute("method", "GET");
                     htmlWriter.RenderBeginTag(HtmlTextWriterTag.Form);
 
-                    if (!string.IsNullOrEmpty(parameter)) {
-                        WriteQueryParameter(htmlWriter, parameter, string.Empty);
+                    foreach (var templatedParameter in templatedParameters) {
+                        WriterParameter(htmlWriter, new LinkParameter(templatedParameter));
                     }
 
                     foreach (var queryParameter in link.Parameters) {
-                        WriteQueryParameter(htmlWriter, queryParameter.Name, queryParameter.DefaultValue);
+                        WriterParameter(htmlWriter, queryParameter);
                     }
 
                     htmlWriter.AddAttribute(HtmlTextWriterAttribute.Type, "submit");
@@ -360,46 +355,38 @@ td:last-child {
 
                     htmlWriter.RenderEndTag(); //form
                     break;
-                }
-                case "GET" when !string.IsNullOrEmpty(parameter): {
-                    var href1 = link.Href;
-                    var href2 = string.Empty;
-
-                    var parameterText = "{" + parameter + "}";
-
-                    if (link.Href.ToUpper().Contains(parameterText.ToUpper())) {
-                        var parameterPosition = link.Href.ToUpper().IndexOf(parameterText.ToUpper(), StringComparison.Ordinal);
-                        href1 = link.Href.Substring(0, parameterPosition);
-                        href2 = link.Href.Substring(parameterPosition + parameterText.Length);
-                    } else {
-                        if (!href1.EndsWith("/")) {
-                            href1 += "/";
-                        }
-                    }
+                } case "GET" when templatedParameters.Any(): {
+                    var beforeAndAfter = link.Href.GetTextBeforeAndAfterParameter(templatedParameters.First());
+                    var href = beforeAndAfter.Before;
 
                     htmlWriter.AddAttribute(HtmlTextWriterAttribute.Id, link.Name + "_link");
-                    htmlWriter.AddAttribute(HtmlTextWriterAttribute.Href, href1);
+                    htmlWriter.AddAttribute(HtmlTextWriterAttribute.Href, href);
                     htmlWriter.RenderBeginTag(HtmlTextWriterTag.A);
-                    htmlWriter.Write(href1);
+                    htmlWriter.Write(href);
                     htmlWriter.RenderEndTag(); //a
 
-                    htmlWriter.Write("&nbsp;");
-
-                    htmlWriter.AddAttribute(HtmlTextWriterAttribute.Id, link.Name + "_input");
-                    htmlWriter.AddAttribute("placeholder", parameter);
-                    htmlWriter.AddAttribute("size", "5");
-                    htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
-                    htmlWriter.RenderEndTag(); //input
-
-                    if (!string.IsNullOrEmpty(href2)) {
+                    var parameterInfoList = new List<UrlParameterInfo>();
+                    foreach (var parameter in templatedParameters) {
                         htmlWriter.Write("&nbsp;");
-                        htmlWriter.Write(href2);
+                        htmlWriter.AddAttribute(HtmlTextWriterAttribute.Id, $"{link.Name}_{parameter}_input");
+                        htmlWriter.AddAttribute("placeholder", parameter);
+                        htmlWriter.AddAttribute("size", "5");
+                        htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
+                        htmlWriter.RenderEndTag(); //input
+
+                        if (parameter == templatedParameters.Last()) {
+                            parameterInfoList.Add(new UrlParameterInfo(parameter, beforeAndAfter.After));
+                            continue;
+                        }
+
+                        var nextParameter = templatedParameters[templatedParameters.IndexOf(parameter) + 1];
+                        beforeAndAfter = beforeAndAfter.After.GetTextBeforeAndAfterParameter(nextParameter);
+                        htmlWriter.Write("&nbsp;");
+                        htmlWriter.Write(beforeAndAfter.Before);
+                        parameterInfoList.Add(new UrlParameterInfo(parameter, beforeAndAfter.Before));
                     }
 
-                    scripts.Add(UpdateLinkScript
-                        .Replace("{link}", link.Name)
-                        .Replace("{uri1}", href1)
-                        .Replace("{uri2}", href2));
+                    scripts.Add(CreateUpdateLinkScript(link.Name, href, parameterInfoList));
                     break;
                 }
                 case "GET":
@@ -414,18 +401,7 @@ td:last-child {
                     htmlWriter.RenderBeginTag(HtmlTextWriterTag.Form);
 
                     foreach (var formField in link.Parameters) {
-                        htmlWriter.AddAttribute(HtmlTextWriterAttribute.Name, formField.Name);
-                        htmlWriter.AddAttribute("placeholder", formField.Name);
-
-                        if (!string.IsNullOrEmpty(formField.DefaultValue)) {
-                            htmlWriter.AddAttribute("value", formField.DefaultValue);
-                        }
-
-                        htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
-                        htmlWriter.RenderEndTag(); //input
-
-                        htmlWriter.RenderBeginTag(HtmlTextWriterTag.Br);
-                        htmlWriter.RenderEndTag(); //br
+                        WriterParameter(htmlWriter, formField);
                     }
 
                     switch (link.Verb) {
@@ -481,16 +457,28 @@ td:last-child {
         htmlWriter.RenderEndTag(); //div
     }
 
-    private static void WriteQueryParameter(HtmlTextWriter htmlWriter, string name, string? defaultValue) {
-        htmlWriter.AddAttribute(HtmlTextWriterAttribute.Name, name);
-        htmlWriter.AddAttribute("placeholder", name);
+    private static void WriterParameter(HtmlTextWriter htmlWriter, LinkParameter parameter) {
+        htmlWriter.AddAttribute(HtmlTextWriterAttribute.Name, parameter.Name);
+        htmlWriter.AddAttribute("placeholder", parameter.Name);
 
-        if (!string.IsNullOrEmpty(defaultValue)) {
-            htmlWriter.AddAttribute("value", defaultValue);
+        if (!string.IsNullOrEmpty(parameter.DefaultValue)) {
+            htmlWriter.AddAttribute("value", parameter.DefaultValue);
         }
 
-        htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
-        htmlWriter.RenderEndTag(); //input
+        if (parameter.ListOfValues.Any()) {
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Select);
+            foreach (var value in parameter.ListOfValues) {
+                htmlWriter.AddAttribute("value", value);
+                htmlWriter.RenderBeginTag(HtmlTextWriterTag.Option);
+                htmlWriter.Write(value);
+                htmlWriter.RenderEndTag(); //option
+            }
+
+            htmlWriter.RenderEndTag(); //select
+        } else {
+            htmlWriter.RenderBeginTag(HtmlTextWriterTag.Input);
+            htmlWriter.RenderEndTag(); //input
+        }
 
         htmlWriter.RenderBeginTag(HtmlTextWriterTag.Br);
         htmlWriter.RenderEndTag(); //br
@@ -536,5 +524,63 @@ td:last-child {
         
         htmlWriter.RenderEndTag(); //script
     }
+
+    private const string GetLink = "var {link}_link= document.getElementById('{link}_link');";
+
+    private const string GetParameterValue = " + encodeURIComponent({link}_{parameter}_input.value)";
+
+    private const string HookInput =
+        @"var {link}_{parameter}_input= document.getElementById('{link}_{parameter}_input');
+              {link}_{parameter}_input.onchange={link}_{parameter}_input.onkeyup= function() {
+                  {link}_link.href = '{href}'{getParametersText};
+              };";
+
+    private class UrlParameterInfo {
+        public UrlParameterInfo(string name, string afterText) {
+            Name = name;
+            AfterText = afterText;
+        }
+
+        public string Name { get; }
+        public string AfterText { get; }
+    }
+
+    private static string CreateUpdateLinkScript(string linkName, string href, IList<UrlParameterInfo> parameters) {
+        var scriptBuilder = new StringBuilder();
+        scriptBuilder.AppendLine(GetLink.Replace("{link}", linkName));
+
+        var getParameterValuesText = CreateGetParameterValuesText(linkName, parameters);
+
+        var hookInputBaseText = HookInput
+            .Replace("{link}", linkName)
+            .Replace("{href}", href);
+        foreach (var parameter in parameters) {
+            var hookInput = hookInputBaseText
+                .Replace("{parameter}", parameter.Name)
+                .Replace("{getParametersText}", getParameterValuesText);
+            scriptBuilder.AppendLine(hookInput);
+        }
+
+        var script = scriptBuilder.ToString();
+
+        return script;
+    }
+
+    private static string CreateGetParameterValuesText(string linkName, IEnumerable<UrlParameterInfo> parameters) {
+        var getParameterValueBaseText = GetParameterValue.Replace("{link}", linkName);
+
+        var parameterBuilder = new StringBuilder();
+        foreach (var parameter in parameters) {
+            var getParameterValueText = getParameterValueBaseText
+                .Replace("{parameter}", parameter.Name);
+
+            if (!string.IsNullOrEmpty(parameter.AfterText)) {
+                getParameterValueText += $" + '{parameter.AfterText}'";
+            }
+
+            parameterBuilder.Append(getParameterValueText);
+        }
+
+        return parameterBuilder.ToString();
+    }
 }
- 

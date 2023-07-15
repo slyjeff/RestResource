@@ -69,7 +69,18 @@ internal class TransformUrlEncodedFormsToJsonMiddleware {
                 continue;
             }
 
-            o[key] = bodyParameters[key];
+            var value = bodyParameters[key];
+
+            if (string.IsNullOrEmpty(value)) {
+                continue;
+            }
+
+            //if (bool.TryParse(value, out var boolValue)) {
+            //    o[key] = boolValue;
+            //    continue;
+            //}
+
+            o[key] = value;
         }
 
         return o;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SlySoft.RestResource;
+using System.Text.Json.Serialization;
 
 namespace WebTest.Controllers;
 
@@ -11,6 +12,7 @@ public sealed class TestController  : ControllerBase {
             .Data("description", "Tests used by the ClientTest app.")
             .Get("notFound", "/test/notFound")
             .Get("text", "/test/text")
+            .Get("templatedGet", "test/templated/{value1}/{value2}", templated: true)
             .Query("query", "test/query")
                 .Parameter("parameter1")
                 .Parameter("parameter2")
@@ -21,7 +23,11 @@ public sealed class TestController  : ControllerBase {
             .EndBody()
             .Put("list", "test/list")
                 .Field("list")
-            .EndBody();
+            .EndBody()
+            .QueryWithAllParameters<BodyWithBool>("queryBool", "test/queryBool")
+            .PostWithAllFields<BodyWithBool>("bool", "test/bool")
+            .PostWithAllFields<BodyWithInt>("int", "test/int")
+            .PostWithAllFields<BodyWithEnum>("enum", "test/enum");
 
         return StatusCode(200, resource);
     }
@@ -34,6 +40,15 @@ public sealed class TestController  : ControllerBase {
     [HttpGet("text")]
     public IActionResult Text() {
         return StatusCode(200, "Non-Resource text.");
+    }
+
+    [HttpGet("templated/{value1}/{value2}")]
+    public IActionResult TemplatedGet(string value1, string value2) {
+        var resource = new Resource()
+            .Data("value1", value1)
+            .Data("value2", value2);
+
+        return StatusCode(200, resource);
     }
 
     [HttpGet("query")]
@@ -67,6 +82,64 @@ public sealed class TestController  : ControllerBase {
     public IActionResult List([FromBody] ListBody body) {
         var resource = new Resource()
             .Data("list", body.List);
+
+        return StatusCode(200, resource);
+    }
+
+    public class BodyWithBool {
+        [JsonConverter(typeof(JsonConverter<bool>))]
+        public bool Value { get; set; }
+    }
+
+    [HttpGet("queryBool")]
+    public IActionResult BoolTest([FromQuery] bool value) {
+        var resource = new Resource()
+            .Data("bool", value);
+        return StatusCode(200, resource);
+    }
+
+    [HttpPost("bool")]
+    public IActionResult BoolTest([FromBody] BodyWithBool? body) {
+        if (body == null) {
+            return StatusCode(500, "Could not parse value");
+        }
+
+        var resource = new Resource()
+            .Data("bool", body.Value);
+
+        return StatusCode(200, resource);
+    }
+
+    public class BodyWithInt {
+        public int Value { get; set; } = 0;
+    }
+
+
+    [HttpPost("int")]
+    public IActionResult IntTest([FromBody] BodyWithInt? body) {
+        if (body == null) {
+            return StatusCode(500, "Could not parse value");
+        }
+
+        var resource = new Resource()
+            .Data("int", body.Value);
+
+        return StatusCode(200, resource);
+    }
+
+    public enum BodyEnum { Value1, Value2 }
+    public class BodyWithEnum {
+        [JsonConverter(typeof(JsonStringEnumConverter))] 
+        public BodyEnum Value { get; set; } = BodyEnum.Value1;
+    }
+
+    [HttpPost("enum")]
+    public IActionResult EnumTest([FromBody] BodyWithEnum? body) {
+        if (body == null) {
+            return StatusCode(500, "Could not parse value");
+        }
+        var resource = new Resource()
+            .Data("enum", body.Value);
 
         return StatusCode(200, resource);
     }

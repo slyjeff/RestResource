@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.0.0.1-Beta</Version>
+    <Version>1.0.0.2-Beta</Version>
     <Authors>Jeff Sylvester</Authors>
     <Title>SlySoft REST Resource ASP.NET Core Utils</Title>
     <Company>SlySoft</Company>
@@ -39,7 +39,6 @@
     <ProjectReference Include="..\SlySoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
     <ProjectReference Include="..\SlySoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj" />
     <ProjectReference Include="..\SlySoft.RestResource.Html\SlySoft.RestResource.Html.csproj" />
-    <ProjectReference Include="..\SlySoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 
 </Project>
