@@ -8,7 +8,7 @@ Install from Nuget.Org.
 
 ### Prerequisites
 
-Requires SlySoft.RestResource, SlySoft.RestResource.HalJson, and SlySoft.RestResource.HalXml
+Requires SlySoft.RestResource and SlySoft.RestResource.Hal
 
 ## Usage
 

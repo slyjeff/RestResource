@@ -302,6 +302,23 @@ public class GetTests {
     }
 
     [TestMethod]
+    public void QueryMappingMustSupportMapAllConfiguringASpecificField() {
+        //act
+        var resource = new Resource()
+            .Query<User>("search", "/api/user")
+                .AllParameters()
+                .Parameter(x => x.Position, defaultValue: UserPosition.Standard)
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var positionParameter = link.GetParameter("position");
+        Assert.IsNotNull(positionParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), positionParameter.DefaultValue);
+    }
+
+    [TestMethod]
     public void QueryMappingMustSupportExcludingAParameter() {
         //act
         var resource = new Resource()

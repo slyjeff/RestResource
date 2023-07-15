@@ -256,6 +256,23 @@ public class PostTests {
     }
 
     [TestMethod]
+    public void PostMappingMustSupportMapAllConfiguringASpecificField() {
+        //act
+        var resource = new Resource()
+            .Post<User>("createUser", "/api/user")
+                .AllFields()
+                .Field(x => x.Position, defaultValue: UserPosition.Standard)
+            .EndBody();
+
+        //assert
+        var link = resource.GetLink("createUser");
+        Assert.IsNotNull(link);
+        var positionParameter = link.GetParameter("position");
+        Assert.IsNotNull(positionParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), positionParameter.DefaultValue);
+    }
+
+    [TestMethod]
     public void PostWithAllFieldsMustMapAllWithNoConfiguration() {
         //act
         var resource = new Resource()

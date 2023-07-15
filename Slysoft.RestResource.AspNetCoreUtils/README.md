@@ -16,7 +16,7 @@ builder.Services.AddControllers(options => {
 
 ### Prerequisites
 
-Requires SlySoft.RestResource, SlySoft.RestResource.HalJson, SlySoft.RestResource.HalXml, and SlySoft.RestResource.Html
+Requires SlySoft.RestResource, SlySoft.RestResource.Hal, and SlySoft.RestResource.Html
 SlySoft.RestResource.Client contains utilities for communicating with web services created using RestResource
 
 ## Usage

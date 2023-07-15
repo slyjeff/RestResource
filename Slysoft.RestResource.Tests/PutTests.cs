@@ -236,6 +236,23 @@ public class PutTests {
     }
 
     [TestMethod]
+    public void PutMappingMustSupportMapAllConfiguringASpecificField() {
+        //act
+        var resource = new Resource()
+            .Put<User>("updateUser", "/api/user")
+                .AllFields()
+                .Field(x => x.Position, defaultValue: UserPosition.Standard)
+            .EndBody();
+
+        //assert
+        var link = resource.GetLink("updateUser");
+        Assert.IsNotNull(link);
+        var positionParameter = link.GetParameter("position");
+        Assert.IsNotNull(positionParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), positionParameter.DefaultValue);
+    }
+
+    [TestMethod]
     public void PutMappingMustSupportExcludingAParameter() {
         //act
         var resource = new Resource()
