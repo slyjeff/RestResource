@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalXml.Tests;
@@ -14,10 +15,10 @@ public sealed class FromHalXmlTests {
         var resource = new Resource()
             .Uri(uri);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
         
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         Assert.AreEqual(uri, deserializedResource.Uri);
@@ -30,10 +31,10 @@ public sealed class FromHalXmlTests {
         var resource = new Resource()
             .Data("message", message);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         Assert.AreEqual(message, deserializedResource.Data["message"]);
@@ -46,10 +47,10 @@ public sealed class FromHalXmlTests {
         var resource = new Resource()
             .Data("value", testObject);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var storedObject = deserializedResource.Data["value"] as IDictionary<string, object?>;
@@ -70,10 +71,10 @@ public sealed class FromHalXmlTests {
         var resource = new Resource()
             .Data("value", strings);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var storedObject = deserializedResource.Data["value"] as IList<object?>;
@@ -91,10 +92,10 @@ public sealed class FromHalXmlTests {
         var resource = new Resource()
             .Data("value", testObjects);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var storedObject = deserializedResource.Data["value"] as IList<IDictionary<string, object?>>;
@@ -122,10 +123,10 @@ public sealed class FromHalXmlTests {
                 .EndMap()
             .EndMap();
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var storedParent = deserializedResource.Data["testObjects"] as IList<IDictionary<string, object?>>;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 // ReSharper disable RedundantAnonymousTypePropertyName
@@ -17,7 +18,7 @@ public class ToHalJsonLinkTests {
             .Get("getLink", href);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -41,7 +42,7 @@ public class ToHalJsonLinkTests {
             .Get("getLink2", href2);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -66,7 +67,7 @@ public class ToHalJsonLinkTests {
             .Get("getLink", href, templated: true);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -89,7 +90,7 @@ public class ToHalJsonLinkTests {
             .Get("getLink", href, timeout: 60);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -116,7 +117,7 @@ public class ToHalJsonLinkTests {
 
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -146,7 +147,7 @@ public class ToHalJsonLinkTests {
 
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -173,7 +174,7 @@ public class ToHalJsonLinkTests {
             .EndBody();
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -197,7 +198,7 @@ public class ToHalJsonLinkTests {
             .EndBody();
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -221,7 +222,7 @@ public class ToHalJsonLinkTests {
             .EndBody();
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -244,7 +245,7 @@ public class ToHalJsonLinkTests {
             .Delete("deleteLink", href);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {

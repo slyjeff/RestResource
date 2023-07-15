@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalJson.Tests;
@@ -14,10 +15,10 @@ public sealed class FromHalJsonDataTests {
         var resource = new Resource()
             .Data("message", message);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         Assert.AreEqual(message, deserializedResource.Data["message"]);
@@ -30,10 +31,10 @@ public sealed class FromHalJsonDataTests {
         var resource = new Resource()
             .Data("value", testObject);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var storedObject = deserializedResource.Data["value"] as IDictionary<string, object?>;
@@ -54,10 +55,10 @@ public sealed class FromHalJsonDataTests {
         var resource = new Resource()
             .Data("value", strings);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var storedObject = deserializedResource.Data["value"] as IList<object?>;
@@ -75,10 +76,10 @@ public sealed class FromHalJsonDataTests {
         var resource = new Resource()
             .Data("value", testObjects);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var storedObject = deserializedResource.Data["value"] as IList<IDictionary<string, object?>>;
@@ -106,10 +107,10 @@ public sealed class FromHalJsonDataTests {
                 .EndMap()
             .EndMap();
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var storedParent = deserializedResource.Data["testObjects"] as IList<IDictionary<string, object?>>;

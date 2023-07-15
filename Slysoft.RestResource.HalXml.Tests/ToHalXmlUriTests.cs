@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalXml.Tests;
@@ -18,7 +19,7 @@ public sealed class DataTests {
             .Data("message", message);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\" href=\"{uri}\"><message>{message}</message></resource>";

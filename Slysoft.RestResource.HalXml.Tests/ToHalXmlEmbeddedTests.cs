@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalXml.Tests;
@@ -22,7 +23,7 @@ public sealed class ToHalXmlEmbeddedTests {
             .Embedded("child", child);
 
         //act
-        var xml = parent.ToHalXml();
+        var xml = parent.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{parentMessage}</message><resource rel=\"child\"><message>{childMessage}</message></resource></resource>";
@@ -49,7 +50,7 @@ public sealed class ToHalXmlEmbeddedTests {
             .Embedded("child2", child2);
 
         //act
-        var xml = parent.ToHalXml();
+        var xml = parent.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{parentMessage}</message><resource rel=\"child1\"><message>{childMessage1}</message></resource><resource rel=\"child2\"><message>{childMessage2}</message></resource></resource>";
@@ -78,7 +79,7 @@ public sealed class ToHalXmlEmbeddedTests {
             .Embedded("children", children);
 
         //act
-        var xml = parent.ToHalXml();
+        var xml = parent.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{parentMessage}</message><resource rel=\"children\"><name>Julie</name><message>{childMessage1}</message></resource><resource rel=\"children\"><name>Sam</name><message>{childMessage2}</message></resource></resource>";

@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalXml.Tests;
@@ -18,7 +19,7 @@ public class ToHalJsonGetLinkTest {
             .Get("getLink", href);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\" /></resource>";
@@ -38,7 +39,7 @@ public class ToHalJsonGetLinkTest {
             .Get("getLink2", href2);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink1\" href=\"{href1}\" /><link rel=\"getLink2\" href=\"{href2}\" /></resource>";
@@ -56,7 +57,7 @@ public class ToHalJsonGetLinkTest {
             .Get("getLink", href, templated: true);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\" templated=\"true\" /></resource>";
@@ -74,7 +75,7 @@ public class ToHalJsonGetLinkTest {
             .Get("getLink", href, timeout: 60);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\" timeout=\"60\" /></resource>";
@@ -95,7 +96,7 @@ public class ToHalJsonGetLinkTest {
             .EndQuery();
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\"><parameter name=\"firstName\" /><parameter name=\"lastName\" /></link></resource>";
@@ -116,7 +117,7 @@ public class ToHalJsonGetLinkTest {
             .EndQuery();
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"getLink\" href=\"{href}\"><parameter name=\"position\"><defaultValue>Admin</defaultValue><listOfValues><value>Standard</value><value>Admin</value></listOfValues></parameter><parameter name=\"yearsEmployed\"><type>number</type></parameter></link></resource>";
@@ -135,7 +136,7 @@ public class ToHalJsonGetLinkTest {
             .EndBody();
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"postLink\" href=\"{href}\" verb=\"POST\" /></resource>";
@@ -154,7 +155,7 @@ public class ToHalJsonGetLinkTest {
             .EndBody();
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"putLink\" href=\"{href}\" verb=\"PUT\" /></resource>";
@@ -173,7 +174,7 @@ public class ToHalJsonGetLinkTest {
             .EndBody();
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"patchLink\" href=\"{href}\" verb=\"PATCH\" /></resource>";
@@ -191,7 +192,7 @@ public class ToHalJsonGetLinkTest {
             .Delete("deleteLink", href);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><message>{message}</message><link rel=\"deleteLink\" href=\"{href}\" verb=\"DELETE\" /></resource>";

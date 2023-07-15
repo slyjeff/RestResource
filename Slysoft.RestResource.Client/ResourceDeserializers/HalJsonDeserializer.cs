@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using SlySoft.RestResource.Client.Extensions;
-using SlySoft.RestResource.HalJson;
+using SlySoft.RestResource.Hal;
 
 namespace SlySoft.RestResource.Client.ResourceDeserializers;
 
@@ -22,7 +22,7 @@ internal class HalJsonDeserializer : IResourceDeserializer {
     public Resource Deserialize(HttpResponseMessage response) {
         try {
             var content = response.GetContent();
-            return new Resource().FromHalJson(content);
+            return new Resource().FromSlySoftHalJson(content);
         } catch {
             return new Resource();
         }

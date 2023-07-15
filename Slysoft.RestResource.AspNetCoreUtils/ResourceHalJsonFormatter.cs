@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using SlySoft.RestResource.HalJson;
+using SlySoft.RestResource.Hal;
 
 namespace SlySoft.RestResource.AspNetCoreUtils; 
 
@@ -27,6 +27,6 @@ public sealed class ResourceHalJsonFormatter : TextOutputFormatter {
         context.HttpContext.Response.Headers["Content-Type"] ="application/slysoft.hal+json";
 
         var resource = context.Object as Resource;
-        return response.WriteAsync(resource?.ToHalJson());
+        return response.WriteAsync(resource?.ToSlySoftHalJson());
     }
 }

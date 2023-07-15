@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalJson.Tests;
@@ -12,10 +13,10 @@ public sealed class FromHalJsonUriTests {
         var resource = new Resource()
             .Uri(uri);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
         
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         Assert.AreEqual(uri, deserializedResource.Uri);

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using SlySoft.RestResource.HalXml;
+using SlySoft.RestResource.Hal;
 
 namespace SlySoft.RestResource.AspNetCoreUtils; 
 
@@ -27,6 +27,6 @@ public sealed class ResourceHalXmlFormatter : TextOutputFormatter {
         context.HttpContext.Response.Headers["Content-Type"] = "application/slysoft.hal+xml";
 
         var resource = context.Object as Resource;
-        return response.WriteAsync(resource?.ToHalXml());
+        return response.WriteAsync(resource?.ToSlySoftHalXml());
     }
 }

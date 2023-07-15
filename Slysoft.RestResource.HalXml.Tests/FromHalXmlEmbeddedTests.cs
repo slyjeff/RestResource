@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalXml.Tests;
@@ -16,10 +17,10 @@ public sealed class FromHalXmlEmbeddedTests {
         var resource = new Resource()
             .Embedded("subResource", embeddedResource);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var subResource = deserializedResource.GetEmbedded("subResource");
@@ -42,10 +43,10 @@ public sealed class FromHalXmlEmbeddedTests {
         var resource = new Resource()
             .Embedded("subResources", new List<Resource> { embeddedResource1, embeddedResource2 });
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var subResources = deserializedResource.GetEmbeddedList("subResources");

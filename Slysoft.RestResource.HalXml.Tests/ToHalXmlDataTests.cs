@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalXml.Tests;
@@ -19,7 +20,7 @@ public sealed class ToHalXmlDataTests {
             .Data("intValue", intValue);
 
         //assert
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><stringValue>{stringValue}</stringValue><intValue>{intValue}</intValue></resource>";
@@ -35,7 +36,7 @@ public sealed class ToHalXmlDataTests {
             .Data("formatted", floatValue, "#,0.000");
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><formatted>{floatValue:#,0.000}</formatted></resource>";
@@ -51,7 +52,7 @@ public sealed class ToHalXmlDataTests {
             .Data("testObject", testObject);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><testObject><stringValue>{testObject.StringValue}</stringValue><intValue>{testObject.IntValue}</intValue></testObject></resource>";
@@ -71,7 +72,7 @@ public sealed class ToHalXmlDataTests {
             .Data("strings", strings);
 
         //act
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><strings><value>{strings[0]}</value><value>{strings[1]}</value><value>{strings[2]}</value></strings></resource>";
@@ -87,7 +88,7 @@ public sealed class ToHalXmlDataTests {
             .Data("dataObjects", dataObjects);
 
         //assert
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //assert
         var expectedXml = $"{XmlHeader}<resource rel=\"self\"><dataObjects><value><stringValue>{dataObjects[0].StringValue}</stringValue><intValue>{dataObjects[0].IntValue}</intValue></value><value><stringValue>{dataObjects[1].StringValue}</stringValue><intValue>{dataObjects[1].IntValue}</intValue></value><value><stringValue>{dataObjects[2].StringValue}</stringValue><intValue>{dataObjects[2].IntValue}</intValue></value></dataObjects></resource>";

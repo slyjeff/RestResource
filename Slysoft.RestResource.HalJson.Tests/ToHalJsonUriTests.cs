@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalJson.Tests;
@@ -15,7 +16,7 @@ public sealed class ToHalJsonUriTests {
             .Uri(uri);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {

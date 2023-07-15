@@ -33,8 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SlySoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj" />
-    <ProjectReference Include="..\SlySoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj" />
+    <ProjectReference Include="..\SlySoft.RestResource.Hal\SlySoft.RestResource.Hal.csproj" />
     <ProjectReference Include="..\SlySoft.RestResource\SlySoft.RestResource.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using SlySoft.RestResource.Hal;
 using SlySoft.RestResource.HalJson.Tests.Utils;
 using TestUtils;
 
@@ -22,7 +23,7 @@ public sealed class ToHalJsonEmbeddedTests {
             .Embedded("child", child);
 
         //act
-        var json = parent.ToHalJson();
+        var json = parent.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -34,7 +35,7 @@ public sealed class ToHalJsonEmbeddedTests {
 
         var expectedJson = JsonConvert
             .SerializeObject(expected, Formatting.Indented)
-            .WithPlaceholder("child", child.ToHalJson());
+            .WithPlaceholder("child", child.ToSlySoftHalJson());
 
         Assert.AreEqual(expectedJson, json);
     }
@@ -58,7 +59,7 @@ public sealed class ToHalJsonEmbeddedTests {
             .Embedded("child2", child2);
 
         //act
-        var json = parent.ToHalJson();
+        var json = parent.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -71,8 +72,8 @@ public sealed class ToHalJsonEmbeddedTests {
 
         var expectedJson = JsonConvert
             .SerializeObject(expected, Formatting.Indented)
-            .WithPlaceholder("child1", child1.ToHalJson())
-            .WithPlaceholder("child2", child2.ToHalJson());
+            .WithPlaceholder("child1", child1.ToSlySoftHalJson())
+            .WithPlaceholder("child2", child2.ToSlySoftHalJson());
 
         Assert.AreEqual(expectedJson, json);
     }
@@ -99,7 +100,7 @@ public sealed class ToHalJsonEmbeddedTests {
             .Embedded("children", children);
 
         //act
-        var json = parent.ToHalJson();
+        var json = parent.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -111,8 +112,8 @@ public sealed class ToHalJsonEmbeddedTests {
 
         var expectedJson = JsonConvert
             .SerializeObject(expected, Formatting.Indented)
-            .WithPlaceholder("child1", child1.ToHalJson())
-            .WithPlaceholder("child2", child2.ToHalJson());
+            .WithPlaceholder("child1", child1.ToSlySoftHalJson())
+            .WithPlaceholder("child2", child2.ToSlySoftHalJson());
 
         Assert.AreEqual(expectedJson, json);
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 
 namespace SlySoft.RestResource.HalJson.Tests;
 
@@ -12,10 +13,10 @@ public sealed class FromHalJsonLinkTests {
         var resource = new Resource()
             .Get("GetUsers", uri);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("getUsers");
@@ -32,10 +33,10 @@ public sealed class FromHalJsonLinkTests {
         var resource = new Resource()
             .Get("getUser", "/api/user/{id}", templated: true);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("getUser");
@@ -49,10 +50,10 @@ public sealed class FromHalJsonLinkTests {
         var resource = new Resource()
             .Get("getUser", "/api/user/{id}", timeout: 60);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("getUser");
@@ -69,10 +70,10 @@ public sealed class FromHalJsonLinkTests {
                 .Parameter("firstName")
             .EndQuery();
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -89,10 +90,10 @@ public sealed class FromHalJsonLinkTests {
                 .Parameter("position", defaultValue: "admin")
             .EndQuery();
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -110,10 +111,10 @@ public sealed class FromHalJsonLinkTests {
                 .Parameter("position", listOfValues: new[] { "Standard", "Admin" })
             .EndQuery();
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -132,10 +133,10 @@ public sealed class FromHalJsonLinkTests {
                 .Parameter("yearsEmployed", type: "number")
             .EndQuery();
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -154,10 +155,10 @@ public sealed class FromHalJsonLinkTests {
             .Post("CreateUser", uri)
             .EndBody();
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("createUser");
@@ -178,10 +179,10 @@ public sealed class FromHalJsonLinkTests {
                 .Field("firstName")
             .EndBody();
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var link = deserializedResource.GetLink("createUser");

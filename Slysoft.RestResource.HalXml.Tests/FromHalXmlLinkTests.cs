@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 
 namespace SlySoft.RestResource.HalXml.Tests;
 
@@ -12,10 +13,10 @@ public sealed class FromHalXmlLinkTests {
         var resource = new Resource()
             .Get("GetUsers", uri);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("getUsers");
@@ -32,10 +33,10 @@ public sealed class FromHalXmlLinkTests {
         var resource = new Resource()
             .Get("getUser", "/api/user/{id}", templated: true);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("getUser");
@@ -49,10 +50,10 @@ public sealed class FromHalXmlLinkTests {
         var resource = new Resource()
             .Get("getUser", "/api/user/{id}", timeout: 60);
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("getUser");
@@ -69,10 +70,10 @@ public sealed class FromHalXmlLinkTests {
                 .Parameter("firstName")
             .EndQuery();
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -89,10 +90,10 @@ public sealed class FromHalXmlLinkTests {
                 .Parameter("position", defaultValue: "admin")
             .EndQuery();
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -110,10 +111,10 @@ public sealed class FromHalXmlLinkTests {
                 .Parameter("position", listOfValues: new[] { "Standard", "Admin" })
             .EndQuery();
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -132,10 +133,10 @@ public sealed class FromHalXmlLinkTests {
                 .Parameter("yearsEmployed", type: "number")
             .EndQuery();
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("search");
@@ -154,10 +155,10 @@ public sealed class FromHalXmlLinkTests {
             .Post("CreateUser", uri)
             .EndBody();
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("createUser");
@@ -178,10 +179,10 @@ public sealed class FromHalXmlLinkTests {
                 .Field("firstName")
             .EndBody();
 
-        var xml = resource.ToHalXml();
+        var xml = resource.ToSlySoftHalXml();
 
         //act
-        var deserializedResource = new Resource().FromHalXml(xml);
+        var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
         var link = deserializedResource.GetLink("createUser");

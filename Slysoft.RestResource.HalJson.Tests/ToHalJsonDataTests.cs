@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 #pragma warning disable IDE0037
@@ -23,7 +24,7 @@ public sealed class ToHalJsonDataTests {
             .Data("intValue", intValue);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -44,7 +45,7 @@ public sealed class ToHalJsonDataTests {
             .Data("formatted", floatValue, "#,0.000");
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         //we can't use an anonymous object for this because it adds quotes when we format the number
@@ -61,7 +62,7 @@ public sealed class ToHalJsonDataTests {
             .Data("testObject", testObject);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -87,7 +88,7 @@ public sealed class ToHalJsonDataTests {
             .Data("strings", strings);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {
@@ -107,7 +108,7 @@ public sealed class ToHalJsonDataTests {
             .Data("dataObjects", dataObjects);
 
         //act
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //assert
         var expected = new {

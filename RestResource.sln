@@ -9,10 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B71514A4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource", "Slysoft.RestResource\SlySoft.RestResource.csproj", "{620F2ABE-F2E7-4837-B35D-072C1B9FB777}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.HalXml", "Slysoft.RestResource.HalXml\SlySoft.RestResource.HalXml.csproj", "{B6CFD288-0E7A-4347-8B69-5380D7F213E5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.HalJson", "Slysoft.RestResource.HalJson\SlySoft.RestResource.HalJson.csproj", "{3EFE732E-FE6F-44B2-8ED0-4CFDFCCFD0E3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.HalJson.Tests", "Slysoft.RestResource.HalJson.Tests\SlySoft.RestResource.HalJson.Tests.csproj", "{912D11EB-3F7B-48FA-92FB-9BCC66200CCF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.HalXml.Tests", "Slysoft.RestResource.HalXml.Tests\SlySoft.RestResource.HalXml.Tests.csproj", "{414AF6D6-DDDC-44C1-B8D0-96584251F985}"
@@ -42,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientTest", "ClientTest\Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest.DotNetFramework", "ClientTest.DotNetFramework\ClientTest.DotNetFramework.csproj", "{47F3D562-87DD-4C4D-9816-143D7C6317F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlySoft.RestResource.Hal", "SlySoft.RestResource.Hal\SlySoft.RestResource.Hal.csproj", "{76B57204-3188-4E35-B530-2999553CB853}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,14 +54,6 @@ Global
 		{620F2ABE-F2E7-4837-B35D-072C1B9FB777}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{620F2ABE-F2E7-4837-B35D-072C1B9FB777}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{620F2ABE-F2E7-4837-B35D-072C1B9FB777}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B6CFD288-0E7A-4347-8B69-5380D7F213E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6CFD288-0E7A-4347-8B69-5380D7F213E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B6CFD288-0E7A-4347-8B69-5380D7F213E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B6CFD288-0E7A-4347-8B69-5380D7F213E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EFE732E-FE6F-44B2-8ED0-4CFDFCCFD0E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EFE732E-FE6F-44B2-8ED0-4CFDFCCFD0E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EFE732E-FE6F-44B2-8ED0-4CFDFCCFD0E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EFE732E-FE6F-44B2-8ED0-4CFDFCCFD0E3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{912D11EB-3F7B-48FA-92FB-9BCC66200CCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{912D11EB-3F7B-48FA-92FB-9BCC66200CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{912D11EB-3F7B-48FA-92FB-9BCC66200CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -112,6 +102,10 @@ Global
 		{47F3D562-87DD-4C4D-9816-143D7C6317F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47F3D562-87DD-4C4D-9816-143D7C6317F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47F3D562-87DD-4C4D-9816-143D7C6317F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B57204-3188-4E35-B530-2999553CB853}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B57204-3188-4E35-B530-2999553CB853}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B57204-3188-4E35-B530-2999553CB853}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B57204-3188-4E35-B530-2999553CB853}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

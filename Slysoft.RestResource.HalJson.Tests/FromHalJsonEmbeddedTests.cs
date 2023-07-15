@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlySoft.RestResource.Hal;
 using TestUtils;
 
 namespace SlySoft.RestResource.HalJson.Tests;
@@ -16,10 +17,10 @@ public sealed class FromHalJsonEmbeddedTests {
         var resource = new Resource()
             .Embedded("subResource", embeddedResource);
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var subResource = deserializedResource.GetEmbedded("subResource");
@@ -42,10 +43,10 @@ public sealed class FromHalJsonEmbeddedTests {
         var resource = new Resource()
             .Embedded("subResources", new List<Resource> { embeddedResource1, embeddedResource2 });
 
-        var json = resource.ToHalJson();
+        var json = resource.ToSlySoftHalJson();
 
         //act
-        var deserializedResource = new Resource().FromHalJson(json);
+        var deserializedResource = new Resource().FromSlySoftHalJson(json);
 
         //assert
         var subResources = deserializedResource.GetEmbeddedList("subResources");
