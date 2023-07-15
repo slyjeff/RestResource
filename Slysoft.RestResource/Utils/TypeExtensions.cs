@@ -20,12 +20,15 @@ internal static class TypeExtensions {
         }
 
 
-        if (property.PropertyType == typeof(bool)) {
+        if (property.PropertyType == typeof(bool) || property.PropertyType == typeof(bool?)) {
             return new List<string> { bool.TrueString, bool.FalseString };
         }
 
-        if (property.PropertyType.IsEnum) {
-            return Enum.GetNames(property.PropertyType);
+        var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
+        var propertyType = underlyingType ?? property.PropertyType;
+
+        if (propertyType.IsEnum) {
+            return Enum.GetNames(propertyType);
         }
 
         return null;

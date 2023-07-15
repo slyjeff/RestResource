@@ -267,6 +267,23 @@ public class GetTests {
     }
 
     [TestMethod]
+    public void QueryMappingMustAutomaticallyPopulateListOfValuesForNullableBoolean() {
+        //act
+        var resource = new Resource()
+            .Query<User>("search", "/api/user")
+                .Parameter(x => x.IsRegisteredNullable)
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetParameter("isRegisteredNullable");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual("True", queryParameter.ListOfValues[0]);
+        Assert.AreEqual("False", queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
     public void QueryMappingMustAutomaticallyPopulateListOfValuesForEnumerations() {
         //act
         var resource = new Resource()
@@ -278,6 +295,23 @@ public class GetTests {
         var link = resource.GetLink("search");
         Assert.IsNotNull(link);
         var queryParameter = link.GetParameter("position");
+        Assert.IsNotNull(queryParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), queryParameter.ListOfValues[0]);
+        Assert.AreEqual(UserPosition.Admin.ToString(), queryParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
+    public void PatchMappingMustAutomaticallyPopulateListOfValuesForNullableEnumerations() {
+        //act
+        var resource = new Resource()
+            .Query<User>("search", "/api/user")
+                .Parameter(x => x.PositionNullable)
+            .EndQuery();
+
+        //assert
+        var link = resource.GetLink("search");
+        Assert.IsNotNull(link);
+        var queryParameter = link.GetParameter("positionNullable");
         Assert.IsNotNull(queryParameter);
         Assert.AreEqual(UserPosition.Standard.ToString(), queryParameter.ListOfValues[0]);
         Assert.AreEqual(UserPosition.Admin.ToString(), queryParameter.ListOfValues[1]);

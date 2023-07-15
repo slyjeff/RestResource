@@ -77,9 +77,9 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("position");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("admin", queryParameter.DefaultValue);
+        var linkParameter = link.GetParameter("position");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("admin", linkParameter.DefaultValue);
     }
 
     [TestMethod]
@@ -93,10 +93,10 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("position");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
-        Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
+        var linkParameter = link.GetParameter("position");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("Standard", linkParameter.ListOfValues[0]);
+        Assert.AreEqual("Admin", linkParameter.ListOfValues[1]);
     }
 
     [TestMethod]
@@ -110,9 +110,9 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("yearsEmployed");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("number", queryParameter.Type);
+        var linkParameter = link.GetParameter("yearsEmployed");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("number", linkParameter.Type);
     }
 
     [TestMethod]
@@ -145,9 +145,9 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("position");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("Admin", queryParameter.DefaultValue);
+        var linkParameter = link.GetParameter("position");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("Admin", linkParameter.DefaultValue);
     }
 
     [TestMethod]
@@ -161,10 +161,10 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("position");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("Standard", queryParameter.ListOfValues[0]);
-        Assert.AreEqual("Admin", queryParameter.ListOfValues[1]);
+        var linkParameter = link.GetParameter("position");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("Standard", linkParameter.ListOfValues[0]);
+        Assert.AreEqual("Admin", linkParameter.ListOfValues[1]);
     }
 
     [TestMethod]
@@ -178,9 +178,9 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("yearsEmployed");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("number", queryParameter.Type);
+        var linkParameter = link.GetParameter("yearsEmployed");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("number", linkParameter.Type);
     }
 
     [TestMethod]
@@ -194,14 +194,31 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("isRegistered");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual("True", queryParameter.ListOfValues[0]);
-        Assert.AreEqual("False", queryParameter.ListOfValues[1]);
+        var linkParameter = link.GetParameter("isRegistered");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("True", linkParameter.ListOfValues[0]);
+        Assert.AreEqual("False", linkParameter.ListOfValues[1]);
     }
 
     [TestMethod]
-    public void PostMappingMustAutomaticallyPopulateListOfValuesForEnumerations() {
+    public void PatchMappingMustAutomaticallyPopulateListOfValuesForNullableBoolean() {
+        //act
+        var resource = new Resource()
+            .Patch<User>("updateUser", "/api/user")
+                .Field(x => x.IsRegisteredNullable)
+            .EndBody();
+
+        //assert
+        var link = resource.GetLink("updateUser");
+        Assert.IsNotNull(link);
+        var linkParameter = link.GetParameter("isRegisteredNullable");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual("True", linkParameter.ListOfValues[0]);
+        Assert.AreEqual("False", linkParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
+    public void PatchMappingMustAutomaticallyPopulateListOfValuesForEnumerations() {
         //act
         var resource = new Resource()
             .Patch<User>("updateUser", "/api/user")
@@ -211,10 +228,27 @@ public class PatchTests {
         //assert
         var link = resource.GetLink("updateUser");
         Assert.IsNotNull(link);
-        var queryParameter = link.GetParameter("position");
-        Assert.IsNotNull(queryParameter);
-        Assert.AreEqual(UserPosition.Standard.ToString(), queryParameter.ListOfValues[0]);
-        Assert.AreEqual(UserPosition.Admin.ToString(), queryParameter.ListOfValues[1]);
+        var linkParameter = link.GetParameter("position");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), linkParameter.ListOfValues[0]);
+        Assert.AreEqual(UserPosition.Admin.ToString(), linkParameter.ListOfValues[1]);
+    }
+
+    [TestMethod]
+    public void PatchMappingMustAutomaticallyPopulateListOfValuesForNullableEnumerations() {
+        //act
+        var resource = new Resource()
+            .Patch<User>("updateUser", "/api/user")
+                .Field(x => x.PositionNullable)
+            .EndBody();
+
+        //assert
+        var link = resource.GetLink("updateUser");
+        Assert.IsNotNull(link);
+        var linkParameter = link.GetParameter("positionNullable");
+        Assert.IsNotNull(linkParameter);
+        Assert.AreEqual(UserPosition.Standard.ToString(), linkParameter.ListOfValues[0]);
+        Assert.AreEqual(UserPosition.Admin.ToString(), linkParameter.ListOfValues[1]);
     }
 
     [TestMethod]
