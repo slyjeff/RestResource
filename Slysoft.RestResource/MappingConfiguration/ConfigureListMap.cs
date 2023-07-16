@@ -5,12 +5,12 @@ using SlySoft.RestResource.Utils;
 namespace SlySoft.RestResource.MappingConfiguration;
 
 internal sealed class CopyPair<T> {
-    public CopyPair(T source, IDictionary<string, object?> destination) {
+    public CopyPair(T source, ObjectData destination) {
         Source = source;
         Destination = destination;
     }
     public T Source { get; }
-    public IDictionary<string, object?> Destination { get; }
+    public ObjectData Destination { get; }
 }
 
 
@@ -55,7 +55,7 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureParametersMap<T, 
         PropertyInfo? property = null;
 
         foreach (var copyPair in _copyPairs) {
-            var destinationList = new List<IDictionary<string, object?>>();
+            var destinationList = new ListData();
             var source = copyPair.Source;
             if (source == null) {
                 continue;
@@ -74,7 +74,7 @@ internal sealed class ConfigureListMap<T, TParent> : IConfigureParametersMap<T, 
 
             copyPair.Destination[name.ToCamelCase()] = destinationList;
             foreach (var sourceItem in sourceList) {
-                var destination = new Dictionary<string, object?>();
+                var destination = new ObjectData();
                 destinationList.Add(destination);
                 subListCopyPairs.Add(new CopyPair<TListItemType>(sourceItem, destination));
             }

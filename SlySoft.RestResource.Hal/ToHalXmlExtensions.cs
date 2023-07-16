@@ -63,17 +63,17 @@ public static class ToHalXmlExtensions {
 
                 break;
             }
-            case IList<IDictionary<string, object?>> listOfDictionary: {
-                foreach (var dictionary in listOfDictionary) {
+            case ListData listData: {
+                foreach (var objectData in listData) {
                     xmlWriter.WriteStartElement("value");
-                    xmlWriter.WriteDictionary(dictionary);
+                    xmlWriter.WriteObjectData(objectData);
                     xmlWriter.WriteEndElement();
                 }
 
                 break;
             }
-            case IDictionary<string, object?> dictionaryObject:
-                xmlWriter.WriteDictionary(dictionaryObject);
+            case ObjectData objectData:
+                xmlWriter.WriteObjectData(objectData);
                 break;
             default:
                 xmlWriter.WriteValue(data.Value ?? string.Empty);
@@ -83,8 +83,8 @@ public static class ToHalXmlExtensions {
         xmlWriter.WriteEndElement();
     }
 
-    private static void WriteDictionary(this XmlWriter xmlWriter, IDictionary<string, object?> dictionary) {
-        foreach (var data in dictionary) {
+    private static void WriteObjectData(this XmlWriter xmlWriter, ObjectData objectData) {
+        foreach (var data in objectData) {
             AddData(xmlWriter, data);
         }
     }

@@ -49,14 +49,14 @@ public static class DataExtensions {
     /// <param name="sourceList">List of items to be mapped</param>
     /// <returns>A configuration class that will allow configuration of fields</returns>
     public static IConfigureParametersMap<T, Resource> MapListDataFrom<T>(this Resource resource, string name, IEnumerable<T> sourceList) {
-        var destinationList = new List<IDictionary<string, object?>>();
+        var destinationList = new ListData();
 
         var dataName = name.ToCamelCase();
         resource.Data[dataName] = destinationList;
 
         var copyPairs = new List<CopyPair<T>>();
         foreach (var sourceItem in sourceList) {
-            var destination = new Dictionary<string, object?>();
+            var destination = new ObjectData();
             destinationList.Add(destination);
             copyPairs.Add(new CopyPair<T>(sourceItem, destination));
         }

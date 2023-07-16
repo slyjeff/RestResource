@@ -3,10 +3,10 @@ using System.Linq.Expressions;
 
 namespace SlySoft.RestResource.Utils; 
 
-internal static class DictionaryExtensions {
-    internal static void AddResourceData(this IDictionary<string, object?> dictionary, string name, object? value, string? format = null) {
+internal static class ObjectDataExtensions {
+    internal static void AddResourceData(this ObjectData objectData, string name, object? value, string? format = null) {
         var dataName = name.ToCamelCase();
-        dictionary[dataName] = ConvertValueToResourceData(value, format);
+        objectData[dataName] = ConvertValueToResourceData(value, format);
     }
 
     private static object? ConvertValueToResourceData(object? value, string? format) {
@@ -29,7 +29,7 @@ internal static class DictionaryExtensions {
         }
 
         if (value is not IEnumerable enumerableValue) {
-            return ConvergeObjectToDictionary(value);
+            return ConvertValueToObjectData(value);
         }
 
         if (!type.IsGenericType) {
@@ -41,11 +41,14 @@ internal static class DictionaryExtensions {
             return (from object? item in enumerableValue select item?.ToString()).Cast<object?>().ToList();
         }
 
-        return (from object? item in enumerableValue select ConvergeObjectToDictionary(item)).ToList();
+        var listData = new ListData();
+        listData.AddRange(from object? enumeratedValue in enumerableValue select ConvertValueToObjectData(enumeratedValue));
+
+        return listData;
     }
 
-    private static IDictionary<string, object?> ConvergeObjectToDictionary(object value) {
-        IDictionary<string, object?> dictionary = new Dictionary<string, object?>();
+    private static ObjectData ConvertValueToObjectData(object value) {
+        var objectData = new ObjectData();
         var properties = value.GetType().GetProperties();
         foreach (var property in properties) {
             //ignore lists in child objects
@@ -53,12 +56,12 @@ internal static class DictionaryExtensions {
                 continue;
             }
 
-            dictionary[property.Name.ToCamelCase()] = ConvertValueToResourceData(property.GetValue(value), null);
+            objectData[property.Name.ToCamelCase()] = ConvertValueToResourceData(property.GetValue(value), null);
         }
-        return dictionary;
+        return objectData;
     }
 
-    public static void MapValue<T>(this IDictionary<string, object?> dictionary, T source, string name, Expression<Func<T, object>> mapAction, string? format) {
+    public static void MapValue<T>(this ObjectData objectData, T source, string name, Expression<Func<T, object>> mapAction, string? format) {
         if (source == null) {
             return;
         }
@@ -77,6 +80,6 @@ internal static class DictionaryExtensions {
             name = property.Name;
         }
 
-        dictionary.AddResourceData(name, property.GetValue(source), format);
+        objectData.AddResourceData(name, property.GetValue(source), format);
     }
 }

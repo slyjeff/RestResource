@@ -84,7 +84,7 @@ public sealed class DataTests {
             .Data("value", testObject);
 
         //assert
-        var storedObject = resource.Data["value"] as IDictionary<string, object?>;
+        var storedObject = resource.Data["value"] as ObjectData;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObject.StringValue, storedObject["stringValue"]);
         Assert.AreEqual(testObject.IntValue, storedObject["intValue"]);
@@ -121,7 +121,7 @@ public sealed class DataTests {
             .Data("value", testObjects);
 
         //assert
-        var storedObject = resource.Data["value"] as IList<IDictionary<string, object?>>;
+        var storedObject = resource.Data["value"] as ListData;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObjects[0].StringValue, storedObject[0]["stringValue"]);
         Assert.AreEqual(testObjects[0].IntValue, storedObject[0]["intValue"]);
@@ -142,7 +142,7 @@ public sealed class DataTests {
             .Data("value", testObjects);
 
         //assert
-        var storedObject = resource.Data["value"] as IList<IDictionary<string, object?>>;
+        var storedObject = resource.Data["value"] as ListData;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObjects[0].StringValue, storedObject[0]["stringValue"]);
         Assert.AreEqual(testObjects[0].IntValue, storedObject[0]["intValue"]);

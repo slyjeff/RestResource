@@ -48,7 +48,7 @@ public static class FromHalJsonExtensions {
         resource.Data.PopulateFromJObject(o);
     }
 
-    private static void PopulateFromJObject(this IDictionary<string, object?> dictionary, JObject o) {
+    private static void PopulateFromJObject(this ObjectData objectData, JObject o) {
         foreach (var item in o) {
             if (item.Key is "_links" or "_embedded") {
                 continue;
@@ -56,15 +56,15 @@ public static class FromHalJsonExtensions {
 
             switch (item.Value) {
                 case JValue value:
-                    dictionary[item.Key] = value.Value;
+                    objectData[item.Key] = value.Value;
                     break;
                 case JArray jArray:
-                    dictionary[item.Key] = jArray.ToList();
+                    objectData[item.Key] = jArray.ToList();
                     break;
                 case JObject jObject: {
-                    var childDictionary = new Dictionary<string, object?>();
-                    childDictionary.PopulateFromJObject(jObject);
-                    dictionary[item.Key] = childDictionary;
+                    var childObjectData = new ObjectData();
+                    childObjectData.PopulateFromJObject(jObject);
+                    objectData[item.Key] = childObjectData;
                     break;
                 }
             }
@@ -81,11 +81,11 @@ public static class FromHalJsonExtensions {
             return jArray.OfType<JValue>().Select(x => x.Value).ToList();
         }
 
-        var list = new List<IDictionary<string, object?>>();
+        var list = new ListData();
         foreach (var item in jArray.OfType<JObject>()) {
-            var dictionary = new Dictionary<string, object?>();
-            dictionary.PopulateFromJObject(item);
-            list.Add(dictionary);
+            var objectData = new ObjectData();
+            objectData.PopulateFromJObject(item);
+            list.Add(objectData);
         }
 
         return list;

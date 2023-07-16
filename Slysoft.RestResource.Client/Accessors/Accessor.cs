@@ -6,8 +6,8 @@ using System.Linq;
 namespace SlySoft.RestResource.Client.Accessors;
 
 public abstract class Accessor : EditableAccessor {
-    protected readonly IDictionary<string, object?> CachedData = new Dictionary<string, object?>();
-    protected readonly IDictionary<string, object?> UpdateValues = new Dictionary<string, object?>();
+    protected readonly ObjectData CachedData = new ();
+    protected readonly ObjectData UpdateValues = new();
     private readonly IList<IEditableAccessor> _editableAccessors = new List<IEditableAccessor>();
 
     public override void RejectChanges() {

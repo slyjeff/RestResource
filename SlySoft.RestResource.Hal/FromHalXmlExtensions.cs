@@ -39,7 +39,7 @@ public static class FromHalXmlExtensions {
         PopulateFromXElement(resource.Data, xElement);
     }
 
-    private static void PopulateFromXElement(this IDictionary<string, object?> dictionary, XContainer xElement) {
+    private static void PopulateFromXElement(this ObjectData objectData, XContainer xElement) {
         foreach (var element in xElement.Elements()) {
             if (element.Name.LocalName is "link" or "resource") {
                 continue;
@@ -47,18 +47,18 @@ public static class FromHalXmlExtensions {
 
             var children = element.Elements().ToList();
             if (children.Count > 1 && children.All(x => x.Name.LocalName == "value")) {
-                dictionary[element.Name.LocalName] = children.ToList();
+                objectData[element.Name.LocalName] = children.ToList();
                 continue;
             }
 
             if (children.Any()) {
-                var childDictionary = new Dictionary<string, object?>();
-                childDictionary.PopulateFromXElement(element);
-                dictionary[element.Name.LocalName] = childDictionary;
+                var childObjectData = new ObjectData();
+                childObjectData.PopulateFromXElement(element);
+                objectData[element.Name.LocalName] = childObjectData;
                 continue;
             }
 
-            dictionary[element.Name.LocalName] = element.Value;
+            objectData[element.Name.LocalName] = element.Value;
         }
     }
 
@@ -72,11 +72,11 @@ public static class FromHalXmlExtensions {
             return xElements.Select(x => (object?)x.Value).ToList();
         }
 
-        var list = new List<IDictionary<string, object?>>();
+        var list = new ListData();
         foreach (var childElement in xElements) {
-            var dictionary = new Dictionary<string, object?>();
-            dictionary.PopulateFromXElement(childElement);
-            list.Add(dictionary);
+            var objectData = new ObjectData();
+            objectData.PopulateFromXElement(childElement);
+            list.Add(objectData);
         }
 
         return list;

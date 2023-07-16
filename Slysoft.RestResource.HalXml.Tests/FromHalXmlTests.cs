@@ -53,7 +53,7 @@ public sealed class FromHalXmlTests {
         var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
-        var storedObject = deserializedResource.Data["value"] as IDictionary<string, object?>;
+        var storedObject = deserializedResource.Data["value"] as ObjectData;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObject.StringValue, storedObject["stringValue"]);
         Assert.AreEqual(testObject.IntValue, Convert.ToInt32(storedObject["intValue"]));
@@ -98,7 +98,7 @@ public sealed class FromHalXmlTests {
         var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
-        var storedObject = deserializedResource.Data["value"] as IList<IDictionary<string, object?>>;
+        var storedObject = deserializedResource.Data["value"] as ListData;
         Assert.IsNotNull(storedObject);
         Assert.AreEqual(testObjects[0].StringValue, storedObject[0]["stringValue"]);
         Assert.AreEqual(testObjects[0].IntValue, Convert.ToInt32(storedObject[0]["intValue"]));
@@ -129,12 +129,12 @@ public sealed class FromHalXmlTests {
         var deserializedResource = new Resource().FromSlySoftHalXml(xml);
 
         //assert
-        var storedParent = deserializedResource.Data["testObjects"] as IList<IDictionary<string, object?>>;
+        var storedParent = deserializedResource.Data["testObjects"] as ListData;
         Assert.IsNotNull(storedParent);
         Assert.AreEqual(testObjects[0].StringValue, storedParent[0]["stringValue"]);
         Assert.AreEqual(testObjects[0].IntValue, Convert.ToInt32(storedParent[0]["intValue"]));
 
-        var storedChild = storedParent[0]["testObjects"] as IList<IDictionary<string, object?>>;
+        var storedChild = storedParent[0]["testObjects"] as ListData;
         Assert.IsNotNull(storedChild);
         Assert.AreEqual(testObjects[0].TestObjects[0].StringValue, storedChild[0]["stringValue"]);
         Assert.AreEqual(testObjects[0].TestObjects[0].IntValue, Convert.ToInt32(storedChild[0]["intValue"]));

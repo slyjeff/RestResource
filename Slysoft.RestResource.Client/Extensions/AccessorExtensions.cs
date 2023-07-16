@@ -15,8 +15,8 @@ internal static class AccessorExtensions {
         return resource.Data.GetData<T>(name);
     }
 
-    internal static T? GetData<T>(this IDictionary<string, object?> dictionary, string name) {
-        foreach (var data in dictionary) {
+    internal static T? GetData<T>(this ObjectData objectData, string name) {
+        foreach (var data in objectData) {
             if (data.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return (T?)ParseValue(data.Value, typeof(T));
             }
@@ -25,8 +25,8 @@ internal static class AccessorExtensions {
         return default;
     }
 
-    private static object? GetEmbeddedAccessor<T>(this IDictionary<string, object> dictionary, string name, IRestClient restClient) {
-        foreach (var data in dictionary) {
+    private static object? GetEmbeddedAccessor<T>(this EmbeddedResourceData embeddedData, string name, IRestClient restClient) {
+        foreach (var data in embeddedData) {
             if (!data.Key.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 continue;
             }
@@ -86,12 +86,12 @@ internal static class AccessorExtensions {
             return ParseList(enumerable, type);
         }
 
-        if (type.IsInterface && value is IDictionary<string, object?> interfaceDictionary) {
-            return DictionaryAccessorFactory.CreateAccessor(type, interfaceDictionary);
+        if (type.IsInterface && value is ObjectData objectData) {
+            return ObjectDataAccessorFactory.CreateAccessor(type, objectData);
         }
 
-        if (type.IsClass && value is IDictionary<string, object?> classDictionary) {
-            return ParseObject(classDictionary, type);
+        if (type.IsClass && value is ObjectData classObjectData) {
+            return ParseObject(classObjectData, type);
         }
 
         if (type == typeof(string)) {
@@ -125,12 +125,12 @@ internal static class AccessorExtensions {
         return CreateEditableAccessorList(genericArgumentType, list);
     }
 
-    private static object? ParseObject(IDictionary<string, object?> dictionary, Type type) {
+    private static object? ParseObject(ObjectData objectData, Type type) {
         var newObject = Activator.CreateInstance(type);
         foreach (var property in type.GetProperties()) {
-            foreach (var dictionaryItem in dictionary) {
-                if (dictionaryItem.Key.Equals(property.Name, StringComparison.CurrentCultureIgnoreCase)) {
-                    property.SetValue(newObject, ParseValue(dictionaryItem.Value, property.PropertyType));
+            foreach (var data in objectData) {
+                if (data.Key.Equals(property.Name, StringComparison.CurrentCultureIgnoreCase)) {
+                    property.SetValue(newObject, ParseValue(data.Value, property.PropertyType));
                     break;
                 }
             }

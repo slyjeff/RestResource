@@ -55,27 +55,27 @@ public static class ToHalJsonExtensions {
             return;
         }
 
-        if (data.Value is IList<IDictionary<string, object?>> listOfDictionary) {
+        if (data.Value is ListData listData) {
             var array = new JArray();
-            foreach (var dictionary in listOfDictionary) {
-                array.Add(dictionary.ToJson());
+            foreach (var dataObject in listData) {
+                array.Add(dataObject.ToJson());
             }
             o[data.Key] = array;
             return;
         }
 
-        if (data.Value is IDictionary<string, object?> dictionaryObject) {
-            o[data.Key] = dictionaryObject.ToJson();
+        if (data.Value is ObjectData objectData) {
+            o[data.Key] = objectData.ToJson();
             return;
         }
 
         o[data.Key] = new JValue(data.Value);
     }
 
-    private static JObject ToJson(this IDictionary<string, object?> dictionary) {
+    private static JObject ToJson(this ObjectData objectData) {
         var jObject = new JObject();
-        foreach (var item in dictionary) {
-            jObject.AddData(item);
+        foreach (var data in objectData) {
+            jObject.AddData(data);
         }
 
         return jObject;

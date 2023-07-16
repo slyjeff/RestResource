@@ -7,8 +7,8 @@ using SlySoft.RestResource.Client.Extensions;
 
 namespace SlySoft.RestResource.Client.Generators;
 
-internal sealed class DictionaryAccessorGenerator : AccessorGenerator {
-    public DictionaryAccessorGenerator(Type interfaceType) : base(interfaceType, typeof(DictionaryAccessor)) {
+internal sealed class ObjectDataAccessorGenerator : AccessorGenerator {
+    public ObjectDataAccessorGenerator(Type interfaceType) : base(interfaceType, typeof(ObjectDataAccessor)) {
     }
 
     public Type GeneratedType() {
@@ -27,7 +27,7 @@ internal sealed class DictionaryAccessorGenerator : AccessorGenerator {
     }
 
     private void AddConstructor() {
-        Type[] constructorArgs = { typeof(IDictionary<string, object?>) };
+        Type[] constructorArgs = { typeof(ObjectData) };
         var constructorBuilder = TypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, constructorArgs);
 
         var codeGenerator = constructorBuilder.GetILGenerator();

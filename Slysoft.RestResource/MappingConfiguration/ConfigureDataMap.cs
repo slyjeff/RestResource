@@ -6,13 +6,13 @@ namespace SlySoft.RestResource.MappingConfiguration;
 internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, TParent> {
     private readonly TParent _parent;
     private readonly T _source;
-    private readonly IDictionary<string, object?> _dictionary;
+    private readonly ObjectData _objectData;
     private readonly IList<string> _excludedProperties = new List<string>();
 
-    public ConfigureDataMap(TParent parent, T source, IDictionary<string, object?> dictionary) {
+    public ConfigureDataMap(TParent parent, T source, ObjectData objectData) {
         _parent = parent;
         _source = source;
-        _dictionary = dictionary;
+        _objectData = objectData;
     }
 
     public IConfigureParametersMap<T, TParent> Map(Expression<Func<T, object>> mapAction, string? format = null) {
@@ -20,7 +20,7 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, 
     }
 
     public IConfigureParametersMap<T, TParent> Map(string name, Expression<Func<T, object>> mapAction, string? format = null) {
-        _dictionary.MapValue(_source, name, mapAction, format);
+        _objectData.MapValue(_source, name, mapAction, format);
         return this;
     }
 
@@ -29,7 +29,7 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, 
     }
 
     public IConfigureParametersMap<TListItemType, IConfigureParametersMap<T, TParent>> MapListDataFrom<TListItemType>(string name, Expression<Func<T, IEnumerable<TListItemType>>> mapAction) {
-        var destinationList = new List<IDictionary<string, object?>>();
+        var destinationList = new ListData();
 
         if (_source == null) {
             return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
@@ -53,11 +53,11 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, 
             return new ConfigureListMap<TListItemType, IConfigureParametersMap<T, TParent>>(this, new List<CopyPair<TListItemType>>());
         }
 
-        _dictionary[name.ToCamelCase()] = destinationList;
+        _objectData[name.ToCamelCase()] = destinationList;
 
         var copyPairs = new List<CopyPair<TListItemType>>();
         foreach (var sourceItem in sourceList) {
-            var destination = new Dictionary<string, object?>();
+            var destination = new ObjectData();
             destinationList.Add(destination);
             copyPairs.Add(new CopyPair<TListItemType>(sourceItem, destination));
         }
@@ -76,11 +76,11 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, 
                 continue;
             }
 
-            if (_dictionary.ContainsKey(property.Name.ToCamelCase())) {
+            if (_objectData.ContainsKey(property.Name.ToCamelCase())) {
                 continue;
             }
 
-            _dictionary.AddResourceData(property.Name, property.GetValue(_source));
+            _objectData.AddResourceData(property.Name, property.GetValue(_source));
         }
 
         return this;
@@ -96,8 +96,8 @@ internal sealed class ConfigureDataMap<T, TParent> : IConfigureParametersMap<T, 
 
         propertyName = propertyName.ToCamelCase();
 
-        if (_dictionary.ContainsKey(propertyName)) {
-            _dictionary.Remove(propertyName);
+        if (_objectData.ContainsKey(propertyName)) {
+            _objectData.Remove(propertyName);
         }
 
         return this;

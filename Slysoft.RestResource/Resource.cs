@@ -12,12 +12,12 @@ public sealed class Resource {
     /// <summary>
     /// Data values contained by this resource
     /// </summary>
-    public IDictionary<string, object?> Data { get; } = new Dictionary<string, object?>();
+    public ObjectData Data { get; } = new();
 
     /// <summary>
     /// Embedded resources; can be either single resources, or lists of resources
     /// </summary>
-    public IDictionary<string, object> EmbeddedResources = new Dictionary<string, object>();
+    public EmbeddedResourceData EmbeddedResources = new();
 
     /// <summary>
     /// Links for this resource

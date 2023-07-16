@@ -213,23 +213,23 @@ td:last-child {
         htmlWriter.RenderEndTag(); //br
     }
 
-    private static void WriteData(HtmlTextWriter htmlWriter, IDictionary<string, object?> data) {
-        if (data.Count == 0) {
+    private static void WriteData(HtmlTextWriter htmlWriter, ObjectData objectData) {
+        if (objectData.Count == 0) {
             return;
         }
 
         htmlWriter.RenderBeginTag(HtmlTextWriterTag.Table);
 
-        foreach (var dataItem in data) {
+        foreach (var data in objectData) {
             htmlWriter.RenderBeginTag(HtmlTextWriterTag.Tr);
 
             htmlWriter.RenderBeginTag(HtmlTextWriterTag.Td);
-            htmlWriter.Write(dataItem.Key);
+            htmlWriter.Write(data.Key);
             htmlWriter.RenderEndTag(); //td
 
-            switch (dataItem.Value) {
-                case IList<IDictionary<string, object?>> list:
-                    WriteListOfObjects(htmlWriter, list);
+            switch (data.Value) {
+                case ListData listData:
+                    WriteListOfObjects(htmlWriter, listData);
                     break;
                 case string stringValue:
                     WriteValue(htmlWriter, stringValue);
@@ -238,7 +238,7 @@ td:last-child {
                     WriteEnumerable(htmlWriter, enumerable);
                     break;
                 default:
-                    WriteValue(htmlWriter, dataItem.Value);
+                    WriteValue(htmlWriter, data.Value);
                     break;
             }
 
@@ -248,13 +248,13 @@ td:last-child {
         htmlWriter.RenderEndTag(); //table
     }
 
-    private static void WriteListOfObjects(HtmlTextWriter htmlWriter, IList<IDictionary<string, object?>> list) {
+    private static void WriteListOfObjects(HtmlTextWriter htmlWriter, ListData listData) {
         htmlWriter.RenderBeginTag(HtmlTextWriterTag.Td);
 
         htmlWriter.RenderBeginTag(HtmlTextWriterTag.Table);
         htmlWriter.RenderBeginTag(HtmlTextWriterTag.Tr);
 
-        var firstItem = list.FirstOrDefault();
+        var firstItem = listData.FirstOrDefault();
         if (firstItem != null) {
             foreach (var data in firstItem) {
                 htmlWriter.RenderBeginTag(HtmlTextWriterTag.Th);
@@ -265,13 +265,13 @@ td:last-child {
 
         htmlWriter.RenderEndTag(); //tr
 
-        foreach (var item in list) {
+        foreach (var item in listData) {
             htmlWriter.RenderBeginTag(HtmlTextWriterTag.Tr);
 
             foreach (var data in item) {
                 switch (data.Value) {
-                    case IList<IDictionary<string, object?>> subList:
-                        WriteListOfObjects(htmlWriter, subList);
+                    case ListData subListData:
+                        WriteListOfObjects(htmlWriter, subListData);
                         break;
                     case string stringValue:
                         WriteValue(htmlWriter, stringValue);
