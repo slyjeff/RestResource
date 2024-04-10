@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTest", "WebTest\WebTest.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.AspNetCoreUtils", "Slysoft.RestResource.AspNetCoreUtils\SlySoft.RestResource.AspNetCoreUtils.csproj", "{4E520854-2880-4148-86C2-87441BB7F0FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.Html", "Slysoft.RestResource.Html\SlySoft.RestResource.Html.csproj", "{0D81871A-5222-4ADE-A6A9-3621A597B4C8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.Client.Tests", "Slysoft.RestResource.Client.Tests\SlySoft.RestResource.Client.Tests.csproj", "{63E260A8-33DA-4949-AE01-AAD1820FB139}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.Client", "Slysoft.RestResource.Client\SlySoft.RestResource.Client.csproj", "{5141BC92-3F45-4928-A67B-524141888A79}"
@@ -38,7 +36,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientTest", "ClientTest\Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest.DotNetFramework", "ClientTest.DotNetFramework\ClientTest.DotNetFramework.csproj", "{47F3D562-87DD-4C4D-9816-143D7C6317F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlySoft.RestResource.Hal", "SlySoft.RestResource.Hal\SlySoft.RestResource.Hal.csproj", "{76B57204-3188-4E35-B530-2999553CB853}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlySoft.RestResource.Hal", "SlySoft.RestResource.Hal\SlySoft.RestResource.Hal.csproj", "{76B57204-3188-4E35-B530-2999553CB853}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slysoft.RestResource.Html", "SlySoft.RestResource.Html\Slysoft.RestResource.Html.csproj", "{E1E441B0-7BD6-488C-BC94-18B56BB1AC57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,10 +74,6 @@ Global
 		{4E520854-2880-4148-86C2-87441BB7F0FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E520854-2880-4148-86C2-87441BB7F0FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E520854-2880-4148-86C2-87441BB7F0FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D81871A-5222-4ADE-A6A9-3621A597B4C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D81871A-5222-4ADE-A6A9-3621A597B4C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D81871A-5222-4ADE-A6A9-3621A597B4C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D81871A-5222-4ADE-A6A9-3621A597B4C8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{63E260A8-33DA-4949-AE01-AAD1820FB139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{63E260A8-33DA-4949-AE01-AAD1820FB139}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63E260A8-33DA-4949-AE01-AAD1820FB139}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -106,6 +102,10 @@ Global
 		{76B57204-3188-4E35-B530-2999553CB853}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76B57204-3188-4E35-B530-2999553CB853}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76B57204-3188-4E35-B530-2999553CB853}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1E441B0-7BD6-488C-BC94-18B56BB1AC57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1E441B0-7BD6-488C-BC94-18B56BB1AC57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1E441B0-7BD6-488C-BC94-18B56BB1AC57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1E441B0-7BD6-488C-BC94-18B56BB1AC57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
