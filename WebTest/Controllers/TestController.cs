@@ -21,6 +21,7 @@ public sealed class TestController  : ControllerBase {
                 .Field("parameter1")
                 .Field("parameter2")
             .EndBody()
+            .Delete("delete", "test/delete")
             .Put("list", "test/list")
                 .Field("list")
             .EndBody()
@@ -74,6 +75,11 @@ public sealed class TestController  : ControllerBase {
             .Data("parameter2", body.Parameter2);
 
         return StatusCode(200, resource);
+    }
+
+    [HttpDelete("delete")]
+    public IActionResult Delete() {
+        return StatusCode(200);
     }
 
     public class ListBody {
